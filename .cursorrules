@@ -1,0 +1,260 @@
+# Cursor AI Rules for DreamMaker Crypto Trading Platform
+
+## Project Context
+
+This is a cryptocurrency trading platform with:
+- **Frontend:** React + Vite + TypeScript + Tailwind
+- **Backend:** Node.js + Express + TypeScript
+- **Testing:** Vitest (unit) + Playwright (E2E)
+- **CI/CD:** GitHub Actions with comprehensive JSON reporting
+
+## Primary Rule: JSON-First Approach
+
+**ALWAYS read JSON configuration files before answering questions.**
+
+### Key JSON Files (Read First!)
+
+1. **`.github/ci-config.json`** - Complete CI/CD configuration
+   - Contains all job definitions
+   - Artifact locations
+   - Debugging guides
+   - Error formats
+
+2. **`.github/CURSOR_AI_GUIDE.json`** - AI assistant workflow guide
+   - Step-by-step workflows
+   - Code examples
+   - Response templates
+   - Decision trees
+
+3. **`package.json`** - Dependencies and scripts
+4. **`tsconfig.json`** - TypeScript configuration
+
+## When User Reports CI Failure
+
+Follow this exact workflow:
+
+1. **Read Config:**
+   ```typescript
+   const config = JSON.parse(
+     fs.readFileSync('.github/ci-config.json', 'utf8')
+   );
+   ```
+
+2. **Ask:** "Which job failed?" OR "What's the workflow run number?"
+
+3. **Locate Artifact:**
+   ```typescript
+   const job = config.jobs[jobName];
+   const artifact = Object.keys(job.artifacts)[0];
+   ```
+
+4. **Guide User:**
+   - "Download artifact: `[artifact_name]`"
+   - "Check file: `[specific_file.json]`"
+
+5. **Parse & Fix:**
+   - Parse the JSON report
+   - List specific errors
+   - Provide fixes
+   - Show verification commands
+
+## Code Quality Standards
+
+### TypeScript
+- Use strict mode
+- Explicit return types for functions
+- No `any` types (use `unknown` if needed)
+- Proper error handling
+
+### React
+- Functional components with hooks
+- Proper dependency arrays
+- TypeScript for props
+- Error boundaries where needed
+
+### Testing
+- Write tests for new features
+- Aim for >60% coverage
+- Test error cases
+- Use descriptive test names
+
+## File Structure Understanding
+
+```
+src/
+├── components/     # React components
+├── views/          # Page-level components
+├── contexts/       # React contexts
+├── hooks/          # Custom hooks
+├── services/       # API services
+├── utils/          # Utility functions
+├── types/          # TypeScript types
+└── styles/         # CSS/Tailwind
+
+.github/
+├── workflows/      # GitHub Actions
+├── ci-config.json  # CI configuration
+└── *.md            # Documentation
+
+scripts/
+└── ci/             # CI helper scripts
+```
+
+## Common Scenarios
+
+### Scenario: Lint Errors
+
+```bash
+# 1. Check errors
+npm run lint
+
+# 2. Auto-fix
+npm run lint -- --fix
+
+# 3. Manual fixes for remaining
+# Read eslint-report.json for details
+```
+
+### Scenario: Test Failures
+
+```bash
+# 1. Run tests
+npm test
+
+# 2. Run specific test
+npm test -- ComponentName.test.tsx
+
+# 3. With coverage
+npm run test:coverage
+```
+
+### Scenario: Build Errors
+
+```bash
+# 1. Try build
+npm run build:client  # or build:server
+
+# 2. Check logs
+# Read build-reports/*-build.log
+
+# 3. Fix TypeScript errors
+npm run typecheck
+```
+
+## Response Format
+
+When helping with errors, use this structure:
+
+```markdown
+## Problem Summary
+[Brief description]
+
+## Root Cause
+[Based on JSON report or logs]
+
+## Fix Steps
+1. [Step 1]
+2. [Step 2]
+...
+
+## Verification
+```bash
+[Commands to verify fix]
+```
+
+## Prevention
+[How to avoid this in future]
+```
+
+## Code Examples
+
+Always provide:
+- Complete code (not snippets)
+- Proper imports
+- TypeScript types
+- Error handling
+- Comments for complex logic
+
+## Don't
+
+- ❌ Don't use `any` type
+- ❌ Don't ignore TypeScript errors
+- ❌ Don't skip tests for new features
+- ❌ Don't hardcode values (use config)
+- ❌ Don't commit console.logs
+- ❌ Don't push without running checks
+
+## Do
+
+- ✅ Read JSON configs first
+- ✅ Use TypeScript strictly
+- ✅ Write tests
+- ✅ Follow ESLint rules
+- ✅ Use meaningful names
+- ✅ Handle errors properly
+- ✅ Document complex logic
+- ✅ Test locally before push
+
+## Before Suggesting Changes
+
+1. **Check current implementation**
+2. **Read related files**
+3. **Consider type safety**
+4. **Think about testing**
+5. **Verify it builds**
+
+## Debugging Priority
+
+When multiple issues exist:
+
+1. **Code quality** (lint/type errors) - Fix first
+2. **Unit tests** - Often auto-fix after #1
+3. **Integration tests**
+4. **Build issues**
+5. **Docker/deployment**
+
+## CI/CD Understanding
+
+**Pipeline Structure:**
+1. Setup & Validation
+2. Code Quality (ESLint, TypeScript)
+3. Unit Tests (Vitest)
+4. Integration Tests
+5. E2E Tests (conditional)
+6. Build Verification
+7. Docker Build
+8. Security Scan
+9. Performance Benchmarks
+10. Final Report
+
+**All reports are JSON.** Read them, don't just look at logs.
+
+## Helpful Commands
+
+```bash
+# Full check before push
+npm run lint && npm run typecheck && npm test
+
+# Build everything
+npm run build:client && npm run build:server
+
+# CI validation
+npm run ci:validate
+
+# Parse CI reports
+npm run ci:parse
+```
+
+## Remember
+
+- This project has comprehensive JSON-based CI/CD
+- Always read `.github/ci-config.json` first for CI questions
+- Use `.github/CURSOR_AI_GUIDE.json` for workflow guidance
+- Provide complete, tested solutions
+- Focus on type safety and testing
+- Guide users through debugging, don't just give answers
+
+---
+
+**Last Updated:** 2025-12-07
+**Version:** 1.0.0

@@ -1,0 +1,248 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schema/mcp-config.json",
+  "version": "1.0.0",
+  "name": "DreamMaker Crypto Trader MCP Config",
+  "description": "MCP configuration for cryptocurrency trading platform development",
+  
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/workspace"],
+      "description": "Access to project files",
+      "enabled": true
+    },
+    
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+      },
+      "description": "GitHub integration for issues, PRs, and workflows",
+      "enabled": true
+    },
+    
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "description": "Persistent memory for context across sessions",
+      "enabled": true
+    }
+  },
+  
+  "resources": {
+    "ci_config": {
+      "path": ".github/ci-config.json",
+      "description": "Complete CI/CD configuration",
+      "priority": "high",
+      "watch": true
+    },
+    
+    "cursor_ai_guide": {
+      "path": ".github/CURSOR_AI_GUIDE.json",
+      "description": "AI assistant integration guide",
+      "priority": "high",
+      "watch": true
+    },
+    
+    "package_json": {
+      "path": "package.json",
+      "description": "Project dependencies and scripts",
+      "priority": "high",
+      "watch": true
+    },
+    
+    "tsconfig": {
+      "path": "tsconfig.json",
+      "description": "TypeScript configuration",
+      "priority": "medium",
+      "watch": true
+    },
+    
+    "ci_guide": {
+      "path": ".github/CI_GUIDE.md",
+      "description": "CI/CD system documentation",
+      "priority": "medium",
+      "watch": false
+    }
+  },
+  
+  "tools": {
+    "validate_ci": {
+      "command": "npm run ci:validate",
+      "description": "Validate CI configuration files",
+      "category": "ci"
+    },
+    
+    "parse_ci_reports": {
+      "command": "npm run ci:parse",
+      "description": "Parse and aggregate CI reports",
+      "category": "ci"
+    },
+    
+    "lint": {
+      "command": "npm run lint",
+      "description": "Run ESLint on the project",
+      "category": "quality"
+    },
+    
+    "lint_fix": {
+      "command": "npm run lint -- --fix",
+      "description": "Auto-fix ESLint errors",
+      "category": "quality"
+    },
+    
+    "typecheck": {
+      "command": "npm run typecheck",
+      "description": "Run TypeScript type checking",
+      "category": "quality"
+    },
+    
+    "test": {
+      "command": "npm test",
+      "description": "Run unit tests",
+      "category": "testing"
+    },
+    
+    "test_coverage": {
+      "command": "npm run test:coverage",
+      "description": "Run tests with coverage",
+      "category": "testing"
+    },
+    
+    "build_client": {
+      "command": "npm run build:client",
+      "description": "Build frontend",
+      "category": "build"
+    },
+    
+    "build_server": {
+      "command": "npm run build:server",
+      "description": "Build backend",
+      "category": "build"
+    }
+  },
+  
+  "prompts": {
+    "debug_ci_failure": {
+      "name": "Debug CI Failure",
+      "description": "Help debug a failed CI pipeline",
+      "template": "I need help debugging a CI failure. Job: {{job_name}}. Please:\n1. Read .github/ci-config.json\n2. Identify the artifact location\n3. Guide me through downloading and analyzing the report\n4. Provide specific fixes"
+    },
+    
+    "fix_lint_errors": {
+      "name": "Fix Linting Errors",
+      "description": "Analyze and fix linting errors",
+      "template": "Please:\n1. Run npm run lint\n2. Analyze the errors\n3. Apply fixes with npm run lint -- --fix\n4. For remaining errors, suggest manual fixes"
+    },
+    
+    "analyze_test_failures": {
+      "name": "Analyze Test Failures",
+      "description": "Debug failing tests",
+      "template": "Tests are failing. Please:\n1. Run npm test\n2. Analyze the failures\n3. Identify root causes\n4. Suggest fixes\n5. Show how to run specific tests"
+    },
+    
+    "review_build": {
+      "name": "Review Build",
+      "description": "Check build configuration and output",
+      "template": "Please review the build setup:\n1. Check tsconfig.json and vite.config.ts\n2. Run builds (client and server)\n3. Analyze output\n4. Suggest optimizations"
+    },
+    
+    "update_dependencies": {
+      "name": "Update Dependencies",
+      "description": "Help update npm dependencies safely",
+      "template": "I want to update dependencies. Please:\n1. Check package.json\n2. Identify outdated packages\n3. Suggest safe updates\n4. Note any breaking changes\n5. Provide update commands"
+    }
+  },
+  
+  "context": {
+    "project_type": "cryptocurrency_trading_platform",
+    "stack": {
+      "frontend": "React + Vite + TypeScript",
+      "backend": "Node.js + Express + TypeScript",
+      "testing": "Vitest + Playwright",
+      "ci": "GitHub Actions"
+    },
+    
+    "key_files_for_ai": [
+      ".github/ci-config.json",
+      ".github/CURSOR_AI_GUIDE.json",
+      "package.json",
+      "tsconfig.json",
+      "README.md"
+    ],
+    
+    "debugging_priority": [
+      "1. Code quality (lint/type errors)",
+      "2. Unit tests",
+      "3. Integration tests",
+      "4. Build issues",
+      "5. Docker/deployment"
+    ],
+    
+    "common_workflows": {
+      "before_push": [
+        "npm run lint",
+        "npm run typecheck",
+        "npm test",
+        "npm run build:client",
+        "npm run build:server"
+      ],
+      
+      "ci_failed": [
+        "Check which job failed",
+        "Download appropriate artifact",
+        "Read JSON report",
+        "Fix issues",
+        "Test locally",
+        "Push again"
+      ],
+      
+      "new_feature": [
+        "Write code",
+        "Add tests",
+        "Update types",
+        "Run lint + typecheck + test",
+        "Create PR"
+      ]
+    }
+  },
+  
+  "shortcuts": {
+    "quick_check": "npm run lint && npm run typecheck && npm test",
+    "full_build": "npm run build:client && npm run build:server",
+    "ci_check": "npm run ci:validate",
+    "fix_all": "npm run lint -- --fix && npm run typecheck"
+  },
+  
+  "ai_hints": {
+    "when_ci_fails": {
+      "step_1": "Read .github/ci-config.json",
+      "step_2": "Identify failed job from user or ci-final-report",
+      "step_3": "Locate artifact using jobs[job_name].artifacts",
+      "step_4": "Guide user to download artifact",
+      "step_5": "Parse JSON report for errors",
+      "step_6": "Provide specific fixes",
+      "step_7": "Show verification commands"
+    },
+    
+    "json_first": {
+      "description": "Always prefer JSON files over logs",
+      "reason": "JSON is structured, parsable, and accurate",
+      "key_files": [
+        ".github/ci-config.json",
+        ".github/CURSOR_AI_GUIDE.json",
+        "ci-reports/**/*.json"
+      ]
+    },
+    
+    "debugging_approach": {
+      "1": "Identify the problem type",
+      "2": "Read relevant JSON config",
+      "3": "Locate the artifact/report",
+      "4": "Parse JSON for details",
+      "5": "Provide specific solution",
+      "6": "Show how to verify locally"
+    }
+  }
+}
