@@ -1,0 +1,435 @@
+{
+  "$schema": "./ci-config-schema.json",
+  "version": "1.0.0",
+  "name": "DreamMaker Crypto Signal Trader CI Configuration",
+  "description": "Comprehensive CI/CD pipeline configuration for easy debugging and AI assistant integration",
+  
+  "metadata": {
+    "created": "2025-12-07",
+    "last_updated": "2025-12-07",
+    "maintainer": "CI Team",
+    "documentation": "https://github.com/nimazasinich/DreammakerCryptoSignalAndTrader/blob/main/.github/CI_GUIDE.md"
+  },
+  
+  "pipeline": {
+    "name": "comprehensive-ci",
+    "trigger_events": ["push", "pull_request", "workflow_dispatch"],
+    "branches": ["main", "master", "develop", "cursor/**", "feature/**"],
+    "timeout_minutes": 120,
+    "concurrency_group": "ci-${{ github.ref }}",
+    "cancel_in_progress": true
+  },
+  
+  "jobs": {
+    "setup-validation": {
+      "name": "Setup & Validation",
+      "description": "Validates project setup, detects changes, and determines what tests to run",
+      "timeout_minutes": 10,
+      "outputs": {
+        "cache-key": "Node modules cache key based on package-lock.json hash",
+        "should-run-e2e": "Boolean indicating if E2E tests should run",
+        "affected-areas": "JSON object with affected code areas"
+      },
+      "artifacts": {
+        "ci-metadata": {
+          "path": "ci-reports/metadata/",
+          "description": "Contains changes.json with detailed change analysis",
+          "retention_days": 30
+        }
+      }
+    },
+    
+    "code-quality": {
+      "name": "Code Quality",
+      "description": "Runs linting, type checking, and code complexity analysis",
+      "timeout_minutes": 15,
+      "depends_on": ["setup-validation"],
+      "checks": {
+        "eslint": {
+          "command": "npm run lint",
+          "output_format": "json",
+          "report_file": "eslint-report.json",
+          "continue_on_error": true
+        },
+        "typescript": {
+          "command": "npm run typecheck",
+          "output_file": "typecheck-output.txt",
+          "report_file": "typecheck-report.json"
+        },
+        "complexity": {
+          "description": "Analyzes code complexity and identifies large files",
+          "report_file": "complexity-report.json",
+          "thresholds": {
+            "max_file_lines": 500,
+            "warn_above_lines": 300
+          }
+        }
+      },
+      "artifacts": {
+        "quality-reports": {
+          "path": "ci-reports/quality/",
+          "files": [
+            "eslint-report.json",
+            "typecheck-report.json",
+            "typecheck-output.txt",
+            "complexity-report.json"
+          ],
+          "retention_days": 30
+        }
+      }
+    },
+    
+    "unit-tests": {
+      "name": "Unit Tests",
+      "description": "Runs Vitest unit tests with coverage reporting",
+      "timeout_minutes": 20,
+      "depends_on": ["setup-validation"],
+      "framework": "vitest",
+      "commands": {
+        "test": "npm run test:coverage",
+        "test_with_reporting": "npm run test:coverage -- --reporter=json --outputFile=ci-reports/tests/vitest-results.json"
+      },
+      "coverage": {
+        "enabled": true,
+        "provider": "v8",
+        "formats": ["text", "json", "html"],
+        "thresholds": {
+          "lines": 60,
+          "functions": 60,
+          "branches": 50,
+          "statements": 60
+        }
+      },
+      "artifacts": {
+        "unit-test-results": {
+          "path": ["ci-reports/tests/", "coverage/"],
+          "files": ["vitest-results.json", "summary.json"],
+          "retention_days": 30
+        }
+      }
+    },
+    
+    "integration-tests": {
+      "name": "Integration Tests",
+      "description": "Runs API integration tests and health checks",
+      "timeout_minutes": 30,
+      "depends_on": ["setup-validation"],
+      "tests": {
+        "api_tests": {
+          "command": "npm run test:api",
+          "description": "Tests API endpoints and integrations"
+        },
+        "health_checks": {
+          "command": "npm run health:check:json",
+          "description": "Validates system health endpoints"
+        }
+      },
+      "artifacts": {
+        "integration-test-results": {
+          "path": "ci-reports/integration/",
+          "files": ["summary.json"],
+          "retention_days": 30
+        }
+      }
+    },
+    
+    "e2e-tests": {
+      "name": "E2E Tests",
+      "description": "Runs Playwright end-to-end tests with browser automation",
+      "timeout_minutes": 45,
+      "depends_on": ["setup-validation", "unit-tests"],
+      "conditional": "needs.setup-validation.outputs.should-run-e2e == 'true'",
+      "framework": "playwright",
+      "strategy": {
+        "matrix": {
+          "shard": [1, 2]
+        },
+        "fail_fast": false
+      },
+      "browsers": ["chromium"],
+      "environment": {
+        "NODE_OPTIONS": "--dns-result-order=ipv4first"
+      },
+      "artifacts": {
+        "e2e-results-shard-N": {
+          "path": ["ci-reports/e2e/", "playwright-report/", "test-results/"],
+          "retention_days": 30
+        }
+      }
+    },
+    
+    "build-verification": {
+      "name": "Build Verification",
+      "description": "Builds client and server separately and verifies outputs",
+      "timeout_minutes": 20,
+      "depends_on": ["code-quality", "unit-tests"],
+      "strategy": {
+        "matrix": {
+          "build_type": ["client", "server"]
+        }
+      },
+      "builds": {
+        "client": {
+          "command": "npm run build:client",
+          "tool": "vite",
+          "output_dir": "dist/",
+          "metrics": ["build_time", "bundle_size", "file_count"]
+        },
+        "server": {
+          "command": "npm run build:server",
+          "tool": "typescript",
+          "output_dir": "dist/",
+          "metrics": ["build_time", "compiled_files"]
+        }
+      },
+      "artifacts": {
+        "build-client": {
+          "path": "dist/",
+          "retention_days": 7,
+          "condition": "success() && matrix.build-type == 'client'"
+        },
+        "build-server": {
+          "path": "dist/",
+          "retention_days": 7,
+          "condition": "success() && matrix.build-type == 'server'"
+        },
+        "build-reports": {
+          "path": "ci-reports/build/",
+          "files": ["client-report.json", "server-report.json"],
+          "retention_days": 30
+        }
+      }
+    },
+    
+    "docker-build": {
+      "name": "Docker Build",
+      "description": "Builds and tests Docker images for backend and frontend",
+      "timeout_minutes": 30,
+      "depends_on": ["build-verification"],
+      "strategy": {
+        "matrix": {
+          "image": ["backend", "frontend"]
+        }
+      },
+      "images": {
+        "backend": {
+          "dockerfile": "Dockerfile.backend",
+          "context": ".",
+          "base_image": "node:20-alpine",
+          "expose_port": 8001,
+          "health_check": "http://localhost:8001/api/health"
+        },
+        "frontend": {
+          "dockerfile": "Dockerfile.frontend",
+          "context": ".",
+          "base_image": "nginx:alpine",
+          "expose_port": 80,
+          "health_check": "http://localhost/health"
+        }
+      },
+      "cache": {
+        "enabled": true,
+        "type": "gha"
+      },
+      "artifacts": {
+        "docker-reports": {
+          "path": "ci-reports/docker/",
+          "files": [
+            "backend-report.json",
+            "frontend-report.json",
+            "backend-startup.log",
+            "frontend-startup.log"
+          ],
+          "retention_days": 30
+        }
+      }
+    },
+    
+    "security-scan": {
+      "name": "Security Scan",
+      "description": "Scans for vulnerabilities and security issues",
+      "timeout_minutes": 15,
+      "depends_on": ["setup-validation"],
+      "scans": {
+        "npm_audit": {
+          "command": "npm audit",
+          "output_format": "json",
+          "report_file": "npm-audit.json",
+          "continue_on_error": true
+        },
+        "secrets_detection": {
+          "description": "Scans codebase for exposed secrets",
+          "patterns": ["password", "secret", "api_key", "token", "auth"],
+          "report_file": "secrets-scan.json"
+        }
+      },
+      "artifacts": {
+        "security-reports": {
+          "path": "ci-reports/security/",
+          "files": ["npm-audit.json", "secrets-scan.json"],
+          "retention_days": 30
+        }
+      }
+    },
+    
+    "performance-benchmarks": {
+      "name": "Performance Benchmarks",
+      "description": "Measures build performance and bundle sizes",
+      "timeout_minutes": 20,
+      "depends_on": ["build-verification"],
+      "metrics": {
+        "build_times": {
+          "client": "Time to build frontend (seconds)",
+          "server": "Time to build backend (seconds)"
+        },
+        "bundle_sizes": {
+          "total": "Total dist size (MB)",
+          "javascript": "Total JS size (KB)",
+          "css": "Total CSS size (KB)"
+        }
+      },
+      "artifacts": {
+        "performance-reports": {
+          "path": "ci-reports/performance/",
+          "files": ["benchmarks.json"],
+          "retention_days": 30
+        }
+      }
+    },
+    
+    "generate-final-report": {
+      "name": "Generate Final Report",
+      "description": "Aggregates all reports into a comprehensive JSON summary",
+      "timeout_minutes": 10,
+      "depends_on": [
+        "setup-validation",
+        "code-quality",
+        "unit-tests",
+        "integration-tests",
+        "build-verification",
+        "docker-build",
+        "security-scan",
+        "performance-benchmarks"
+      ],
+      "run_condition": "always()",
+      "outputs": {
+        "ci-report.json": "Complete pipeline results in JSON",
+        "SUMMARY.md": "Human-readable markdown summary"
+      },
+      "artifacts": {
+        "ci-final-report": {
+          "path": "final-report/",
+          "files": ["ci-report.json", "SUMMARY.md"],
+          "retention_days": 30
+        }
+      },
+      "notifications": {
+        "pr_comment": "Posts summary to pull request",
+        "github_summary": "Adds to GitHub Actions summary"
+      }
+    }
+  },
+  
+  "reports": {
+    "directory": "ci-reports",
+    "retention_days": 30,
+    "formats": ["json", "markdown", "html"],
+    "structure": {
+      "metadata/": "Change detection and pipeline metadata",
+      "quality/": "Code quality, linting, type checking reports",
+      "tests/": "Unit test results and coverage",
+      "integration/": "Integration test results",
+      "e2e/": "End-to-end test results",
+      "build/": "Build logs and metrics",
+      "docker/": "Docker build and test reports",
+      "security/": "Security scan results",
+      "performance/": "Performance benchmarks"
+    }
+  },
+  
+  "debugging_guide": {
+    "failed_pipeline": {
+      "step_1": "Download ci-final-report artifact to see overall status",
+      "step_2": "Check ci-report.json for which jobs failed",
+      "step_3": "Download specific job artifacts (e.g., quality-reports, unit-test-results)",
+      "step_4": "Review JSON reports for detailed error information",
+      "step_5": "Check logs in GitHub Actions for execution details"
+    },
+    "common_issues": {
+      "lint_failures": {
+        "artifact": "quality-reports/eslint-report.json",
+        "description": "Contains all linting errors with file locations and rules"
+      },
+      "test_failures": {
+        "artifact": "unit-test-results/vitest-results.json",
+        "description": "Contains failed test details and stack traces"
+      },
+      "build_failures": {
+        "artifact": "build-reports/[client|server]-report.json",
+        "description": "Contains build logs and error messages"
+      },
+      "docker_failures": {
+        "artifact": "docker-reports/[backend|frontend]-report.json",
+        "description": "Contains image build info and startup logs"
+      }
+    }
+  },
+  
+  "ai_assistant_integration": {
+    "cursor_workflow": {
+      "step_1": "Read .github/ci-config.json for complete pipeline structure",
+      "step_2": "Access specific job configuration from jobs section",
+      "step_3": "Check artifacts section for report locations",
+      "step_4": "Use debugging_guide for troubleshooting steps"
+    },
+    "key_files": [
+      ".github/ci-config.json - Main CI configuration",
+      ".github/ci-config-schema.json - JSON schema for validation",
+      ".github/workflows/comprehensive-ci.yml - GitHub Actions workflow",
+      ".github/CI_GUIDE.md - Human-readable documentation",
+      "scripts/ci/ - CI helper scripts"
+    ],
+    "json_reports": {
+      "all_reports_use_iso8601_timestamps": true,
+      "all_reports_include_status_field": true,
+      "error_format": {
+        "file": "path/to/file",
+        "line": 123,
+        "column": 45,
+        "message": "Error description",
+        "rule": "rule-name",
+        "severity": "error|warning"
+      }
+    }
+  },
+  
+  "environment_variables": {
+    "NODE_VERSION": {
+      "value": "20.x",
+      "description": "Node.js version for all jobs"
+    },
+    "REPORTS_DIR": {
+      "value": "ci-reports",
+      "description": "Directory for all CI reports"
+    },
+    "ARTIFACTS_RETENTION_DAYS": {
+      "value": 30,
+      "description": "How long to keep artifacts"
+    },
+    "CI": {
+      "value": "true",
+      "description": "Indicates running in CI environment"
+    }
+  },
+  
+  "maintenance": {
+    "update_frequency": "Review monthly or when adding new features",
+    "checklist": [
+      "Update Node version if changed",
+      "Review timeout values",
+      "Check artifact retention policies",
+      "Validate all report paths exist",
+      "Test with actual pipeline run"
+    ]
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "cursor.general.enableMCP": true,
+  "cursor.mcp.configPath": ".cursor/mcp-config.json",
+  
+  "cursor.chat.model": "claude-sonnet-4",
+  "cursor.chat.contextMode": "auto",
+  "cursor.chat.maxTokens": 8000,
+  
+  "cursor.autocomplete.enabled": true,
+  "cursor.autocomplete.model": "claude-sonnet-4",
+  
+  "cursor.rules.enabled": true,
+  "cursor.rules.files": [
+    ".cursorrules",
+    ".cursor/rules/*.md"
+  ],
+  
+  "cursor.context.includedFiles": [
+    ".github/ci-config.json",
+    ".github/CURSOR_AI_GUIDE.json",
+    "package.json",
+    "tsconfig.json",
+    ".github/CI_GUIDE.md"
+  ],
+  
+  "cursor.context.excludedPatterns": [
+    "node_modules/**",
+    "dist/**",
+    "build/**",
+    "coverage/**",
+    ".git/**",
+    "*.log",
+    "*.lock"
+  ],
+  
+  "cursor.features.codeActions": true,
+  "cursor.features.inlineEdits": true,
+  "cursor.features.chatPanel": true,
+  
+  "cursor.experimental.jsonParsing": true,
+  "cursor.experimental.contextEnhancement": true,
+  
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.organizeImports": true
+  },
+  
+  "files.associations": {
+    "*.json": "jsonc",
+    ".cursorrules": "markdown"
+  },
+  
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/coverage/**": true,
+    "**/.git/**": true
+  },
+  
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/coverage": true,
+    "**/.git": true,
+    "**/build": true
+  },
+  
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  }
+}

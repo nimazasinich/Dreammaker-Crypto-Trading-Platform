@@ -1,0 +1,451 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Cursor AI Integration Guide",
+  "description": "راهنمای جامع برای استفاده از سیستم CI توسط Cursor AI و سایر دستیاران هوش مصنوعی",
+  "version": "1.0.0",
+  "last_updated": "2025-12-07",
+  
+  "quick_reference": {
+    "primary_config_file": ".github/ci-config.json",
+    "documentation_file": ".github/CI_GUIDE.md",
+    "workflow_file": ".github/workflows/comprehensive-ci.yml",
+    "validation_script": "scripts/ci/validate-ci-config.ts",
+    "parser_script": "scripts/ci/parse-ci-reports.ts"
+  },
+  
+  "ai_workflow": {
+    "step_1_understand_request": {
+      "description": "کاربر در مورد مشکل CI سوال می‌کند",
+      "action": "شناسایی نوع مشکل (lint, test, build, docker, etc.)",
+      "questions_to_ask": [
+        "Which GitHub Actions workflow run failed?",
+        "What is the workflow run number?",
+        "Which specific job failed?",
+        "Do you have access to download artifacts?"
+      ]
+    },
+    
+    "step_2_read_configuration": {
+      "description": "خواندن فایل‌های پیکربندی",
+      "files_to_read": [
+        {
+          "path": ".github/ci-config.json",
+          "purpose": "ساختار کامل pipeline و مستندات",
+          "key_sections": [
+            "jobs - لیست تمام مراحل",
+            "jobs[job_name].artifacts - محل گزارش‌ها",
+            "debugging_guide - راهنمای رفع مشکل"
+          ]
+        },
+        {
+          "path": ".github/CI_GUIDE.md",
+          "purpose": "مستندات قابل خواندن برای انسان",
+          "when_to_use": "برای توضیحات تفصیلی"
+        }
+      ],
+      "example_code": "const config = JSON.parse(fs.readFileSync('.github/ci-config.json', 'utf8'));\nconst jobInfo = config.jobs['code-quality'];\nconsole.log('Artifacts:', jobInfo.artifacts);"
+    },
+    
+    "step_3_locate_artifacts": {
+      "description": "پیدا کردن محل گزارش‌ها",
+      "artifact_mapping": {
+        "code_quality_failed": {
+          "artifact_name": "quality-reports",
+          "key_files": [
+            "eslint-report.json - خطاهای linting",
+            "typecheck-report.json - خطاهای type",
+            "complexity-report.json - مشکلات پیچیدگی کد"
+          ]
+        },
+        "unit_tests_failed": {
+          "artifact_name": "unit-test-results",
+          "key_files": [
+            "vitest-results.json - نتایج تست",
+            "summary.json - خلاصه",
+            "coverage/ - پوشش کد"
+          ]
+        },
+        "integration_tests_failed": {
+          "artifact_name": "integration-test-results",
+          "key_files": [
+            "summary.json - خلاصه تست‌های یکپارچگی"
+          ]
+        },
+        "e2e_tests_failed": {
+          "artifact_name": "e2e-results-shard-N",
+          "key_files": [
+            "results-shard-N.json - نتایج E2E",
+            "playwright-report/ - گزارش HTML",
+            "test-results/ - تصاویر و ویدیوها"
+          ]
+        },
+        "build_failed": {
+          "artifact_name": "build-reports-[client|server]",
+          "key_files": [
+            "client-report.json - متریک‌های build",
+            "server-report.json - متریک‌های build",
+            "*-build.log - لاگ‌های build"
+          ]
+        },
+        "docker_failed": {
+          "artifact_name": "docker-reports-[backend|frontend]",
+          "key_files": [
+            "backend-report.json - اطلاعات image",
+            "frontend-report.json - اطلاعات image",
+            "*-startup.log - لاگ‌های startup"
+          ]
+        },
+        "security_failed": {
+          "artifact_name": "security-reports",
+          "key_files": [
+            "npm-audit.json - آسیب‌پذیری‌ها",
+            "secrets-scan.json - نتایج اسکن secret"
+          ]
+        }
+      }
+    },
+    
+    "step_4_guide_user": {
+      "description": "راهنمایی کاربر برای دانلود و تحلیل",
+      "instructions": [
+        "1. Go to GitHub Actions → Run #[RUN_NUMBER]",
+        "2. Scroll down to Artifacts section",
+        "3. Download [ARTIFACT_NAME]",
+        "4. Extract and open [KEY_FILE]",
+        "5. Look for [SPECIFIC_FIELD] in JSON"
+      ]
+    },
+    
+    "step_5_parse_report": {
+      "description": "تجزیه گزارش JSON",
+      "parsing_strategies": {
+        "eslint_report": {
+          "structure": "Array of file objects",
+          "error_extraction": "file.messages.filter(m => m.severity === 2)",
+          "example_code": "const errors = report\n  .filter(f => f.errorCount > 0)\n  .map(f => ({\n    file: f.filePath,\n    errors: f.messages.filter(m => m.severity === 2)\n  }));"
+        },
+        "vitest_report": {
+          "structure": "testResults array",
+          "failed_tests": "testResults.filter(t => t.status === 'failed')",
+          "example_code": "const failed = report.testResults\n  .filter(t => t.status === 'failed')\n  .map(t => ({\n    name: t.name,\n    message: t.failureMessage\n  }));"
+        },
+        "build_report": {
+          "structure": "Single object",
+          "check_status": "report.status === 'failed'",
+          "get_logs": "Read report.log_file",
+          "example_code": "if (report.status === 'failed') {\n  console.log('Build failed!');\n  console.log('Log file:', report.log_file);\n  console.log('Duration:', report.duration_seconds, 's');\n}"
+        }
+      }
+    },
+    
+    "step_6_provide_solution": {
+      "description": "ارائه راه‌حل",
+      "solution_template": {
+        "problem_summary": "خلاصه مشکل به زبان ساده",
+        "root_cause": "علت اصلی با استناد به گزارش",
+        "fix_steps": "مراحل رفع به ترتیب",
+        "verification": "چگونه بررسی کنیم که مشکل حل شده",
+        "prevention": "چگونه از این مشکل جلوگیری کنیم"
+      },
+      "example_response": "Based on the ESLint report, there are 3 errors:\n\n1. **File:** src/components/Dashboard.tsx\n   **Line:** 42\n   **Error:** Missing return type\n   **Fix:** Add `: void` or `: Promise<void>`\n\n2. [Additional errors...]\n\n**To fix locally:**\n```bash\nnpm run lint\nnpm run lint -- --fix\n```\n\n**Verify:**\n```bash\nnpm run lint  # Should show 0 errors\n```"
+    }
+  },
+  
+  "common_scenarios": {
+    "scenario_1_lint_errors": {
+      "user_message": "CI failed with lint errors",
+      "ai_steps": [
+        "1. Read .github/ci-config.json → jobs.code-quality",
+        "2. Tell user to download 'quality-reports' artifact",
+        "3. Guide to open eslint-report.json",
+        "4. Parse JSON and list each error with file, line, and rule",
+        "5. Provide fix for each error or suggest `npm run lint -- --fix`",
+        "6. Explain how to run locally to verify"
+      ],
+      "json_path_to_errors": "report[] → messages[] → {line, column, message, ruleId}",
+      "sample_fix": "For error '@typescript-eslint/explicit-function-return-type':\nAdd return type: `function foo(): string { ... }`"
+    },
+    
+    "scenario_2_test_failures": {
+      "user_message": "Tests are failing in CI",
+      "ai_steps": [
+        "1. Read .github/ci-config.json → jobs.unit-tests",
+        "2. Tell user to download 'unit-test-results' artifact",
+        "3. Guide to open vitest-results.json",
+        "4. Parse JSON and list failed tests with assertions",
+        "5. Explain what each test expects vs what it got",
+        "6. Suggest fixes based on assertion type",
+        "7. Show how to run single test locally"
+      ],
+      "json_path_to_failures": "testResults[] → filter(status === 'failed') → {name, failureMessage}",
+      "sample_fix": "For 'Expected element to be in document':\n- Check if component renders correctly\n- Verify test setup/mocks\n- Run: `npm test -- Dashboard.test.tsx`"
+    },
+    
+    "scenario_3_build_failures": {
+      "user_message": "Build is failing",
+      "ai_steps": [
+        "1. Ask: Client or Server build?",
+        "2. Read .github/ci-config.json → jobs.build-verification",
+        "3. Tell user to download 'build-reports-client' or 'build-reports-server'",
+        "4. Guide to check *-report.json for status",
+        "5. Guide to read *-build.log for detailed error",
+        "6. Identify error type (TypeScript, import, config, etc.)",
+        "7. Provide specific fix",
+        "8. Show local build command"
+      ],
+      "json_path_to_info": "report → {status, duration_seconds, log_file}",
+      "sample_fix": "For TypeScript error in build:\n- Check log_file for exact error\n- Fix type errors\n- Run: `npm run build:client` or `npm run build:server`"
+    },
+    
+    "scenario_4_docker_failures": {
+      "user_message": "Docker build/test failed",
+      "ai_steps": [
+        "1. Ask: Backend or Frontend image?",
+        "2. Read .github/ci-config.json → jobs.docker-build",
+        "3. Tell user to download 'docker-reports-backend' or 'docker-reports-frontend'",
+        "4. Check *-report.json for image info",
+        "5. Read *-startup.log for container errors",
+        "6. Identify issue (build, runtime, healthcheck)",
+        "7. Provide Dockerfile fix or config change",
+        "8. Show local Docker commands to test"
+      ],
+      "json_path_to_info": "report → {image, size_mb, layers, container_test.status}",
+      "sample_fix": "For container startup failure:\n- Check *-startup.log for error\n- Verify Dockerfile CMD/ENTRYPOINT\n- Test locally: `docker build -f Dockerfile.backend .`"
+    },
+    
+    "scenario_5_complete_pipeline_failure": {
+      "user_message": "Multiple jobs failed / I don't know what failed",
+      "ai_steps": [
+        "1. Tell user to download 'ci-final-report' artifact FIRST",
+        "2. Guide to open ci-report.json",
+        "3. Show how to read jobs section: {job_name: 'success|failure'}",
+        "4. List all failed jobs",
+        "5. For each failed job, follow specific scenario above",
+        "6. Prioritize: Fix code-quality first, then tests, then builds"
+      ],
+      "json_path_to_jobs": "jobs → {job_name: result}",
+      "sample_analysis": "{\n  \"code_quality\": \"failure\",  ← Start here\n  \"unit_tests\": \"failure\",    ← Then this\n  \"build\": \"success\"\n}\n\nPriority: Fix lint errors first, then tests will likely pass."
+    }
+  },
+  
+  "json_error_formats": {
+    "eslint": {
+      "structure": "Array<FileReport>",
+      "file_report": {
+        "filePath": "string",
+        "messages": "Array<Message>",
+        "errorCount": "number",
+        "warningCount": "number"
+      },
+      "message": {
+        "ruleId": "string",
+        "severity": "1=warn, 2=error",
+        "message": "string",
+        "line": "number",
+        "column": "number"
+      }
+    },
+    
+    "vitest": {
+      "structure": "Object with testResults array",
+      "test_result": {
+        "name": "string",
+        "status": "'passed'|'failed'|'skipped'",
+        "duration": "number (ms)",
+        "failureMessage": "string (if failed)"
+      }
+    },
+    
+    "build": {
+      "structure": "Single object",
+      "fields": {
+        "timestamp": "ISO 8601 string",
+        "build_type": "'client'|'server'",
+        "status": "'success'|'failed'",
+        "duration_seconds": "number",
+        "build_size": "string (e.g., '15.2M')",
+        "file_count": "number",
+        "log_file": "string (filename)"
+      }
+    },
+    
+    "docker": {
+      "structure": "Single object",
+      "fields": {
+        "timestamp": "ISO 8601 string",
+        "image": "'backend'|'frontend'",
+        "tag": "string",
+        "size_bytes": "number",
+        "size_mb": "number",
+        "layers": "number",
+        "created": "ISO 8601 string",
+        "container_test": {
+          "status": "string",
+          "log_file": "string"
+        }
+      }
+    },
+    
+    "security": {
+      "npm_audit": {
+        "metadata": {
+          "vulnerabilities": {
+            "critical": "number",
+            "high": "number",
+            "moderate": "number",
+            "low": "number"
+          }
+        }
+      },
+      "secrets_scan": {
+        "timestamp": "ISO 8601 string",
+        "scan_pattern": "string",
+        "findings_count": "number",
+        "status": "'clean'|'potential_issues'"
+      }
+    }
+  },
+  
+  "code_examples": {
+    "read_ci_config": {
+      "language": "typescript",
+      "code": "import fs from 'fs';\n\nconst config = JSON.parse(\n  fs.readFileSync('.github/ci-config.json', 'utf8')\n);\n\n// Get job info\nconst jobInfo = config.jobs['code-quality'];\nconsole.log('Artifacts:', jobInfo.artifacts);\n\n// Get debugging guide\nconst guide = config.debugging_guide;\nconsole.log('Common issues:', guide.common_issues);"
+    },
+    
+    "parse_eslint_report": {
+      "language": "typescript",
+      "code": "import fs from 'fs';\n\nconst report = JSON.parse(\n  fs.readFileSync('quality-reports/eslint-report.json', 'utf8')\n);\n\n// Find all errors\nconst filesWithErrors = report.filter(f => f.errorCount > 0);\n\nfilesWithErrors.forEach(file => {\n  console.log(`\\nFile: ${file.filePath}`);\n  \n  const errors = file.messages.filter(m => m.severity === 2);\n  \n  errors.forEach(error => {\n    console.log(`  Line ${error.line}:${error.column}`);\n    console.log(`    ${error.message}`);\n    console.log(`    Rule: ${error.ruleId}`);\n  });\n});"
+    },
+    
+    "parse_test_results": {
+      "language": "typescript",
+      "code": "import fs from 'fs';\n\nconst report = JSON.parse(\n  fs.readFileSync('unit-test-results/vitest-results.json', 'utf8')\n);\n\n// Find failed tests\nconst failedTests = report.testResults.filter(\n  test => test.status === 'failed'\n);\n\nconsole.log(`Failed tests: ${failedTests.length}`);\n\nfailedTests.forEach(test => {\n  console.log(`\\nTest: ${test.name}`);\n  console.log(`Duration: ${test.duration}ms`);\n  console.log(`Message:\\n${test.failureMessage}`);\n});"
+    },
+    
+    "analyze_final_report": {
+      "language": "typescript",
+      "code": "import fs from 'fs';\n\nconst report = JSON.parse(\n  fs.readFileSync('final-report/ci-report.json', 'utf8')\n);\n\nconsole.log('Pipeline:', report.pipeline);\nconsole.log('\\nJob Results:');\n\nfor (const [job, status] of Object.entries(report.jobs)) {\n  const icon = status === 'success' ? '✅' : '❌';\n  console.log(`${icon} ${job}: ${status}`);\n}\n\nconsole.log('\\nSummary:', report.summary);\nconsole.log('\\nDownload these artifacts:');\nreport.reports_available.forEach(r => console.log(`  - ${r}`));"
+    }
+  },
+  
+  "response_templates": {
+    "lint_error_response": {
+      "template": "I found {count} linting errors in the CI pipeline.\n\n{error_list}\n\n**To fix:**\n1. Download the `quality-reports` artifact\n2. Run locally: `npm run lint`\n3. Auto-fix: `npm run lint -- --fix`\n4. Manual fixes for remaining errors\n\n**Verify:**\n```bash\nnpm run lint  # Should show 0 errors\n```",
+      "variables": {
+        "count": "Number of errors",
+        "error_list": "Formatted list of errors with file:line info"
+      }
+    },
+    
+    "test_failure_response": {
+      "template": "I found {count} failing tests:\n\n{test_list}\n\n**To debug:**\n1. Run the specific test: `npm test -- {test_file}`\n2. Check the assertion that failed\n3. Review test setup and mocks\n\n**Common causes:**\n- Component not rendering correctly\n- Missing test data/mocks\n- Async timing issues\n\n**Verify:**\n```bash\nnpm test  # All tests should pass\n```",
+      "variables": {
+        "count": "Number of failed tests",
+        "test_list": "Formatted list of test names and errors",
+        "test_file": "Test file name"
+      }
+    },
+    
+    "build_failure_response": {
+      "template": "The {build_type} build failed.\n\n**Error:**\n{error_summary}\n\n**To fix:**\n1. Download `build-reports-{build_type}` artifact\n2. Check `{build_type}-build.log` for details\n3. Fix the identified error\n4. Test locally: `npm run build:{build_type}`\n\n**Build info:**\n- Duration: {duration}s\n- Log file: {log_file}\n\n**Verify:**\n```bash\nnpm run build:{build_type}  # Should complete successfully\n```",
+      "variables": {
+        "build_type": "client or server",
+        "error_summary": "Brief description of error",
+        "duration": "Build duration",
+        "log_file": "Log file name"
+      }
+    }
+  },
+  
+  "best_practices_for_ai": {
+    "always_read_config_first": {
+      "reason": "Contains complete structure and artifact locations",
+      "files": [".github/ci-config.json", ".github/CI_GUIDE.md"]
+    },
+    
+    "guide_to_correct_artifact": {
+      "reason": "Users need specific artifact for their issue",
+      "approach": "Use ci-config.json → jobs[job_name].artifacts to find exact artifact name"
+    },
+    
+    "parse_json_programmatically": {
+      "reason": "More accurate than reading logs",
+      "approach": "Show code examples to parse JSON reports"
+    },
+    
+    "provide_complete_solution": {
+      "components": [
+        "Problem summary",
+        "Root cause",
+        "Fix steps",
+        "Local verification command",
+        "Prevention tips"
+      ]
+    },
+    
+    "prioritize_errors": {
+      "order": [
+        "1. Code quality (lint, type errors) - Fix first",
+        "2. Unit tests - May auto-fix after #1",
+        "3. Integration tests",
+        "4. Build issues",
+        "5. Docker/deployment"
+      ],
+      "reason": "Fixing earlier stages often resolves later stages"
+    }
+  },
+  
+  "troubleshooting_decision_tree": {
+    "start": "What failed in CI?",
+    "branches": {
+      "dont_know": {
+        "action": "Download ci-final-report",
+        "next": "Read ci-report.json → jobs section"
+      },
+      "lint_failed": {
+        "action": "Download quality-reports",
+        "next": "Read eslint-report.json"
+      },
+      "typecheck_failed": {
+        "action": "Download quality-reports",
+        "next": "Read typecheck-report.json and typecheck-output.txt"
+      },
+      "tests_failed": {
+        "action": "Download unit-test-results",
+        "next": "Read vitest-results.json"
+      },
+      "e2e_failed": {
+        "action": "Download e2e-results-shard-N",
+        "next": "Read results-shard-N.json and check playwright-report/"
+      },
+      "build_failed": {
+        "action": "Download build-reports-[client|server]",
+        "next": "Read *-report.json and *-build.log"
+      },
+      "docker_failed": {
+        "action": "Download docker-reports-[backend|frontend]",
+        "next": "Read *-report.json and *-startup.log"
+      },
+      "security_issues": {
+        "action": "Download security-reports",
+        "next": "Read npm-audit.json and secrets-scan.json"
+      }
+    }
+  },
+  
+  "validation": {
+    "validate_config": "tsx scripts/ci/validate-ci-config.ts",
+    "parse_reports": "tsx scripts/ci/parse-ci-reports.ts [artifacts-dir]"
+  },
+  
+  "helpful_npm_scripts": {
+    "ci:validate": "Validates CI configuration",
+    "ci:parse": "Parses CI reports",
+    "lint": "Runs ESLint",
+    "typecheck": "Runs TypeScript type checking",
+    "test": "Runs unit tests",
+    "test:coverage": "Runs tests with coverage",
+    "build:client": "Builds frontend",
+    "build:server": "Builds backend"
+  }
+}
