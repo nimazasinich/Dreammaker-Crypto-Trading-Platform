@@ -308,7 +308,7 @@ export class MarketDataController {
           if (keyword && typeof keyword === 'string') {
             return await this.sentimentNewsService.analyzeKeywordSentiment(keyword);
           }
-          return await this.sentimentNewsService.getAggregatedSentiment();
+          return await this.sentimentNewsService.getAggregatedSentiment(['BTC', 'ETH']);
         },
         { ttl: 600, tags: ['sentiment'] }
       );
@@ -338,7 +338,7 @@ export class MarketDataController {
       }
 
       const btcPrice = await this.multiProviderService.getRealTimePrice('BTC');
-      const sentiment = await this.sentimentNewsService.getAggregatedSentiment();
+      const sentiment = await this.sentimentNewsService.getAggregatedSentiment(['BTC', 'ETH']);
 
       res.json({
         success: true,
@@ -353,17 +353,14 @@ export class MarketDataController {
             timestamp: btcPrice.timestamp
           },
           sentiment: {
-            overallSentiment: sentiment.overallSentiment,
-            overallScore: sentiment.overallScore,
-            fearGreedIndex: sentiment.fearGreedIndex,
-            newsSentiment: sentiment.newsSentiment,
+            overall: sentiment.overall,
+            bySymbol: sentiment.bySymbol,
             timestamp: sentiment.timestamp
           }
         },
         config: {
-          primarySource: this.config.getExchangeConfig().primarySource,
-          fallbackSources: this.config.getExchangeConfig().fallbackSources,
-          tradingEnabled: this.config.getExchangeConfig().tradingEnabled
+          enabled: this.config.getExchangeConfig().enabled,
+          testnet: this.config.getExchangeConfig().testnet
         },
         timestamp: Date.now()
       });

@@ -126,48 +126,41 @@ export class RealDataManager {
         }
 
         try {
-            // Try Binance via proxy
-            const response = await axios.get(`${API_BASE}/binance/ticker/24hr`, {
-                params: { symbol: normalizedSymbol },
-                timeout: 20000 // افزایش timeout
-            });
+            // Use HuggingFace unified API via cryptoAPI
+            const { cryptoAPI } = await import('../services/CryptoAPI.js');
+            const tickerData = await cryptoAPI.getMarketTickers(100);
+            
+            // Find the specific ticker for this symbol
+            const ticker = tickerData.data?.find((t: any) => 
+                t.symbol?.toUpperCase() === normalizedSymbol.toUpperCase()
+            );
 
-            const price24hr = await axios.get(`${API_BASE}/binance/ticker/24hr`, {
-                params: { symbol: normalizedSymbol },
-                timeout: 10000
-            });
+            if (!ticker) {
+                throw new Error(`Ticker not found for ${symbol}`);
+            }
 
             const data: RealPriceData = {
                 symbol: symbol.replace('USDT', ''),
-                price: parseFloat(response.data.price),
-                change24h: parseFloat(price24hr.data.priceChangePercent || '0'),
-                volume24h: parseFloat(price24hr.data.volume || '0'),
+                price: parseFloat(ticker.price || ticker.last || '0'),
+                change24h: parseFloat(ticker.change_24h || ticker.priceChangePercent || '0'),
+                volume24h: parseFloat(ticker.volume_24h || ticker.volume || '0'),
                 lastUpdate: Date.now()
             };
 
             this.setCache(cacheKey, data);
             return data;
         } catch (error) {
-            // Fallback to CoinGecko
+            // Fallback: try to get price directly from HuggingFace
             try {
-                const coinId = this.symbolToCoinGeckoId(normalizedSymbol);
-                const response = await axios.get(`${API_BASE}/coingecko/simple/price`, {
-                    params: {
-                        ids: coinId,
-                        vs_currencies: 'usd',
-                        include_24hr_change: true,
-                        include_24hr_vol: true
-                    },
-                    timeout: 20000 // افزایش timeout
-                });
+                const { cryptoAPI } = await import('../services/CryptoAPI.js');
+                const priceData = await cryptoAPI.getPrice(`${normalizedSymbol.replace('USDT', '')}/USDT`);
 
-                const coinData = response.data[coinId];
-                if (coinData && coinData.usd) {
+                if (priceData?.data?.price) {
                     const data: RealPriceData = {
                         symbol: symbol.replace('USDT', ''),
-                        price: coinData.usd,
-                        change24h: coinData.usd_24h_change || 0,
-                        volume24h: coinData.usd_24h_vol || 0,
+                        price: parseFloat(priceData.data.price),
+                        change24h: parseFloat(priceData.data.change_24h || '0'),
+                        volume24h: parseFloat(priceData.data.volume_24h || '0'),
                         lastUpdate: Date.now()
                     };
 
@@ -203,24 +196,23 @@ export class RealDataManager {
         if (cached) return cached;
 
         try {
-            // Try Binance
+            // Use HuggingFace unified API
+            const { cryptoAPI } = await import('../services/CryptoAPI.js');
             const interval = this.mapTimeframe(timeframe);
-            const response = await axios.get(`${API_BASE}/binance/klines`, {
-                params: {
-                    symbol: symbol.toUpperCase(),
-                    interval,
-                    limit
-                },
-                timeout: 25000 // افزایش timeout برای داده‌های تاریخی
-            });
+            const ohlcvData = await cryptoAPI.getOHLCV(
+                symbol.replace('USDT', '').toUpperCase(),
+                interval,
+                limit
+            );
 
-            const data: OHLCV[] = (response.data || []).map((item: any[]) => ({
-                timestamp: item[0],
-                open: parseFloat(item[1]),
-                high: parseFloat(item[2]),
-                low: parseFloat(item[3]),
-                close: parseFloat(item[4]),
-                volume: parseFloat(item[5])
+            // Transform HF response to internal format
+            const data: OHLCV[] = (ohlcvData.data || []).map((item: any) => ({
+                timestamp: item.timestamp || item[0],
+                open: parseFloat(item.open || item[1]),
+                high: parseFloat(item.high || item[2]),
+                low: parseFloat(item.low || item[3]),
+                close: parseFloat(item.close || item[4]),
+                volume: parseFloat(item.volume || item[5])
             }));
 
             this.setCache(cacheKey, data);

@@ -74,22 +74,17 @@ export class EmergencyDataFallbackService {
 
   private async fetchFromCoinGecko(symbol: string): Promise<MarketData | null> {
     try {
-      // Convert symbol to CoinGecko format
-      const coinId = this.symbolToCoinGeckoId(symbol);
-      if (!coinId) return null;
-
-      const response = await axios.get(
-        `https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true`,
-        { timeout: 10000 }
-      );
-
-      const data = response.data[coinId];
-      if (!data) return null;
+      // Use HuggingFace unified API instead of direct CoinGecko
+      const { cryptoAPI } = await import('./CryptoAPI.js');
+      
+      const priceData = await cryptoAPI.getPrice(`${symbol.toUpperCase()}/USDT`);
+      
+      if (!priceData?.data?.price) return null;
 
       const now = Date.now();
-      const price = data.usd;
-      const change24h = data.usd_24h_change || 0;
-      const volume24h = data.usd_24h_vol || 0;
+      const price = parseFloat(priceData.data.price);
+      const change24h = parseFloat(priceData.data.change_24h || '0');
+      const volume24h = parseFloat(priceData.data.volume_24h || '0');
 
       // Estimate OHLC from current price and 24h change
       const yesterdayPrice = price / (1 + change24h / 100);

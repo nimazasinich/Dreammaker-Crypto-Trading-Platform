@@ -168,6 +168,8 @@ export const EnhancedSidebar: React.FC = () => {
                 }}
                 onMouseEnter={() => setIsHovering(true)}
                 onMouseLeave={() => setIsHovering(false)}
+                role="navigation"
+                aria-label="Main navigation"
             >
                 {/* Enhanced animated gradient overlays */}
                 <div
@@ -374,6 +376,14 @@ export const EnhancedSidebar: React.FC = () => {
                                         <button
                                             type="button"
                                             onClick={() => setCurrentView(item.id)}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter' || e.key === ' ') {
+                                                    e.preventDefault();
+                                                    setCurrentView(item.id);
+                                                }
+                                            }}
+                                            aria-label={item.label}
+                                            aria-current={isActive ? 'page' : undefined}
                                             className={`group relative flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-300 flex-row-reverse ${isActive
                                                 ? isDark ? 'text-white' : 'text-purple-900'
                                                 : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-purple-900'
@@ -390,7 +400,6 @@ export const EnhancedSidebar: React.FC = () => {
                                             } : {
                                                 animation: `slideIn 0.3s ease-out ${globalIndex * 0.03}s both`,
                                             }}
-                                            aria-current={isActive ? 'page' : undefined}
                                         >
                                             {/* Hover glow effect */}
                                             {!isActive && (

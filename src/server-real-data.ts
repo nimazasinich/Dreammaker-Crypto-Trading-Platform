@@ -125,28 +125,57 @@ app.get('/status/health', (req, res) => {
     });
 });
 
-// Proxy routes for external APIs
+// Proxy routes using HuggingFace unified API
 app.get('/api/proxy/binance/price', async (req, res) => {
     try {
-        const { symbol } = req.query;
-        const response = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbol}`);
-        const data = await response.json();
-        res.json(data);
+        const { symbol } = req.query as { symbol: string };
+        // Use HuggingFace cryptoAPI instead of direct Binance call
+        const { cryptoAPI } = await import('./services/CryptoAPI.js');
+        const pair = symbol.includes('/') ? symbol : `${symbol.replace('USDT', '')}/USDT`;
+        const priceData = await cryptoAPI.getPrice(pair);
+        
+        // Transform to Binance-compatible format for backward compatibility
+        res.json({
+            symbol: symbol,
+            price: priceData.data?.price || '0'
+        });
     } catch (error: any) {
-        logger.error('Binance proxy error', {}, error);
+        logger.error('HuggingFace price proxy error', {}, error);
         res.status(500).json({ error: error.message });
     }
 });
 
 app.get('/api/proxy/coingecko/simple/price', async (req, res) => {
     try {
-        const { ids, vs_currencies, include_24hr_change, include_24hr_vol } = req.query;
-        const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=${vs_currencies}&include_24hr_change=${include_24hr_change}&include_24hr_vol=${include_24hr_vol}`;
-        const response = await fetch(url);
-        const data = await response.json();
-        res.json(data);
+        const { ids, vs_currencies } = req.query as { ids: string; vs_currencies: string };
+        // Use HuggingFace cryptoAPI instead of direct CoinGecko call
+        const { cryptoAPI } = await import('./services/CryptoAPI.js');
+        
+        // Convert CoinGecko IDs to symbols and fetch from HF
+        const symbols = (ids as string).split(',');
+        const prices: any = {};
+        
+        for (const coinId of symbols) {
+            try {
+                // Map common CoinGecko IDs to symbols
+                const symbol = coinId === 'bitcoin' ? 'BTC' : 
+                              coinId === 'ethereum' ? 'ETH' : 
+                              coinId.toUpperCase();
+                const priceData = await cryptoAPI.getPrice(`${symbol}/USDT`);
+                
+                prices[coinId] = {
+                    usd: priceData.data?.price || 0,
+                    usd_24h_change: priceData.data?.change_24h || 0,
+                    usd_24h_vol: priceData.data?.volume_24h || 0
+                };
+            } catch {
+                // Skip failed symbols
+            }
+        }
+        
+        res.json(prices);
     } catch (error: any) {
-        logger.error('CoinGecko proxy error', {}, error);
+        logger.error('HuggingFace coingecko proxy error', {}, error);
         res.status(500).json({ error: error.message });
     }
 });

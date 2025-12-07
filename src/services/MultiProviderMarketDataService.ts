@@ -95,7 +95,11 @@ export class MultiProviderMarketDataService {
     const CMC_KEY_2 = getAPIKey('coinmarketcap_2', 'marketData') || getAPIKey('coinmarketcap_alt', 'marketData') || process.env.CMC_API_KEY_2 || process.env.COINMARKETCAP_API_KEY_2 || '';
     const CRYPTOCOMPARE_KEY = getAPIKey('cryptocompare', 'marketData') || process.env.CRYPTOCOMPARE_API_KEY || '';
 
-    // Initialize CoinGecko client (Primary - No key needed)
+    // ⚠️ DEPRECATED: Direct API clients - Use cryptoAPI (HuggingFace) instead
+    // These clients are kept for backward compatibility only
+    // TODO: Refactor all methods to use cryptoAPI from CryptoAPI.ts
+    
+    // Initialize CoinGecko client (Primary - No key needed) - DEPRECATED
     this.coingeckoClient = axios.create({
       baseURL: getBaseURL('coingecko', 'marketData') || apisConfig.coingecko?.baseUrl || 'https://api.coingecko.com/api/v3',
       timeout: 10000,
@@ -104,7 +108,7 @@ export class MultiProviderMarketDataService {
       }
     });
 
-    // Initialize CoinMarketCap client (First Key)
+    // Initialize CoinMarketCap client (First Key) - DEPRECATED
     this.cmcClient = axios.create({
       baseURL: getBaseURL('coinmarketcap', 'marketData') || apisConfig.coinmarketcap?.baseUrl || 'https://pro-api.coinmarketcap.com/v1',
       timeout: 10000,
@@ -114,7 +118,7 @@ export class MultiProviderMarketDataService {
       }
     });
 
-    // Initialize CoinMarketCap client (Second Key - Fallback)
+    // Initialize CoinMarketCap client (Second Key - Fallback) - DEPRECATED
     this.cmcClient2 = axios.create({
       baseURL: getBaseURL('coinmarketcap', 'marketData') || apisConfig.coinmarketcap?.baseUrl || 'https://pro-api.coinmarketcap.com/v1',
       timeout: 10000,
@@ -124,7 +128,7 @@ export class MultiProviderMarketDataService {
       }
     });
 
-    // Initialize CryptoCompare client
+    // Initialize CryptoCompare client - DEPRECATED
     this.cryptoCompareClient = axios.create({
       baseURL: getBaseURL('cryptocompare', 'marketData') || apisConfig.cryptocompare?.baseUrl || 'https://min-api.cryptocompare.com/data',
       timeout: 10000,
@@ -133,7 +137,7 @@ export class MultiProviderMarketDataService {
       } : {}
     });
 
-    // Initialize Binance Public API (No key needed)
+    // Initialize Binance Public API (No key needed) - DEPRECATED
     this.binanceClient = axios.create({
       baseURL: 'https://api.binance.com/api/v3',
       timeout: 10000,

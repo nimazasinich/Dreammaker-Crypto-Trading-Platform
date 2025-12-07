@@ -314,7 +314,7 @@ export class SystemController {
             try {
                 // Check if KuCoin API keys are configured
                 const kucoinConfig = this.config.getKuCoinConfig();
-                if (!kucoinConfig.apiKey || !kucoinConfig.secretKey) {
+                if (!kucoinConfig.apiKey || !kucoinConfig.apiSecret) {
                     this.logger.info('KUCOIN_DISABLED_BY_CONFIG', {
                         reason: 'API keys not configured'
                     });

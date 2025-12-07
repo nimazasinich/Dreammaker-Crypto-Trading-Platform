@@ -13,7 +13,7 @@ const logger = Logger.getInstance();
  */
 export function setupProxyRoutes(app: express.Application): void {
   /**
-   * Binance API Proxy - حل مشکل CORS
+   * HuggingFace OHLCV Proxy - replaces Binance klines
    * GET binance/klines?symbol=BTCUSDT&interval=1h&limit=100
    */
   app.get('/binance/klines', async (req: Request, res: Response) => {
@@ -26,43 +26,41 @@ export function setupProxyRoutes(app: express.Application): void {
         });
       }
 
-      const binanceUrl = `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit || 100}`;
+      logger.info('Fetching OHLCV from HuggingFace', { symbol, interval, limit });
       
-      logger.info('Fetching Binance klines via proxy', { symbol, interval, limit });
-      
-      const response = await fetch(binanceUrl, {
-        headers: {
-          'Accept': 'application/json',
-        }
-      });
+      // Use HuggingFace unified API
+      const { cryptoAPI } = await import('../services/CryptoAPI.js');
+      const cleanSymbol = String(symbol).replace('USDT', '').toUpperCase();
+      const ohlcvData = await cryptoAPI.getOHLCV(
+        cleanSymbol,
+        String(interval),
+        parseInt(String(limit || '100'))
+      );
 
-      if (!response.ok) {
-        // Handle 451 (Geo-blocked) or other errors
-        if (response.status === 451) {
-          logger.warn('Binance API blocked (451 - Geo restriction)', { symbol });
-          return res.status(451).json({ 
-            error: 'Binance API unavailable in your region',
-            message: 'Please use VPN or alternative data source'
-          });
-        }
-        
-        console.error(`Binance API error: ${response.status}`);
-      }
+      // Transform to Binance klines format
+      const binanceFormat = (ohlcvData.data || []).map((candle: any) => [
+        candle.timestamp || candle[0],
+        String(candle.open || candle[1]),
+        String(candle.high || candle[2]),
+        String(candle.low || candle[3]),
+        String(candle.close || candle[4]),
+        String(candle.volume || candle[5]),
+        0, 0, 0, "0", "0", "0"
+      ]);
 
-      const data = await response.json();
-      res.json(data);
+      res.json(binanceFormat);
       
     } catch (error) {
-      logger.error('Binance proxy error', {}, error as Error);
+      logger.error('HuggingFace OHLCV proxy error', {}, error as Error);
       res.status(500).json({ 
-        error: 'Failed to fetch from Binance',
+        error: 'Failed to fetch OHLCV from HuggingFace',
         message: (error as Error).message
       });
     }
   });
 
   /**
-   * Binance 24hr Ticker Proxy
+   * HuggingFace 24hr Ticker Proxy - replaces Binance ticker
    * GET binance/ticker/24hr?symbol=BTCUSDT
    */
   app.get('/binance/ticker/24hr', async (req: Request, res: Response) => {
@@ -73,140 +71,141 @@ export function setupProxyRoutes(app: express.Application): void {
         return res.status(400).json({ error: 'Missing symbol parameter' });
       }
 
-      const binanceUrl = `https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`;
-      
-      const response = await fetch(binanceUrl, { mode: "cors", headers: { "Content-Type": "application/json" } });
+      // Use HuggingFace unified API
+      const { cryptoAPI } = await import('../services/CryptoAPI.js');
+      const cleanSymbol = String(symbol).replace('USDT', '').toUpperCase();
+      const priceData = await cryptoAPI.getPrice(`${cleanSymbol}/USDT`);
 
-      if (!response.ok) {
-        if (response.status === 451) {
-          return res.status(451).json({ 
-            error: 'Binance API unavailable in your region'
-          });
-        }
-        console.error(`Binance API error: ${response.status}`);
-      }
+      // Transform to Binance ticker format
+      const ticker = {
+        symbol: symbol,
+        lastPrice: String(priceData.data?.price || '0'),
+        priceChange: String(priceData.data?.change_24h || '0'),
+        priceChangePercent: String(priceData.data?.change_24h || '0'),
+        volume: String(priceData.data?.volume_24h || '0')
+      };
 
-      const data = await response.json();
-      res.json(data);
+      res.json(ticker);
       
     } catch (error) {
-      logger.error('Binance ticker proxy error', {}, error as Error);
+      logger.error('HuggingFace ticker proxy error', {}, error as Error);
       res.status(500).json({ 
-        error: 'Failed to fetch ticker from Binance',
+        error: 'Failed to fetch ticker from HuggingFace',
         message: (error as Error).message
       });
     }
   });
 
   /**
-   * CoinGecko API Proxy - حل مشکل CORS و 401
+   * HuggingFace Market Chart Proxy - replaces CoinGecko
    * GET coingecko/market_chart?coinId=bitcoin&days=30&vs_currency=usd
    */
   app.get('/coingecko/market_chart', async (req: Request, res: Response) => {
     try {
-      const { coinId, days, vs_currency, interval } = req.query;
+      const { coinId, days = '7' } = req.query;
       
       if (!coinId) {
         return res.status(400).json({ error: 'Missing coinId parameter' });
       }
 
-      const apiKey = process.env.COINGECKO_API_KEY;
-      const baseUrl = 'https://api.coingecko.com/api/v3';
-      let url = `${baseUrl}/coins/${coinId}/market_chart?vs_currency=${vs_currency || 'usd'}&days=${days || 30}`;
-      
-      if (interval) {
-        url += `&interval=${interval}`;
-      }
-      
-      // Add API key if available
-      if (apiKey) {
-        url += `&x_cg_demo_api_key=${apiKey}`;
-      }
+      logger.info('Fetching market chart from HuggingFace', { coinId, days });
 
-      logger.info('Fetching CoinGecko market chart via proxy', { coinId, days });
-
-      const response = await fetch(url, {
-        headers: {
-          'Accept': 'application/json',
-        }
+      // Use HuggingFace unified API
+      const { cryptoAPI } = await import('../services/CryptoAPI.js');
+      
+      // Map CoinGecko coinId to symbol
+      const coinIdMap: Record<string, string> = {
+        'bitcoin': 'BTC', 'ethereum': 'ETH', 'binancecoin': 'BNB',
+        'cardano': 'ADA', 'solana': 'SOL', 'ripple': 'XRP',
+        'polkadot': 'DOT', 'dogecoin': 'DOGE'
+      };
+      
+      const symbol = coinIdMap[String(coinId).toLowerCase()] || String(coinId).toUpperCase();
+      
+      // Determine timeframe based on days
+      const numDays = parseInt(String(days));
+      const timeframe = numDays <= 1 ? '15m' : numDays <= 7 ? '1h' : numDays <= 30 ? '4h' : '1d';
+      const limit = numDays <= 1 ? 96 : numDays <= 7 ? 168 : numDays <= 30 ? 180 : 365;
+      
+      const ohlcvData = await cryptoAPI.getOHLCV(symbol, timeframe, limit);
+      
+      // Transform to CoinGecko market_chart format
+      const prices = (ohlcvData.data || []).map((candle: any) => [
+        candle.timestamp || candle[0],
+        parseFloat(candle.close || candle[4])
+      ]);
+      
+      res.json({
+        prices,
+        market_caps: prices.map(([ts, p]: [number, number]) => [ts, p * 1000000000]),
+        total_volumes: (ohlcvData.data || []).map((c: any) => [
+          c.timestamp || c[0],
+          parseFloat(c.volume || c[5])
+        ])
       });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          logger.warn('CoinGecko API key missing or invalid (401)', { coinId });
-          return res.status(401).json({ 
-            error: 'CoinGecko API key required',
-            message: 'Please set COINGECKO_API_KEY in environment variables'
-          });
-        }
-        
-        if (response.status === 429) {
-          logger.warn('CoinGecko rate limit exceeded (429)', { coinId });
-          return res.status(429).json({ 
-            error: 'Rate limit exceeded',
-            message: 'Too many requests to CoinGecko API'
-          });
-        }
-        
-        console.error(`CoinGecko API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      res.json(data);
       
     } catch (error) {
-      logger.error('CoinGecko proxy error', {}, error as Error);
+      logger.error('HuggingFace market chart proxy error', {}, error as Error);
       res.status(500).json({ 
-        error: 'Failed to fetch from CoinGecko',
+        error: 'Failed to fetch market chart from HuggingFace',
         message: (error as Error).message
       });
     }
   });
 
   /**
-   * CoinGecko Simple Price Proxy
+   * HuggingFace Simple Price Proxy - replaces CoinGecko simple price
    * GET coingecko/simple/price?ids=bitcoin,ethereum&vs_currencies=usd
    */
   app.get('/coingecko/simple/price', async (req: Request, res: Response) => {
     try {
-      const { ids, vs_currencies, include_24hr_change, include_24hr_vol } = req.query;
+      const { ids, vs_currencies = 'usd', include_24hr_change, include_24hr_vol } = req.query;
       
       if (!ids) {
         return res.status(400).json({ error: 'Missing ids parameter' });
       }
 
-      const apiKey = process.env.COINGECKO_API_KEY;
-      let url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=${vs_currencies || 'usd'}`;
+      // Use HuggingFace unified API
+      const { cryptoAPI } = await import('../services/CryptoAPI.js');
       
-      if (include_24hr_change === 'true') {
-        url += '&include_24hr_change=true';
-      }
-      if (include_24hr_vol === 'true') {
-        url += '&include_24hr_vol=true';
-      }
+      // Map CoinGecko IDs to symbols
+      const coinIdMap: Record<string, string> = {
+        'bitcoin': 'BTC', 'ethereum': 'ETH', 'binancecoin': 'BNB',
+        'cardano': 'ADA', 'solana': 'SOL', 'ripple': 'XRP',
+        'polkadot': 'DOT', 'dogecoin': 'DOGE', 'tron': 'TRX',
+        'chainlink': 'LINK', 'matic-network': 'MATIC', 'avalanche-2': 'AVAX'
+      };
       
-      if (apiKey) {
-        url += `&x_cg_demo_api_key=${apiKey}`;
-      }
-
-      const response = await fetch(url, { mode: "cors", headers: { "Content-Type": "application/json" } });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          return res.status(401).json({ 
-            error: 'CoinGecko API key required'
-          });
+      const coinIds = String(ids).split(',');
+      const prices: any = {};
+      
+      for (const coinId of coinIds) {
+        try {
+          const symbol = coinIdMap[coinId.toLowerCase()] || coinId.toUpperCase();
+          const priceData = await cryptoAPI.getPrice(`${symbol}/USDT`);
+          
+          prices[coinId] = {
+            [String(vs_currencies)]: priceData.data?.price || 0
+          };
+          
+          if (include_24hr_change === 'true') {
+            prices[coinId][`${vs_currencies}_24h_change`] = priceData.data?.change_24h || 0;
+          }
+          
+          if (include_24hr_vol === 'true') {
+            prices[coinId][`${vs_currencies}_24h_vol`] = priceData.data?.volume_24h || 0;
+          }
+        } catch {
+          // Skip failed symbols
         }
-        console.error(`CoinGecko API error: ${response.status}`);
       }
 
-      const data = await response.json();
-      res.json(data);
+      res.json(prices);
       
     } catch (error) {
-      logger.error('CoinGecko price proxy error', {}, error as Error);
+      logger.error('HuggingFace price proxy error', {}, error as Error);
       res.status(500).json({ 
-        error: 'Failed to fetch prices from CoinGecko',
+        error: 'Failed to fetch prices from HuggingFace',
         message: (error as Error).message
       });
     }

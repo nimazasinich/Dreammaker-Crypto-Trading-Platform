@@ -14,7 +14,7 @@
   --text-base: #ffffff;   /* alias for text */
   --text-secondary: #cbd5e1; /* light gray */
   --muted: #cbd5e1;       /* light gray */
-  --text-muted: #64748b;  /* slate-500 */
+  --text-muted: #94a3b8;  /* slate-400 - improved contrast for WCAG AA */
 
   /* Brand & primary colors - Electric Purple & Cyan */
   --brand: #8b5cf6;       /* electric purple */
