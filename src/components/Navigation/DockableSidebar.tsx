@@ -140,6 +140,7 @@ export const DockableSidebar: React.FC<DockableSidebarProps> = ({
                                         e.currentTarget.style.transform = 'translateY(0) scale(1)';
                                     }}
                                     title={panel.title}
+                                    aria-label={`Open ${panel.title} panel`}
                                 >
                                     {/* Glow effect */}
                                     <motion.div
@@ -240,6 +241,7 @@ export const DockableSidebar: React.FC<DockableSidebarProps> = ({
                                                 e.currentTarget.style.background = `linear-gradient(135deg, ${indicator.color} 0%, ${indicator.color}ff 50%, ${indicator.color}dd 100%)`;
                                             }}
                                             title={indicator.name}
+                                            aria-label={`Toggle ${indicator.name} indicator`}
                                         >
                                             {/* Enhanced glow effect - درخشندگی بیشتر */}
                                             <motion.div
@@ -334,6 +336,8 @@ export const DockableSidebar: React.FC<DockableSidebarProps> = ({
                             e.currentTarget.style.borderColor = lightColors.border;
                         }}
                         title="Expand Sidebar"
+                        aria-label="Expand sidebar navigation"
+                        aria-expanded={isOpen}
                     >
                         <ChevronRight className="w-3.5 h-3.5" style={{ strokeWidth: 2.5 }} />
                     </motion.button>
@@ -430,6 +434,8 @@ export const DockableSidebar: React.FC<DockableSidebarProps> = ({
                                     e.currentTarget.style.boxShadow = `0 2px 4px ${lightColors.shadow}`;
                                 }}
                                 title="Collapse Sidebar"
+                                aria-label="Collapse sidebar navigation"
+                                aria-expanded={isOpen}
                             >
                                 <ChevronLeft className="w-5 h-5" />
                             </motion.button>
