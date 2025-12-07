@@ -1,6 +1,6 @@
 // src/components/connectors/RealChartDataConnector.tsx
 import React, { useState, useEffect } from 'react';
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import { MarketData } from '../../types';
 import { useData } from '../../contexts/DataContext';
 import { AdvancedChart } from '../AdvancedChart';

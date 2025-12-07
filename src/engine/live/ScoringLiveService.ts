@@ -8,7 +8,7 @@
  * - All scores computed from real candles, indicators, and detectors
  */
 
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import { ConfigManager } from '../../core/ConfigManager.js';
 import { fetchOHLC } from '../MarketDataService.js';
 import { analyzeSMC, analyzeElliott, analyzeHarmonic } from '../Analyzers.js';
@@ -219,7 +219,7 @@ export class ScoringLiveService {
 
       if (whaleActivity && whaleActivity.onChainMetrics) {
         // Normalize whale activity based on exchange flows and large transactions
-        const netFlow = whaleActivity.exchangeFlows?.netFlow || 0;
+        const netFlow = whaleActivity.exchangeFlows?.reduce((sum, flow) => sum + flow.netFlow, 0) || 0;
         const txCount = whaleActivity.largeTransactions?.length || 0;
 
         // Positive net flow (to exchanges) = bearish, negative (from exchanges) = bullish

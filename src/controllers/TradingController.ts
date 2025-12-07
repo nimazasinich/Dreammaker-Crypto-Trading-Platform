@@ -1,9 +1,9 @@
 // src/controllers/TradingController.ts
 import { Request, Response } from 'express';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { RealTradingService } from '../services/RealTradingService.js';
 import { OrderManagementService } from '../services/OrderManagementService.js';
-import { ConfigManager } from '../core/ConfigManager.js';
+import { ConfigManager } from '../core/ConfigManager';
 import { TradeEngine } from '../engine/trading/TradeEngine.js';
 import { TradeSignal } from '../types/index.js';
 import { ExchangeClient } from '../services/exchange/ExchangeClient.js';
@@ -28,7 +28,7 @@ export class TradingController {
       const { symbol } = req.params;
       const cleanSymbol = symbol.replace('USDT', '').toUpperCase();
 
-      if (!this.config.isRealDataMode()) {
+      if (!this.config.isRealDataMode) {
         res.status(400).json({
           error: 'Real data mode is not enabled',
           message: 'Enable realDataMode in config to use this endpoint'

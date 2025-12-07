@@ -21,7 +21,7 @@
  */
 
 import axios, { AxiosInstance, AxiosError } from 'axios';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { getHuggingFaceBaseUrl, getHuggingFaceTimeout } from '../config/dataSource.js';
 
 /**

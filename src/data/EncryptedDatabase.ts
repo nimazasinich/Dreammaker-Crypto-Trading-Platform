@@ -3,7 +3,7 @@ import { createCipher, createDecipher, randomBytes } from 'crypto';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { mkdirSync } from 'fs';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { DatabaseMigrations } from './DatabaseMigrations.js';
 import { MarketDataRepository } from './repositories/MarketDataRepository.js';
 import { TrainingMetricsRepository } from './repositories/TrainingMetricsRepository.js';

@@ -3,7 +3,7 @@
  * Handles CORS issues when calling external APIs from the browser
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 const logger = Logger.getInstance();
 

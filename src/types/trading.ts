@@ -158,12 +158,13 @@ export interface ElliottWaveAnalysis {
 
 export interface HarmonicPattern {
     name: string;
-    type: 'GARTLEY' | 'BAT' | 'BUTTERFLY' | 'CRAB' | 'SHARK' | 'CYPHER';
+    type: 'GARTLEY' | 'BAT' | 'BUTTERFLY' | 'CRAB' | 'SHARK' | 'CYPHER' | 'ABCD';
     completion: number;
     direction: 'BULLISH' | 'BEARISH';
     prz: {
         upper: number;
         lower: number;
+        confluence?: number;
     };
     confidence: number;
     points?: {
@@ -173,6 +174,12 @@ export interface HarmonicPattern {
         C: number;
         D: number;
     };
+    fibonacciLevels?: Array<{
+        level: number;
+        price: number;
+        type: 'RETRACEMENT' | 'EXTENSION';
+    }>;
+    completionProbability?: number;
 }
 
 export interface SentimentAnalysis {

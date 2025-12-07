@@ -11,9 +11,9 @@
  * - User notifications for source failures
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { Database } from '../data/Database.js';
-import { AdvancedCache } from '../core/AdvancedCache.js';
+import { AdvancedCache } from '../core/AdvancedCache';
 import { MultiProviderMarketDataService } from './MultiProviderMarketDataService.js';
 import { HuggingFaceService } from './HuggingFaceService.js';
 import { hfDataEngineAdapter } from './HFDataEngineAdapter.js';

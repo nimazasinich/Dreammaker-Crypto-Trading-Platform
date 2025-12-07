@@ -1,5 +1,5 @@
 // src/monitoring/PerformanceMonitor.ts
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import os from 'os';
 
 export interface PerformanceMetrics {

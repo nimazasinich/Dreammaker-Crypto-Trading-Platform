@@ -3,8 +3,8 @@
  * Provides information about supported symbols and exchanges
  */
 import express from 'express';
-import { Logger } from '../core/Logger.js';
-import { ConfigManager } from '../core/ConfigManager.js';
+import { Logger } from '../core/Logger';
+import { ConfigManager } from '../core/ConfigManager';
 import { BinanceService } from '../services/BinanceService.js';
 import { KuCoinService } from '../services/KuCoinService.js';
 

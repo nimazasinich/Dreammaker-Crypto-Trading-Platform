@@ -5,7 +5,7 @@
  * Provides enhanced sentiment analysis with multi-source aggregation
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { UnifiedDataService } from './UnifiedDataService.js';
 import type { SentimentData } from '../types/index.js';
 

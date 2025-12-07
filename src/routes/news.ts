@@ -3,7 +3,7 @@
  * News aggregation and sentiment analysis endpoints
  */
 import express from 'express';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { SentimentNewsService } from '../services/SentimentNewsService.js';
 import { SentimentAnalysisService } from '../services/SentimentAnalysisService.js';
 import { UnifiedNewsService } from '../services/UnifiedNewsService.js';

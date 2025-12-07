@@ -1,5 +1,5 @@
 import { AdvancedCache } from '../utils/cache';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { ConnectionStatus } from '../types';
 import { retry } from '../utils/retry';
 

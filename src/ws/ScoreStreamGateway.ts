@@ -10,7 +10,7 @@
  */
 
 import { WebSocket } from 'ws';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { ScoringLiveService, LiveScoreResult } from '../engine/live/ScoringLiveService.js';
 import { isFeatureEnabled } from '../config/systemConfig.js';
 

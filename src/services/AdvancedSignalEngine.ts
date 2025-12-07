@@ -4,7 +4,7 @@
  * EXTREME SELECTIVITY: Max 2-3 signals per day per pair
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 export interface SignalScore {
   layer1_priceAction: number;      // 0-30 points

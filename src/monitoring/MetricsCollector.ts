@@ -1,5 +1,5 @@
 // src/monitoring/MetricsCollector.ts
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 export interface Metric {
   name: string;

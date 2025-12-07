@@ -10,7 +10,7 @@
  * - Cache را بهینه می‌کند
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 export interface ResourceUsage {
   provider: string;

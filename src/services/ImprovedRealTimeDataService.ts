@@ -11,7 +11,7 @@
  */
 
 import WebSocket from 'ws';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { EventEmitter } from 'events';
 import { wsUrl } from '../lib/ws';
 

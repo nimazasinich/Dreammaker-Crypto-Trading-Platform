@@ -9,7 +9,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { TradingMode, TradingMarket } from '../types/index.js';
 
 export interface SystemConfig {

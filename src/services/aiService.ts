@@ -1,6 +1,6 @@
 import { TradingDecision, TrainingMetrics, MarketData, AIConfig } from '../types';
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 interface Experience {
   state: number[];
   action: number;

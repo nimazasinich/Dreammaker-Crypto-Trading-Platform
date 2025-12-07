@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { COLORS, GRADIENTS, getGradient, getGlowColor } from '../styles/constants';
 import TopSignalsPanel from '../components/TopSignalsPanel';
 import { Signal } from '../components/TopSignalsPanel';

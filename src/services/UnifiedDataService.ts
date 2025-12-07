@@ -10,7 +10,7 @@
  * Based on api-config-complete.txt configuration
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { EnhancedAPIClient } from './EnhancedAPIClient.js';
 import { CentralizedAPIConfig, getEnabledProviders } from '../config/CentralizedAPIConfig.js';
 

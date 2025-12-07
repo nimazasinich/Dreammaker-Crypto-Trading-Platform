@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import DatasourceClient from '../services/DatasourceClient';
 import { useMode } from './ModeContext';
 import type { DataSource } from '../components/ui/DataSourceBadge';

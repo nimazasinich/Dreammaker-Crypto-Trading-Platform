@@ -4,7 +4,7 @@
  */
 
 import { DetectorWeights, TimeframeWeights, ConstitutionalLimits, WeightAmendment } from './types.js';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 /**
  * Default Constitutional Limits

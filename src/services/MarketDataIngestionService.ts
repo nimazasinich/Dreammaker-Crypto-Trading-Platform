@@ -1,4 +1,4 @@
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { BinanceService } from './BinanceService.js';
 import { KuCoinService } from './KuCoinService.js';
 import { Database } from '../data/Database.js';
@@ -8,7 +8,7 @@ import { MultiProviderMarketDataService } from './MultiProviderMarketDataService
 import { SentimentNewsService } from './SentimentNewsService.js';
 import { RealTradingService } from './RealTradingService.js';
 import { HFOHLCVService } from './HFOHLCVService.js';
-import { ConfigManager } from '../core/ConfigManager.js';
+import { ConfigManager } from '../core/ConfigManager';
 // COMMENTED OUT: Missing FallbackDataProvider - need to be created or removed
 // import { FallbackDataProvider } from '../providers/FallbackDataProvider.js';
 import cron from 'node-cron';
@@ -68,7 +68,7 @@ export class MarketDataIngestionService {
       // Always use multi-provider service (primary source)
       if (!this.bootFlags.startOnBoot) {
         this.logger.info('Skipping ingestion at boot (START_INGEST_ON_BOOT=false)');
-      } else if (this.config.isRealDataMode()) {
+      } else if (this.config.isRealDataMode) {
         this.logger.info('Starting multi-provider market data ingestion (boot-gated)');
         await this.startRealTimeDataCollection();
         await this.startHistoricalDataCollection(this.bootFlags.histLimit);

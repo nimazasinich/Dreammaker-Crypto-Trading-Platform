@@ -1,5 +1,5 @@
 import { MarketData, BacktestResult, BacktestTrade, TradingDecision } from '../types';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { aiService } from './aiService';
 
 interface BacktestConfig {

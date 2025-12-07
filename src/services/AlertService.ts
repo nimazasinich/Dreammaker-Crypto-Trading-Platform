@@ -1,4 +1,4 @@
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { Alert } from '../types/index.js';
 import { AlertManager } from '../monitoring/AlertManager.js';
 

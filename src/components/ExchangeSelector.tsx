@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, AlertCircle } from 'lucide-react';
 import axios from 'axios';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { API_BASE } from '../config/env.js';
 
 const logger = Logger.getInstance();

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import { CandlestickData, TechnicalIndicators } from '../../types';
 import { Activity, BarChart3, TrendingUp, TrendingDown, RefreshCw } from 'lucide-react';
 import { marketDataService } from '../../services/marketDataService';

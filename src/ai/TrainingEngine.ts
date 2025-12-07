@@ -1,4 +1,4 @@
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { XavierInitializer } from './XavierInitializer.js';
 import { StableActivations } from './StableActivations.js';
 import { NetworkArchitectures, NetworkConfig } from './NetworkArchitectures.js';

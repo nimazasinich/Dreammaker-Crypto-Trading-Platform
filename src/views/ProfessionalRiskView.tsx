@@ -4,7 +4,7 @@ import { RiskGauge } from '../components/risk/RiskGauge';
 import { LiquidationBar } from '../components/risk/LiquidationBar';
 import { StressTestCard } from '../components/risk/StressTestCard';
 import { RiskAlertCard } from '../components/risk/RiskAlertCard';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { API_BASE, USE_MOCK_DATA } from '../config/env';
 import { TradingDashboard } from '../components/trading/TradingDashboard';
 import { Portfolio } from '../components/portfolio/Portfolio';

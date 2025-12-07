@@ -8,7 +8,7 @@
  * - Status tracking
  * - Multiple provider support
  */
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 interface ProviderConfig {
   calls: number;

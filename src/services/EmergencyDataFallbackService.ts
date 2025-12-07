@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { JSDOM } from 'jsdom';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { MarketData } from '../types/index.js';
 
 export class EmergencyDataFallbackService {

@@ -2,7 +2,7 @@
 import { OHLC } from './types';
 import { atr } from './Indicators';
 import { sendLiquidationAlert } from './NotificationService';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 const logger = Logger.getInstance();
 

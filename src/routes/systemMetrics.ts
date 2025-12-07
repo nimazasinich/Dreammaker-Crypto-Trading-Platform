@@ -4,7 +4,7 @@
  */
 import express from 'express';
 import os from 'os';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 const router = express.Router();
 const logger = Logger.getInstance();

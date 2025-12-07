@@ -23,7 +23,7 @@
  * ```
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 // ============================================================================
 // Types & Interfaces

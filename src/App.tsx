@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Logger } from './core/Logger.js';
+import { Logger } from './core/Logger';
 import { NavigationProvider, useNavigation } from './components/Navigation/NavigationProvider';
 import { ThemeProvider } from './components/Theme/ThemeProvider';
 import { AccessibilityProvider } from './components/Accessibility/AccessibilityProvider';

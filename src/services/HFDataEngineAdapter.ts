@@ -9,7 +9,7 @@
  * a unified interface for controllers regardless of the underlying data source.
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import {
     HFDataEngineClient,
     HFErrorResponse,

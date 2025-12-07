@@ -1,4 +1,4 @@
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { MarketData } from '../types/index.js';
 
 // Utility to convert Date | number to number

@@ -3,7 +3,7 @@
  * Background AI training service with automatic model rollback
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { TrainingEngine } from '../ai/TrainingEngine.js';
 import { BullBearAgent } from '../ai/BullBearAgent.js';
 import { Database } from '../data/Database.js';

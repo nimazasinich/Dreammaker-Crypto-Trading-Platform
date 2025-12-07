@@ -5,7 +5,7 @@
 import express from 'express';
 import { AIController } from '../controllers/AIController.js';
 import { TuningController } from '../controllers/TuningController.js';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 const router = express.Router();
 const logger = Logger.getInstance();

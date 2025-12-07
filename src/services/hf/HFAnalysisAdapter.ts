@@ -9,13 +9,17 @@
  * analysis (SMC, Elliott Wave) returns NOT_IMPLEMENTED as these are handled locally.
  */
 
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import { HFDataEngineClient, HFSentimentResult } from '../HFDataEngineClient.js';
 import { getPrimarySource } from '../../config/dataSource.js';
-import { providerLatencyTracker } from '../../core/providerLatencyTracker.js';
-import { providerRecoveryTracker } from '../../core/providerRecoveryTracker.js';
-import { providerErrorLog } from '../../core/providerErrorLog.js';
+import { ProviderLatencyTracker } from '../../core/providerLatencyTracker';
+import { ProviderRecoveryTracker } from '../../core/providerRecoveryTracker';
+import { ProviderErrorLog } from '../../core/providerErrorLog';
 import type { AdapterErrorResponse, AdapterSuccessResponse, AdapterResponse } from './HFMarketAdapter.js';
+
+const providerLatencyTracker = ProviderLatencyTracker.getInstance();
+const providerRecoveryTracker = ProviderRecoveryTracker.getInstance();
+const providerErrorLog = ProviderErrorLog.getInstance();
 
 /**
  * HuggingFace Analysis Adapter

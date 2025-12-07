@@ -4,7 +4,7 @@
  * Automatically starts when app loads and runs continuously
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { SignalAgent } from './SignalAgent.js';
 import { ExtremePoint } from './ExtremePointsDetector.js';
 import { MarketData } from '../types/index.js';

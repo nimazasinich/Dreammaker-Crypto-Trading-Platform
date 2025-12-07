@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import { Newspaper, Smile, Frown, AlertCircle, TrendingUp } from 'lucide-react';
 import { useTheme } from '../Theme/ThemeProvider';
 import { dataManager } from '../../services/dataManager';

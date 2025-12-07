@@ -1,4 +1,4 @@
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { TrainingEngine } from './TrainingEngine.js';
 import { ExplorationStrategies } from './ExplorationStrategies.js';
 import { TensorFlowModel } from './TensorFlowModel.js';

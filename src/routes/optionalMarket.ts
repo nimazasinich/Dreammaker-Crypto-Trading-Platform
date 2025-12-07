@@ -3,7 +3,7 @@
  * Alternative market data providers
  */
 import express from 'express';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 const router = express.Router();
 const logger = Logger.getInstance();

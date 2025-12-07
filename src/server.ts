@@ -48,8 +48,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import { createServer } from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
-import { Logger } from './core/Logger.js';
-import { ConfigManager } from './core/ConfigManager.js';
+import { Logger } from './core/Logger';
+import { ConfigManager } from './core/ConfigManager';
 import { Database } from './data/Database.js';
 import { BinanceService } from './services/BinanceService.js';
 import { KuCoinService } from './services/KuCoinService.js';
@@ -1765,7 +1765,7 @@ app.get('/api/market/cryptocompare-prices', async (req, res) => {
 app.get('/api/market/prices', async (req, res) => {
   try {
     const { symbols } = req.query;
-    const useRealData = config.isRealDataMode();
+    const useRealData = config.isRealDataMode;
     
     if (useRealData) {
       const symbolList = typeof symbols === 'string' 
@@ -2750,7 +2750,7 @@ app.get('/api/market/analysis/:symbol', async (req, res) => {
     const { symbol } = req.params;
     const cleanSymbol = symbol.replace('USDT', '').toUpperCase();
 
-    if (!config.isRealDataMode()) {
+    if (!config.isRealDataMode) {
       return res.status(400).json({
         error: 'Real data mode is not enabled',
         message: 'Enable realDataMode in config to use this endpoint'
@@ -2776,7 +2776,7 @@ app.get('/api/market/analysis/:symbol', async (req, res) => {
 // Test endpoint for real data - ??? ???????? ?????
 app.get('/api/test/real-data', async (req, res) => {
   try {
-    if (!config.isRealDataMode()) {
+    if (!config.isRealDataMode) {
       return res.status(400).json({
         error: 'Real data mode is not enabled',
         message: 'Enable realDataMode in config to use this endpoint'
@@ -4012,7 +4012,7 @@ async function handleSubscription(ws: WebSocket, data: any) {
       const symbolList = Array.isArray(symbols) ? symbols : [symbols];
       const cleanSymbols = (symbolList || []).map(s => s.replace('USDT', '').toUpperCase());
       
-      if (config.isRealDataMode()) {
+      if (config.isRealDataMode) {
         // Use multi-provider real-time streaming
         const cleanup = multiProviderService.startRealTimeStream(
           cleanSymbols,

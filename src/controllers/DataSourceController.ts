@@ -6,7 +6,7 @@
  */
 
 import { Request, Response } from 'express';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { unifiedDataSourceManager, DataSourceMode } from '../services/UnifiedDataSourceManager.js';
 
 export class DataSourceController {

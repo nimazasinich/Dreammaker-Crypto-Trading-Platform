@@ -3,7 +3,7 @@
  * Handles WebSocket events for futures trading updates
  */
 import { WebSocket } from 'ws';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { FuturesService } from '../services/FuturesService.js';
 import { FEATURE_FUTURES } from '../config/flags.js';
 import { FuturesPosition, FuturesOrder } from '../types/futures.js';

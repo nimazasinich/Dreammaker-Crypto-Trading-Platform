@@ -8,7 +8,7 @@
  * - Status caching
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { KuCoinFuturesService } from './KuCoinFuturesService.js';
 
 const logger = Logger.getInstance();

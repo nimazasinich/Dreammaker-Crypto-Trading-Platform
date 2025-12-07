@@ -12,7 +12,7 @@
  */
 
 import { Request, Response } from 'express';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { getSystemConfig, isFeatureEnabled, getTradingMode, getTradingMarket } from '../config/systemConfig.js';
 import { ScoreStreamGateway } from '../ws/ScoreStreamGateway.js';
 import { TuningStorage } from '../engine/tuning/TuningStorage.js';

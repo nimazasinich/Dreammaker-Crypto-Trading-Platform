@@ -3,7 +3,7 @@
  * Handles HTTP requests for futures trading operations
  */
 import { Request, Response } from 'express';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { FuturesService } from '../services/FuturesService.js';
 import { FEATURE_FUTURES } from '../config/flags.js';
 import { FuturesOrder } from '../types/futures.js';

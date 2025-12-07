@@ -3,7 +3,7 @@
  * Serves cached/offline data when live sources are unavailable
  */
 import express from 'express';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { EmergencyDataFallbackService } from '../services/EmergencyDataFallbackService.js';
 import { RedisService } from '../services/RedisService.js';
 import { FallbackDataManager } from '../services/FallbackDataManager.js';

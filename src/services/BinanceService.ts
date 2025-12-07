@@ -3,8 +3,8 @@
 // All real data should flow through DatasourceClient
 
 import { MarketData } from '../types/index.js';
-import { Logger } from '../core/Logger.js';
-import { ConfigManager } from '../core/ConfigManager.js';
+import { Logger } from '../core/Logger';
+import { ConfigManager } from '../core/ConfigManager';
 
 interface RateLimitInfo {
   requestsPerSecond: number;

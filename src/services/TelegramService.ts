@@ -1,5 +1,5 @@
 import { readVault, writeVault } from '../config/secrets.js';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { AISignal as Signal } from '../types/index.js';
 
 interface TelegramConfig {

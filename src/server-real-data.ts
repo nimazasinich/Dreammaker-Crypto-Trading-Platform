@@ -19,7 +19,7 @@ import { BullBearAgent } from './ai/BullBearAgent.js';
 import { BlockchainDataService } from './services/BlockchainDataService.js';
 import { FearGreedService } from './services/FearGreedService.js';
 import { WhaleTrackerService } from './services/WhaleTrackerService.js';
-import { Logger } from './core/Logger.js';
+import { Logger } from './core/Logger';
 import { CORSProxyService } from './services/CORSProxyService.js';
 import { AlternateRegistryService } from './services/AlternateRegistryService.js';
 // COMMENTED OUT: Missing route files - need to be created or removed

@@ -4,7 +4,7 @@
  * reversal or breakout points and generates trading signals
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { ExtremePointsDetector, ExtremePoint } from './ExtremePointsDetector.js';
 import { MarketData } from '../types/index.js';
 

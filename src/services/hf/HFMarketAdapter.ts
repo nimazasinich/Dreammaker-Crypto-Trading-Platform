@@ -18,13 +18,13 @@
  * See docs/hf-engine-scope.md and docs/data-flow.md for details.
  */
 
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import { HFDataEngineClient, HFCryptoPrice } from '../HFDataEngineClient.js';
 import { HFOHLCVService, HFOHLCVData } from '../HFOHLCVService.js';
 import { getPrimarySource } from '../../config/dataSource.js';
-import { providerLatencyTracker } from '../../core/providerLatencyTracker.js';
-import { providerRecoveryTracker } from '../../core/providerRecoveryTracker.js';
-import { providerErrorLog } from '../../core/providerErrorLog.js';
+import { ProviderLatencyTracker } from '../../core/providerLatencyTracker';
+import { ProviderRecoveryTracker } from '../../core/providerRecoveryTracker';
+import { ProviderErrorLog } from '../../core/providerErrorLog';
 import { MarketData } from '../../types/index.js';
 
 /**
@@ -67,6 +67,10 @@ export interface TickerData {
 /**
  * HuggingFace Market Adapter
  */
+const providerLatencyTracker = ProviderLatencyTracker.getInstance();
+const providerRecoveryTracker = ProviderRecoveryTracker.getInstance();
+const providerErrorLog = ProviderErrorLog.getInstance();
+
 export class HFMarketAdapter {
   private static instance: HFMarketAdapter;
   private logger = Logger.getInstance();

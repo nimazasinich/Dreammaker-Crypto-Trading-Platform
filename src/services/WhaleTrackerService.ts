@@ -5,7 +5,7 @@
  * All external API calls have been removed.
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { cryptoAPI, WhaleTransaction } from './CryptoAPI';
 
 export interface WhaleAlert {
@@ -209,6 +209,11 @@ export class WhaleTrackerService {
       activeAddresses: number;
       largeTransfers: number;
       exchangeReserves: number;
+      hodlerBehavior?: {
+        longTermHolders: number;
+        shortTermHolders: number;
+        accumulationTrend: 'increasing' | 'decreasing' | 'stable';
+      };
     };
   }> {
     try {

@@ -13,7 +13,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import { ExchangeClient, PositionResult, AccountInfo } from '../../services/exchange/ExchangeClient.js';
 import { Database } from '../../data/Database.js';
 import { RiskGuardConfig, MarketRiskConfig, RiskCheckInput, RiskCheckResult, TradingMarket } from '../../types/index.js';

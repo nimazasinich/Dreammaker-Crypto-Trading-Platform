@@ -8,8 +8,11 @@ interface EmptyStateProps {
   action?: {
     label: string;
     onClick: () => void;
+    icon?: LucideIcon;
+    variant?: 'primary' | 'secondary' | 'danger';
   };
   className?: string;
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export const EmptyState: React.FC<EmptyStateProps> = ({
@@ -17,8 +20,12 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   title,
   description,
   action,
-  className = ''
+  className = '',
+  size = 'md'
 }) => {
+  const ActionIcon = action?.icon;
+  const variantClasses = action?.variant === 'danger' ? 'btn-danger' : action?.variant === 'secondary' ? 'btn-secondary' : 'btn-primary';
+  
   return (
     <div className={`flex flex-col items-center justify-center py-12 px-4 text-center ${className}`}>
       <div className="w-16 h-16 rounded-full bg-purple-500/10 flex items-center justify-center mb-4">
@@ -29,9 +36,10 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       {action && (
         <button
           onClick={action.onClick}
-          className="btn-primary px-6 py-2.5"
+          className={`${variantClasses} px-6 py-2.5 flex items-center gap-2`}
           aria-label={action.label}
         >
+          {ActionIcon && <ActionIcon className="w-4 h-4" />}
           {action.label}
         </button>
       )}

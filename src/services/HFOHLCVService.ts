@@ -2,7 +2,7 @@
 import { HuggingFaceService } from './HuggingFaceService.js';
 import { MarketData } from '../types/index.js';
 import { TTLCache } from '../utils/cache.js';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import axios from 'axios';
 import { withExponentialBackoff, isRateLimitError } from '../utils/exponentialBackoff.js';
 

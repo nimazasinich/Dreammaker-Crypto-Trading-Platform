@@ -2,7 +2,7 @@
 // Global error handler middleware for consistent JSON error responses
 
 import type { Request, Response, NextFunction } from 'express';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 const logger = Logger.getInstance();
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createChart, IChartApi, ISeriesApi, CandlestickData as LWCandlestickData } from 'lightweight-charts';
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import { CandlestickData } from '../../types';
 import { marketDataService } from '../../services/marketDataService';
 import { RefreshCw } from 'lucide-react';

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import { PredictionData } from '../../types';
 import { Brain, Target, TrendingUp, TrendingDown, Minus, AlertTriangle, RefreshCw, AlertCircle } from 'lucide-react';
 import { dataManager } from '../../services/dataManager';

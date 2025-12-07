@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import axios from 'axios';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 interface KuCoinCredentials {
   apiKey: string;

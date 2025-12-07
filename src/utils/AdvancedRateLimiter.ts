@@ -11,7 +11,7 @@
  * - Timeout handling
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 export interface RateLimiterOptions {
   maxTokens: number;       // Maximum token capacity

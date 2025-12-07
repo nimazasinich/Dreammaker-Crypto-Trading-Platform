@@ -15,7 +15,7 @@ import {
 } from './types.js';
 import { DetectorWeights, TimeframeWeights } from './types.js';
 import { WeightParliament } from './weights.js';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 /**
  * Timeframe Jurisdiction

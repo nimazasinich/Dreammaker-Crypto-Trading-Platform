@@ -4,7 +4,7 @@
  */
 import express from 'express';
 import os from 'os';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { ResourceMonitorService } from '../services/ResourceMonitorService.js';
 
 const router = express.Router();

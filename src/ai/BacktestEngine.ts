@@ -1,4 +1,4 @@
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { MarketData, BacktestResult, BacktestTrade } from '../types/index.js';
 import { BullBearAgent } from './BullBearAgent.js';
 

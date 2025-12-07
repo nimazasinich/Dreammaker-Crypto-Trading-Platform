@@ -5,7 +5,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 export interface AlternateSource {
   name: string;

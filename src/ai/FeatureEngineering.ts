@@ -1,4 +1,4 @@
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { MarketData } from '../types/index.js';
 import { SMCAnalyzer } from '../services/SMCAnalyzer.js';
 import { ElliottWaveAnalyzer } from '../services/ElliottWaveAnalyzer.js';

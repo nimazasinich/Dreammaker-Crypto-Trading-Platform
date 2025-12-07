@@ -1,6 +1,6 @@
 // useSignalWebSocket.ts - WebSocket hook for real-time signal data
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { StageData } from '../components/signal/SignalStagePipeline';
 import { WS_BASE, API_BASE, buildWebSocketUrl } from '../config/env.js';
 

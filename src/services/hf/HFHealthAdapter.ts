@@ -18,12 +18,12 @@
  * Details: see docs/hf-engine-scope.md
  */
 
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import { HFDataEngineClient, HFHealthResponse, HFProvider } from '../HFDataEngineClient.js';
 import { getPrimarySource, isHuggingFaceEnabled } from '../../config/dataSource.js';
-import { providerLatencyTracker } from '../../core/providerLatencyTracker.js';
-import { providerRecoveryTracker } from '../../core/providerRecoveryTracker.js';
-import { providerErrorLog } from '../../core/providerErrorLog.js';
+import { ProviderLatencyTracker } from '../../core/providerLatencyTracker';
+import { ProviderRecoveryTracker } from '../../core/providerRecoveryTracker';
+import { ProviderErrorLog } from '../../core/providerErrorLog';
 import type { AdapterErrorResponse, AdapterSuccessResponse, AdapterResponse } from './HFMarketAdapter.js';
 
 export interface SystemHealth {
@@ -46,6 +46,10 @@ export interface SystemHealth {
 /**
  * HuggingFace Health Adapter
  */
+const providerLatencyTracker = ProviderLatencyTracker.getInstance();
+const providerRecoveryTracker = ProviderRecoveryTracker.getInstance();
+const providerErrorLog = ProviderErrorLog.getInstance();
+
 export class HFHealthAdapter {
   private static instance: HFHealthAdapter;
   private logger = Logger.getInstance();

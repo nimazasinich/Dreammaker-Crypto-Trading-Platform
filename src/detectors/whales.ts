@@ -49,7 +49,7 @@ export async function whalesLayer(symbol: string): Promise<LayerScore> {
     // 1. Exchange Flow Analysis (50% weight)
     // Negative netFlow = Outflow from exchanges = Bullish (whales accumulating)
     // Positive netFlow = Inflow to exchanges = Bearish (whales dumping)
-    const netFlow = whaleData.exchangeFlows.netFlow;
+    const netFlow = whaleData.exchangeFlows.reduce((sum, flow) => sum + flow.netFlow, 0);
 
     if (netFlow < -1000000) {
       // Heavy outflow (> $1M) - Very Bullish

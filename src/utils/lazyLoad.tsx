@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, ComponentType } from 'react';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 
 /**

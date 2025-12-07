@@ -3,7 +3,7 @@
  * Trains neural networks using live market data from multiple sources
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { TrainingEngine } from './TrainingEngine.js';
 import { ExperienceBuffer, Experience } from './ExperienceBuffer.js';
 import { RealMarketDataService } from '../services/RealMarketDataService.js';

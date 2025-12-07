@@ -1,12 +1,12 @@
 // src/controllers/MarketDataController.ts
 import { Request, Response } from 'express';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { Database } from '../data/Database.js';
 import { MultiProviderMarketDataService } from '../services/MultiProviderMarketDataService.js';
 import { SentimentNewsService } from '../services/SentimentNewsService.js';
 import { BinanceService } from '../services/BinanceService.js';
-import { ConfigManager } from '../core/ConfigManager.js';
-import { AdvancedCache } from '../core/AdvancedCache.js';
+import { ConfigManager } from '../core/ConfigManager';
+import { AdvancedCache } from '../core/AdvancedCache';
 import { hfDataEngineAdapter } from '../services/HFDataEngineAdapter.js';
 import { getPrimarySource } from '../config/dataSource.js';
 
@@ -22,7 +22,7 @@ export class MarketDataController {
   async getPrices(req: Request, res: Response): Promise<void> {
     try {
       const { symbols, limit } = req.query;
-      const useRealData = this.config.isRealDataMode();
+      const useRealData = this.config.isRealDataMode;
       const primarySource = getPrimarySource();
 
       // If HuggingFace is the primary source or mixed mode, try HF first
@@ -236,7 +236,7 @@ export class MarketDataController {
     try {
       const { symbol } = req.params;
       
-      if (this.config.isRealDataMode()) {
+      if (this.config.isRealDataMode) {
         const cleanSymbol = symbol.replace('USDT', '').toUpperCase();
         const cacheKey = `price:${cleanSymbol}`;
         
@@ -329,7 +329,7 @@ export class MarketDataController {
 
   async testRealData(req: Request, res: Response): Promise<void> {
     try {
-      if (!this.config.isRealDataMode()) {
+      if (!this.config.isRealDataMode) {
         res.status(400).json({
           error: 'Real data mode is not enabled',
           message: 'Enable realDataMode in config to use this endpoint'

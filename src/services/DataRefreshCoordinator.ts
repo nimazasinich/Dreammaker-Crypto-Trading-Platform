@@ -7,7 +7,7 @@
  * Solution: Single refresh cycle that all components subscribe to, reducing duplicate requests.
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 const logger = Logger.getInstance();
 
 type DataType = 'signals' | 'portfolio' | 'marketData' | 'health';

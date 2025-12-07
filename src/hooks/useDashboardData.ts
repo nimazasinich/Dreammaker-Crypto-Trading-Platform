@@ -6,7 +6,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { dashboardDataService, DashboardData } from '../services/DashboardDataService';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 const logger = Logger.getInstance();
 

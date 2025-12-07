@@ -1,5 +1,5 @@
 import { useState, useCallback, FormEvent, ChangeEvent } from 'react';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { validateForm, ValidationRule, hasErrors } from '../utils/validation';
 
 // Local FormState interface specific to form handling (different from global FormState in types)

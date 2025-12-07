@@ -267,7 +267,7 @@ export class HFDataService {
       };
     }
     
-    return response as FetchResponse<MarketDataItem[]>;
+    return response as unknown as FetchResponse<MarketDataItem[]>;
   }
 
   /**
@@ -301,7 +301,7 @@ export class HFDataService {
       };
     }
     
-    return response as FetchResponse<OHLCVItem[]>;
+    return response as unknown as FetchResponse<OHLCVItem[]>;
   }
 
   /**
@@ -322,7 +322,7 @@ export class HFDataService {
       };
     }
     
-    return response as FetchResponse<NewsItem[]>;
+    return response as unknown as FetchResponse<NewsItem[]>;
   }
 
   /**
@@ -392,7 +392,7 @@ export class HFDataService {
       };
     }
     
-    return response as FetchResponse<AIPredictionItem>;
+    return response as unknown as FetchResponse<AIPredictionItem>;
   }
 
   // ============================================================================

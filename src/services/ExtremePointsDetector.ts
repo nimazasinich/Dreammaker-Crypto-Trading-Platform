@@ -5,7 +5,7 @@
  * Only considers signals with volume >= $2M
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { MarketData } from '../types/index.js';
 import { ElliottWaveAnalyzer } from './ElliottWaveAnalyzer.js';
 import { HarmonicPatternDetector } from './HarmonicPatternDetector.js';

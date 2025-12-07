@@ -1,6 +1,6 @@
 // src/components/connectors/RealSignalFeedConnector.tsx
 import React, { useState, useEffect } from 'react';
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import { realDataManager, RealSignalData } from '../../services/RealDataManager';
 
 interface RealSignalFeedConnectorProps {

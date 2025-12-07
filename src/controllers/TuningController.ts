@@ -11,7 +11,7 @@
  */
 
 import { Request, Response } from 'express';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { ScoringTuner } from '../engine/tuning/ScoringTuner.js';
 import { TuningStorage } from '../engine/tuning/TuningStorage.js';
 import { TuningConfig } from '../types/index.js';

@@ -1,5 +1,5 @@
 import { Database } from 'better-sqlite3';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 

@@ -1,5 +1,5 @@
 // src/services/SentimentAnalysisService.ts
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { SentimentData } from '../types/index.js';
 import { SentimentNewsService } from './SentimentNewsService.js';
 import { HFSentimentService } from './HFSentimentService.js';

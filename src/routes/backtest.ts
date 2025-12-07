@@ -3,7 +3,7 @@
  * Comprehensive backtesting endpoints for trading strategies
  */
 import express from 'express';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { BacktestEngine } from '../ai/BacktestEngine.js';
 import { RealBacktestEngine } from '../services/RealBacktestEngine.js';
 import fs from 'fs/promises';

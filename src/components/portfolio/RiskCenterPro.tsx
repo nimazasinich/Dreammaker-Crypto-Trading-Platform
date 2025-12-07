@@ -375,7 +375,7 @@ export default function RiskCenterPro() {
   if (positions.length === 0) {
     return (
       <EmptyState
-        icon={<Wallet className="w-12 h-12" />}
+        icon={Wallet}
         title="No positions to analyze"
         description="Open some positions to start tracking risk metrics and portfolio analytics"
         action={{

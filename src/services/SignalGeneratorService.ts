@@ -3,7 +3,7 @@
  * Real-time signal generation with confidence filtering and multi-timeframe confluence
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { BullBearAgent } from '../ai/BullBearAgent.js';
 import { Database } from '../data/Database.js';
 import { FeatureEngineering } from '../ai/FeatureEngineering.js';

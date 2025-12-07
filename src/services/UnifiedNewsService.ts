@@ -8,7 +8,7 @@
  * - Caching
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { fetchNews, fetchFearGreed, NewsArticle } from './enhanced/newsProvider.js';
 import { NewsApiService } from './optional/NewsApiService.js';
 

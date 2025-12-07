@@ -20,6 +20,13 @@ export interface ElliottWaveAnalysis {
   confidence?: number;
   targetPrice?: number;
   invalidationLevel?: number;
+  waveStructure?: Array<{
+    wave: string;
+    start: number;
+    end: number;
+    price: number;
+    timestamp: number;
+  }>;
 }
 
 export class ElliottWaveAnalyzer {

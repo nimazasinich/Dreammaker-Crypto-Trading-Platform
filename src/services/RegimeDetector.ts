@@ -1,5 +1,5 @@
 // src/services/RegimeDetector.ts
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { OHLCVData } from './MultiProviderMarketDataService.js';
 
 export type MarketRegime = 'bull' | 'bear' | 'sideways';

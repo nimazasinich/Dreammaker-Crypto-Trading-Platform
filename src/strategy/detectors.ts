@@ -9,7 +9,7 @@ import { OHLCVData, TechnicalFeatures } from './features.js';
 import { FearGreedService } from '../services/FearGreedService.js';
 import { SentimentNewsService } from '../services/SentimentNewsService.js';
 import { WhaleTrackerService } from '../services/WhaleTrackerService.js';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 /** Clamp score to [-1, +1] */
 function clamp(value: number, min = -1, max = 1): number {

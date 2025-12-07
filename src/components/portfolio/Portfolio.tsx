@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import { PortfolioPosition, MarketData } from '../../types';
 import { Wallet, TrendingUp, TrendingDown, DollarSign, PieChart, RefreshCw } from 'lucide-react';
 import DatasourceClient from '../../services/DatasourceClient';
@@ -117,13 +117,13 @@ export const Portfolio: React.FC<PortfolioProps> = ({ marketData }) => {
 
         {positions.length === 0 ? (
           <EmptyState
-            icon={<Wallet className="w-12 h-12" />}
+            icon={Wallet}
             title="No open positions"
             description="Your portfolio is empty. Start trading to see positions here."
             action={{
               label: "Refresh",
               onClick: () => window.location.reload(),
-              icon: <RefreshCw className="w-4 h-4" />
+              icon: RefreshCw
             }}
             size="md"
             className="bg-gray-800 border-gray-700"

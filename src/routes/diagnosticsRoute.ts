@@ -6,11 +6,17 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { Logger } from '../core/Logger.js';
-import { providerLatencyTracker, ProviderName } from '../core/providerLatencyTracker.js';
-import { providerRecoveryTracker } from '../core/providerRecoveryTracker.js';
-import { providerErrorLog } from '../core/providerErrorLog.js';
+import { Logger } from '../core/Logger';
+import { ProviderLatencyTracker } from '../core/providerLatencyTracker';
+import { ProviderRecoveryTracker } from '../core/providerRecoveryTracker';
+import { ProviderErrorLog } from '../core/providerErrorLog';
 import { getPrimarySource } from '../config/dataSource.js';
+
+const providerLatencyTracker = ProviderLatencyTracker.getInstance();
+const providerRecoveryTracker = ProviderRecoveryTracker.getInstance();
+const providerErrorLog = ProviderErrorLog.getInstance();
+
+type ProviderName = string;
 
 const router = Router();
 const logger = Logger.getInstance();
@@ -71,39 +77,40 @@ interface DiagnosticsResponse {
  * Build diagnostics for a single provider
  */
 function buildProviderDiagnostics(provider: ProviderName): ProviderDiagnostics {
-  const latencyStats = providerLatencyTracker.getStats(provider);
-  const recoveryStats = providerRecoveryTracker.getStats(provider);
+  const latencyStats = providerLatencyTracker.getStats(provider) as any;
+  const recoveryStats = providerRecoveryTracker.getStats(provider) as any;
   const errorStats = providerErrorLog.getStats(provider);
+  const lastError = providerErrorLog.getLastError(provider);
 
   return {
     provider,
     latency: {
-      avg: latencyStats.avgLatency,
-      min: latencyStats.minLatency,
-      max: latencyStats.maxLatency,
-      last: latencyStats.lastLatency
+      avg: latencyStats?.avgLatency || 0,
+      min: latencyStats?.minLatency || 0,
+      max: latencyStats?.maxLatency || 0,
+      last: latencyStats?.lastLatency || 0
     },
     recovery: {
-      uptime: recoveryStats.uptime,
-      successRate: recoveryStats.successRate,
-      failureRate: recoveryStats.failureRate,
-      isHealthy: recoveryStats.isHealthy,
-      consecutiveFailures: recoveryStats.consecutiveFailures,
-      lastStatus: recoveryStats.lastStatus
+      uptime: recoveryStats?.uptime || 100,
+      successRate: recoveryStats?.successRate || 100,
+      failureRate: recoveryStats?.failureRate || 0,
+      isHealthy: recoveryStats?.isHealthy || true,
+      consecutiveFailures: recoveryStats?.consecutiveFailures || 0,
+      lastStatus: recoveryStats?.lastStatus || 'success'
     },
     errors: {
-      totalErrors: errorStats.totalErrors,
-      lastError: errorStats.lastError ? {
-        timestamp: errorStats.lastError.timestamp,
-        message: errorStats.lastError.message,
-        endpoint: errorStats.lastError.endpoint,
-        statusCode: errorStats.lastError.statusCode
+      totalErrors: errorStats.total,
+      lastError: lastError ? {
+        timestamp: lastError.timestamp,
+        message: lastError.error,
+        endpoint: provider,
+        statusCode: 0
       } : undefined,
       recentErrors: providerErrorLog.hasRecentErrors(provider, 5) ?
         providerErrorLog.getRecentErrors(provider, 10).length : 0
     },
-    lastSuccessTime: recoveryStats.lastSuccessTime,
-    lastFailureTime: recoveryStats.lastFailureTime
+    lastSuccessTime: recoveryStats?.lastSuccessTime,
+    lastFailureTime: recoveryStats?.lastFailureTime
   };
 }
 
@@ -133,7 +140,10 @@ router.get('/', (req: Request, res: Response) => {
     ).length;
 
     const totalRequests = allProviders.reduce(
-      (sum, p) => sum + (providerRecoveryTracker.getStats(p.provider as ProviderName).totalAttempts),
+      (sum, p) => {
+        const stats = providerRecoveryTracker.getStats(p.provider as ProviderName) as any;
+        return sum + (stats?.totalFailures || 0) + (stats?.totalRecoveries || 0);
+      },
       0
     );
 
@@ -201,8 +211,8 @@ router.post('/clear', (req: Request, res: Response) => {
   try {
     logger.info('Clearing all diagnostics data');
 
-    providerLatencyTracker.clearAllStats();
-    providerRecoveryTracker.clearAllStats();
+    providerLatencyTracker.clearStats();
+    providerRecoveryTracker.clearStats();
     providerErrorLog.clearAllErrors();
 
     res.json({

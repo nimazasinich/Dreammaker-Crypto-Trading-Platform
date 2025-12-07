@@ -3,7 +3,7 @@
  * Real accuracy measurement for model evaluation
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { BullBearAgent } from './BullBearAgent.js';
 import { MarketData } from '../types/index.js';
 import { BullBearPrediction } from './BullBearAgent.js';

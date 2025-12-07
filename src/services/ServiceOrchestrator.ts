@@ -4,7 +4,7 @@
  * This is the "glue" that makes the puzzle pieces work together
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { SignalGeneratorService, Signal } from './SignalGeneratorService.js';
 import { OrderManagementService } from './OrderManagementService.js';
 import { ContinuousLearningService } from './ContinuousLearningService.js';

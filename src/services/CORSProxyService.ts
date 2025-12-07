@@ -2,7 +2,7 @@
  * CORS Proxy Service - Handle CORS issues with multiple fallback proxies
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 const CORS_PROXIES = [
   'https://api.allorigins.win/get?url=',

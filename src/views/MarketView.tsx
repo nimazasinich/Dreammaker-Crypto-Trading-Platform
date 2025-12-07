@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import {
     TrendingUp,
     TrendingDown,

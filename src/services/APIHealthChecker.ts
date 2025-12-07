@@ -5,7 +5,7 @@
  * Provides comprehensive health reports and recommendations
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { CentralizedAPIConfig, APIConfig, APICategory } from '../config/CentralizedAPIConfig.js';
 import axios from 'axios';
 

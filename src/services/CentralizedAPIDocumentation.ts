@@ -7,7 +7,7 @@
  */
 
 import { centralizedAPIManager } from './CentralizedAPIManager.js';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { APIIntegrationHelper } from './APIIntegrationHelper.js';
 import { CentralizedAPIConfig } from '../config/CentralizedAPIConfig.js';
 

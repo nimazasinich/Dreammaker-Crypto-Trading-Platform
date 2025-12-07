@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Database, Globe, TrendingUp, Shuffle, Check, AlertCircle } from 'lucide-react';
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 
 const logger = Logger.getInstance();
 

@@ -9,7 +9,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 export type DataSourceType = 'huggingface' | 'binance' | 'kucoin' | 'mixed';
 
