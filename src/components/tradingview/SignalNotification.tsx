@@ -19,7 +19,7 @@ const SignalNotification: React.FC<SignalNotificationProps> = ({
   onClose,
   onSignalClick
 }) => {
-  if (!signal) return null;
+  // Hooks must be called before any early returns
   useEffect(() => {
     if (signal) {
       // Auto-close after 8 seconds

@@ -240,7 +240,9 @@ describe('RequestValidator', () => {
     });
 
     it('should reject invalid symbols', () => {
-      const invalidSymbols = ['', 'invalid@', 'btc', '123'];
+      // Note: Validator uses pattern /^[A-Z0-9]{2,10}([-\/]?[A-Z0-9]{2,10})?$/
+      // So '123' is technically valid, and lowercase 'btc' is invalid
+      const invalidSymbols = ['', 'invalid@', 'btc', 'BTC@USDT', 'A'];  // 'A' is too short (min 2 chars)
       
       for (const symbol of invalidSymbols) {
         const result = RequestValidator.validateSymbol(symbol);
@@ -260,7 +262,9 @@ describe('RequestValidator', () => {
     });
 
     it('should reject invalid timeframes', () => {
-      const invalidTimeframes = ['5x', '2h', '10m', 'invalid'];
+      // Valid timeframes per validator: 1m, 3m, 5m, 15m, 30m, 1h, 2h, 4h, 6h, 8h, 12h, 1d, 3d, 1w, 1M
+      // So 2h is actually valid, 10m is invalid (only 1m, 3m, 5m, 15m, 30m are valid for minutes)
+      const invalidTimeframes = ['5x', '10m', '7h', 'invalid'];
       
       for (const tf of invalidTimeframes) {
         const result = RequestValidator.validateTimeframe(tf);
