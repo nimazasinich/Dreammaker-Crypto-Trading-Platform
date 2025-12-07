@@ -191,28 +191,32 @@ export class EnhancedMarketDataService {
   private constructor() {
     const apisConfig = this.config.getApisConfig();
 
-    // Initialize CoinGecko client (Primary - No auth)
+    // ⚠️ DEPRECATED: Direct API clients - Use cryptoAPI (HuggingFace) instead
+    // These clients are kept for backward compatibility only
+    // TODO: Refactor all methods to use cryptoAPI from CryptoAPI.ts
+    
+    // Initialize CoinGecko client (Primary - No auth) - DEPRECATED
     this.coingeckoClient = axios.create({
       baseURL: apisConfig.coingecko?.baseUrl || 'https://api.coingecko.com/api/v3',
       timeout: 10000,
       headers: { Accept: 'application/json' }
     });
 
-    // Initialize CoinPaprika client (No auth)
+    // Initialize CoinPaprika client (No auth) - DEPRECATED
     this.coinpaprikaClient = axios.create({
       baseURL: 'https://api.coinpaprika.com/v1',
       timeout: 10000,
       headers: { Accept: 'application/json' }
     });
 
-    // Initialize CoinCap client (No auth)
+    // Initialize CoinCap client (No auth) - DEPRECATED
     this.coincapClient = axios.create({
       baseURL: 'https://api.coincap.io/v2',
       timeout: 10000,
       headers: { Accept: 'application/json' }
     });
 
-    // Initialize Binance Public API (No auth)
+    // Initialize Binance Public API (No auth) - DEPRECATED
     this.binanceClient = axios.create({
       baseURL: 'https://api.binance.com/api/v3',
       timeout: 10000,

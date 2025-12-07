@@ -1563,35 +1563,34 @@ app.get('/api/market/real-prices', async (req, res) => {
 
     const geckoIds = (symbolList || []).map(s => geckoIdMap[s] || s).join(',');
 
-    logger.info('Fetching REAL prices from CoinGecko (real-prices endpoint)', { symbols: symbolList, geckoIds });
+    logger.info('Fetching REAL prices from HuggingFace (real-prices endpoint)', { symbols: symbolList });
 
-    // Fetch from CoinGecko - NO FALLBACK
-    const response = await fetch(
-      `https://api.coingecko.com/api/v3/simple/price?ids=${geckoIds}&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true`
-    , { mode: "cors", headers: { "Content-Type": "application/json" } });
+    // Use HuggingFace unified API instead of direct CoinGecko
+    const { cryptoAPI } = await import('./services/CryptoAPI.js');
+    
+    // Fetch prices in batch from HuggingFace
+    const pairs = symbolList.map(s => `${s.toUpperCase()}/USDT`);
+    const pricesData = await cryptoAPI.getPrices(pairs);
 
-    if (!response.ok) {
-      console.error(`CoinGecko API returned ${response.status}`);
-    }
-
-    const data = await response.json();
     const formattedPrices = symbolList
       .map(symbol => {
-        const geckoId = geckoIdMap[symbol] || symbol;
-        const coinData = data[geckoId];
+        const pair = `${symbol.toUpperCase()}/USDT`;
+        const priceEntry = pricesData.data?.find((p: any) => 
+          p.pair?.toUpperCase() === pair || p.symbol?.toUpperCase() === symbol.toUpperCase()
+        );
 
-        if (coinData && coinData.usd) {
+        if (priceEntry && priceEntry.price) {
           return {
             symbol: symbol.toUpperCase(),
-            price: coinData.usd,
-            change24h: coinData.usd_24h_change || 0,
-            changePercent24h: coinData.usd_24h_change || 0,
-            volume: coinData.usd_24h_vol || 0,
+            price: parseFloat(priceEntry.price),
+            change24h: parseFloat(priceEntry.change_24h || '0'),
+            changePercent24h: parseFloat(priceEntry.change_24h || '0'),
+            volume: parseFloat(priceEntry.volume_24h || '0'),
             timestamp: Date.now()
           };
         }
 
-        // Return null if CoinGecko doesn't have this coin
+        // Return null if HuggingFace doesn't have this coin
         return null;
       })
       .filter(Boolean);
@@ -1645,22 +1644,27 @@ app.get('/api/market/coingecko-prices', async (req, res) => {
       return res.status(400).json({ error: 'No valid symbols provided' });
     }
 
-    logger.info('Fetching prices from CoinGecko (coingecko-prices endpoint)', { symbols: symbolList });
+    logger.info('Fetching prices from HuggingFace (coingecko-prices endpoint)', { symbols: symbolList });
 
-    const response = await fetch(
-      `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds.join(',')}&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true`
-    );
-
-    if (!response.ok) {
-      console.error(`CoinGecko API error: ${response.status}`);
+    // Use HuggingFace unified API
+    const { cryptoAPI } = await import('./services/CryptoAPI.js');
+    const pairs = symbolList.map(s => `${s.toUpperCase()}/USDT`);
+    
+    let pricesData;
+    try {
+      pricesData = await cryptoAPI.getPrices(pairs);
+    } catch (error) {
+      logger.error('HuggingFace API error', {}, error);
+      pricesData = { data: [] };
     }
 
-    const data = await response.json();
     const prices = (symbolList || []).map(symbol => {
-      const coinId = COINGECKO_IDS[symbol];
-      const coinData = data[coinId];
+      const pair = `${symbol.toUpperCase()}/USDT`;
+      const priceEntry = pricesData.data?.find((p: any) => 
+        p.pair?.toUpperCase() === pair || p.symbol?.toUpperCase() === symbol.toUpperCase()
+      );
       
-      if (!coinData) {
+      if (!priceEntry || !priceEntry.price) {
         // Fallback for missing coins
         return {
           symbol: symbol.toUpperCase(),
@@ -1674,10 +1678,10 @@ app.get('/api/market/coingecko-prices', async (req, res) => {
 
       return {
         symbol: symbol.toUpperCase(),
-        price: coinData.usd || 0,
-        change24h: coinData.usd_24h_change || 0,
-        changePercent24h: coinData.usd_24h_change || 0,
-        volume: coinData.usd_24h_vol || 0,
+        price: parseFloat(priceEntry.price) || 0,
+        change24h: parseFloat(priceEntry.change_24h || '0'),
+        changePercent24h: parseFloat(priceEntry.change_24h || '0'),
+        volume: parseFloat(priceEntry.volume_24h || '0'),
         timestamp: Date.now()
       };
     });
@@ -4305,55 +4309,91 @@ app.get('/api/sentiment', async (req, res) => {
 // BINANCE AND COINGECKO PROXY ROUTES
 // ============================================================================
 
-// Proxy: Binance klines (historical candlestick data)
+// Proxy: HuggingFace OHLCV (historical candlestick data) - replaces Binance klines
 app.get('/binance/klines', async (req, res) => {
   try {
     const { symbol, interval, limit } = req.query;
-    const params = new URLSearchParams();
-    if (symbol) params.append('symbol', String(symbol));
-    if (interval) params.append('interval', String(interval));
-    if (limit) params.append('limit', String(limit));
     
-    const url = `https://api.binance.com/api/v3/klines?${params.toString()}`;
-    logger.debug('Proxying Binance klines request', { url });
+    // Use HuggingFace unified API
+    const { cryptoAPI } = await import('./services/CryptoAPI.js');
+    const cleanSymbol = String(symbol).replace('USDT', '').toUpperCase();
+    const ohlcvData = await cryptoAPI.getOHLCV(
+      cleanSymbol,
+      String(interval || '1h'),
+      parseInt(String(limit || '100'))
+    );
     
-    const response = await axios.get(url, { timeout: 10000 });
-    res.json(response.data);
+    // Transform HF response to Binance klines format [[timestamp, open, high, low, close, volume], ...]
+    const binanceFormat = (ohlcvData.data || []).map((candle: any) => [
+      candle.timestamp || candle[0],
+      String(candle.open || candle[1]),
+      String(candle.high || candle[2]),
+      String(candle.low || candle[3]),
+      String(candle.close || candle[4]),
+      String(candle.volume || candle[5]),
+      0, // Close time (not provided by HF)
+      "0", // Quote asset volume
+      0, // Number of trades
+      "0", // Taker buy base asset volume
+      "0", // Taker buy quote asset volume
+      "0" // Ignore
+    ]);
+    
+    res.json(binanceFormat);
   } catch (error: any) {
-    logger.error('Binance proxy error', {
-      message: error?.message,
-      status: error?.response?.status
+    logger.error('HuggingFace OHLCV proxy error', {
+      message: error?.message
     }, error as Error);
-    res.status(error?.response?.status || 500).json({ 
-      error: 'Failed to fetch Binance data',
+    res.status(500).json({ 
+      error: 'Failed to fetch OHLCV data from HuggingFace',
       message: error?.message 
     });
   }
 });
 
-// Proxy: Binance 24hr ticker
+// Proxy: HuggingFace 24hr ticker - replaces Binance ticker
 app.get('/binance/ticker/24hr', async (req, res) => {
   try {
     const { symbol } = req.query;
-    const url = symbol 
-      ? `https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`
-      : 'https://api.binance.com/api/v3/ticker/24hr';
     
-    logger.debug('Proxying Binance ticker request', { url });
+    // Use HuggingFace unified API
+    const { cryptoAPI } = await import('./services/CryptoAPI.js');
     
-    const response = await axios.get(url, { 
-      timeout: 10000,
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        'Accept': 'application/json'
-      }
-    });
-    res.json(response.data);
+    if (symbol) {
+      // Single ticker
+      const cleanSymbol = String(symbol).replace('USDT', '').toUpperCase();
+      const priceData = await cryptoAPI.getPrice(`${cleanSymbol}/USDT`);
+      
+      // Transform to Binance ticker format
+      const ticker = {
+        symbol: symbol,
+        lastPrice: String(priceData.data?.price || '0'),
+        priceChange: String(priceData.data?.change_24h || '0'),
+        priceChangePercent: String(priceData.data?.change_24h || '0'),
+        volume: String(priceData.data?.volume_24h || '0'),
+        quoteVolume: String(priceData.data?.volume_24h || '0'),
+        openTime: Date.now() - 86400000,
+        closeTime: Date.now()
+      };
+      res.json(ticker);
+    } else {
+      // All tickers
+      const tickersData = await cryptoAPI.getMarketTickers(100);
+      const tickers = (tickersData.data || []).map((t: any) => ({
+        symbol: `${t.symbol}USDT`,
+        lastPrice: String(t.price || t.last || '0'),
+        priceChange: String(t.change_24h || '0'),
+        priceChangePercent: String(t.change_24h || '0'),
+        volume: String(t.volume_24h || t.volume || '0'),
+        quoteVolume: String(t.volume_24h || t.volume || '0'),
+        openTime: Date.now() - 86400000,
+        closeTime: Date.now()
+      }));
+      res.json(tickers);
+    }
   } catch (error: any) {
-    logger.error('Binance ticker proxy error', {
-      message: error?.message,
-      status: error?.response?.status,
-      data: error?.response?.data
+    logger.error('HuggingFace ticker proxy error', {
+      message: error?.message
     }, error as Error);
     
     // Return mock data as fallback
@@ -4370,43 +4410,72 @@ app.get('/binance/ticker/24hr', async (req, res) => {
   }
 });
 
-// Proxy: CoinGecko market chart (historical price data)
+// Proxy: HuggingFace market chart - replaces CoinGecko market chart
 app.get('/coingecko/market_chart', async (req, res) => {
   try {
-    const { coinId, days, vs_currency = 'usd', interval } = req.query;
+    const { coinId, days = '7', vs_currency = 'usd' } = req.query;
     
     if (!coinId) {
       return res.status(400).json({ error: 'coinId parameter is required' });
     }
     
-    const params = new URLSearchParams();
-    params.append('vs_currency', String(vs_currency));
-    if (days) params.append('days', String(days));
-    if (interval) params.append('interval', String(interval));
+    // Use HuggingFace unified API
+    const { cryptoAPI } = await import('./services/CryptoAPI.js');
     
-    const url = `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?${params.toString()}`;
-    logger.debug('Proxying CoinGecko market chart request', { url });
+    // Map CoinGecko coinId to symbol
+    const coinIdMap: Record<string, string> = {
+      'bitcoin': 'BTC',
+      'ethereum': 'ETH',
+      'binancecoin': 'BNB',
+      'cardano': 'ADA',
+      'solana': 'SOL',
+      'ripple': 'XRP',
+      'polkadot': 'DOT',
+      'dogecoin': 'DOGE'
+    };
     
-    const response = await axios.get(url, { 
-      timeout: 15000,
-      headers: {
-        'Accept': 'application/json'
-      }
+    const symbol = coinIdMap[String(coinId).toLowerCase()] || String(coinId).toUpperCase();
+    
+    // Determine timeframe based on days
+    const numDays = parseInt(String(days));
+    const timeframe = numDays <= 1 ? '15m' : numDays <= 7 ? '1h' : numDays <= 30 ? '4h' : '1d';
+    const limit = numDays <= 1 ? 96 : numDays <= 7 ? 168 : numDays <= 30 ? 180 : 365;
+    
+    const ohlcvData = await cryptoAPI.getOHLCV(symbol, timeframe, limit);
+    
+    // Transform to CoinGecko market_chart format
+    const prices = (ohlcvData.data || []).map((candle: any) => [
+      candle.timestamp || candle[0],
+      parseFloat(candle.close || candle[4])
+    ]);
+    
+    const market_caps = prices.map(([timestamp, price]: [number, number]) => [
+      timestamp,
+      price * 1000000000 // Rough estimate
+    ]);
+    
+    const total_volumes = (ohlcvData.data || []).map((candle: any) => [
+      candle.timestamp || candle[0],
+      parseFloat(candle.volume || candle[5])
+    ]);
+    
+    res.json({
+      prices,
+      market_caps,
+      total_volumes
     });
-    res.json(response.data);
   } catch (error: any) {
-    logger.error('CoinGecko proxy error', {
-      message: error?.message,
-      status: error?.response?.status
+    logger.error('HuggingFace market chart proxy error', {
+      message: error?.message
     }, error as Error);
-    res.status(error?.response?.status || 500).json({ 
-      error: 'Failed to fetch CoinGecko data',
+    res.status(500).json({ 
+      error: 'Failed to fetch market chart data from HuggingFace',
       message: error?.message 
     });
   }
 });
 
-// Proxy: CoinGecko simple price
+// Proxy: HuggingFace simple price - replaces CoinGecko simple price
 app.get('/coingecko/simple/price', async (req, res) => {
   try {
     const { ids, vs_currencies = 'usd', include_24hr_change, include_24hr_vol } = req.query;
@@ -4415,29 +4484,56 @@ app.get('/coingecko/simple/price', async (req, res) => {
       return res.status(400).json({ error: 'ids parameter is required' });
     }
     
-    const params = new URLSearchParams();
-    params.append('ids', String(ids));
-    params.append('vs_currencies', String(vs_currencies));
-    if (include_24hr_change) params.append('include_24hr_change', String(include_24hr_change));
-    if (include_24hr_vol) params.append('include_24hr_vol', String(include_24hr_vol));
+    // Use HuggingFace unified API
+    const { cryptoAPI } = await import('./services/CryptoAPI.js');
     
-    const url = `https://api.coingecko.com/api/v3/simple/price?${params.toString()}`;
-    logger.debug('Proxying CoinGecko simple price request', { url });
+    // Map CoinGecko IDs to symbols
+    const coinIdMap: Record<string, string> = {
+      'bitcoin': 'BTC',
+      'ethereum': 'ETH',
+      'binancecoin': 'BNB',
+      'cardano': 'ADA',
+      'solana': 'SOL',
+      'ripple': 'XRP',
+      'polkadot': 'DOT',
+      'dogecoin': 'DOGE',
+      'tron': 'TRX',
+      'chainlink': 'LINK',
+      'matic-network': 'MATIC',
+      'avalanche-2': 'AVAX'
+    };
     
-    const response = await axios.get(url, { 
-      timeout: 10000,
-      headers: {
-        'Accept': 'application/json'
+    const coinIds = String(ids).split(',');
+    const prices: any = {};
+    
+    for (const coinId of coinIds) {
+      try {
+        const symbol = coinIdMap[coinId.toLowerCase()] || coinId.toUpperCase();
+        const priceData = await cryptoAPI.getPrice(`${symbol}/USDT`);
+        
+        prices[coinId] = {
+          [String(vs_currencies)]: priceData.data?.price || 0
+        };
+        
+        if (include_24hr_change === 'true') {
+          prices[coinId][`${vs_currencies}_24h_change`] = priceData.data?.change_24h || 0;
+        }
+        
+        if (include_24hr_vol === 'true') {
+          prices[coinId][`${vs_currencies}_24h_vol`] = priceData.data?.volume_24h || 0;
+        }
+      } catch {
+        // Skip failed symbols
       }
-    });
-    res.json(response.data);
+    }
+    
+    res.json(prices);
   } catch (error: any) {
-    logger.error('CoinGecko simple price proxy error', {
-      message: error?.message,
-      status: error?.response?.status
+    logger.error('HuggingFace simple price proxy error', {
+      message: error?.message
     }, error as Error);
-    res.status(error?.response?.status || 500).json({ 
-      error: 'Failed to fetch CoinGecko prices',
+    res.status(500).json({ 
+      error: 'Failed to fetch prices from HuggingFace',
       message: error?.message 
     });
   }

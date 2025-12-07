@@ -163,33 +163,19 @@ export class RealMarketDataService {
 
     await this.cgLimiter.wait();
 
-    const geckoId = this.mapSymbolToGeckoId(symbol);
-    const url = `https://api.coingecko.com/api/v3/simple/price?ids=${geckoId}&vs_currencies=${vs.toLowerCase()}`;
-
+    // Use HuggingFace unified API instead of direct CoinGecko
     return withExponentialBackoff(
       async () => {
-        const response = await axios.get(url, {
-          validateStatus: status => status < 500, // Don't throw on 429
-          timeout: 10000
-        });
-
-        // Handle 429 Rate Limit - soft disable with longer backoff
-        if (response.status === 429) {
-          this.logger.warn('CoinGecko rate limit (429) – temporarily disabling', {
-            symbol,
-            retryAfter: '60-120 seconds'
-          });
-          // Wait longer before retry
-          await new Promise(resolve => setTimeout(resolve, 60000));
-          throw { response, status: 429, message: 'coingecko_429_rate_limit' };
+        const { cryptoAPI } = await import('./CryptoAPI.js');
+        
+        const priceData = await cryptoAPI.getPrice(`${symbol.toUpperCase()}/USDT`);
+        
+        if (!priceData?.data?.price) {
+          this.logger.debug(`HuggingFace: No data for ${symbol}`);
+          throw new Error('HUGGINGFACE_NO_DATA');
         }
 
-        const price = response.data?.[geckoId]?.[vs.toLowerCase()];
-        if (typeof price !== 'number') {
-          this.logger.debug(`CoinGecko: No data for ${symbol}`, { geckoId });
-          throw new Error('COINGECKO_NO_DATA');
-        }
-
+        const price = parseFloat(priceData.data.price);
         return price;
       },
       {
