@@ -9,17 +9,21 @@
  * but in the current build, all signal operations return NOT_IMPLEMENTED.
  */
 
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import { HFDataEngineClient } from '../HFDataEngineClient.js';
 import { getPrimarySource } from '../../config/dataSource.js';
-import { providerLatencyTracker } from '../../core/providerLatencyTracker.js';
-import { providerRecoveryTracker } from '../../core/providerRecoveryTracker.js';
-import { providerErrorLog } from '../../core/providerErrorLog.js';
+import { ProviderLatencyTracker } from '../../core/providerLatencyTracker';
+import { ProviderRecoveryTracker } from '../../core/providerRecoveryTracker';
+import { ProviderErrorLog } from '../../core/providerErrorLog';
 import type { AdapterErrorResponse, AdapterSuccessResponse, AdapterResponse } from './HFMarketAdapter.js';
 
 /**
  * HuggingFace Signals Adapter
  */
+const providerLatencyTracker = ProviderLatencyTracker.getInstance();
+const providerRecoveryTracker = ProviderRecoveryTracker.getInstance();
+const providerErrorLog = ProviderErrorLog.getInstance();
+
 export class HFSignalsAdapter {
   private static instance: HFSignalsAdapter;
   private logger = Logger.getInstance();

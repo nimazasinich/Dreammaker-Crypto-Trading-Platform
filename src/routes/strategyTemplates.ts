@@ -3,7 +3,7 @@
  * CRUD operations for strategy templates
  */
 import express from 'express';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import fs from 'fs/promises';
 import path from 'path';
 

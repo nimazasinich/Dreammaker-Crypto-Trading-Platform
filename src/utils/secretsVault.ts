@@ -7,7 +7,7 @@
 import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 const logger = Logger.getInstance();
 

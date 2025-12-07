@@ -1,7 +1,7 @@
 // src/services/HFSentimentService.ts
 import { HuggingFaceService } from './HuggingFaceService.js';
 import { TTLCache } from '../utils/cache.js';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 export interface SentimentResult {
   label: string;

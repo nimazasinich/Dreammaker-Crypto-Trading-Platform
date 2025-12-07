@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { motion, HTMLMotionProps } from 'framer-motion';
 
-type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'success' | 'danger' | 'warning' | 'gradient';
+type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'success' | 'danger' | 'warning' | 'gradient' | 'destructive';
 type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'icon';
 
 interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'size'> {
@@ -73,6 +73,15 @@ const variantStyles: Record<ButtonVariant, string> = {
     hover:from-amber-500 hover:via-amber-400 hover:to-amber-500
     active:from-amber-700 active:via-amber-600 active:to-amber-700
     border border-amber-400/20
+  `,
+  destructive: `
+    bg-gradient-to-r from-red-600 via-red-500 to-red-600
+    text-white font-semibold
+    shadow-lg shadow-red-500/25
+    hover:shadow-xl hover:shadow-red-500/30
+    hover:from-red-500 hover:via-red-400 hover:to-red-500
+    active:from-red-700 active:via-red-600 active:to-red-700
+    border border-red-400/20
   `,
   gradient: `
     bg-gradient-to-r from-purple-600 via-blue-500 to-cyan-500

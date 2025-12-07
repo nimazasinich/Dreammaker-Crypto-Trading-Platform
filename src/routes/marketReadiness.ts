@@ -3,7 +3,7 @@
  * Check data availability and readiness for trading symbols
  */
 import express from 'express';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { RealMarketDataService } from '../services/RealMarketDataService.js';
 import { HistoricalDataService } from '../services/HistoricalDataService.js';
 import { RedisService } from '../services/RedisService.js';

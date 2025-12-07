@@ -74,7 +74,8 @@ class RequestDeduplicator {
       inFlight: this.inFlightRequests.size,
       deduplicationRate: this.stats.totalRequests > 0
         ? (this.stats.dedupedRequests / this.stats.totalRequests) * 100
-        : 0
+        : 0,
+      deduplicatedCount: this.stats.dedupedRequests
     };
   }
 

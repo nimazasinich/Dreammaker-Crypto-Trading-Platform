@@ -3,11 +3,11 @@
  * Comprehensive order management system with multiple order types and lifecycle tracking
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { Database } from '../data/Database.js';
 import { BinanceService } from './BinanceService.js';
 import { KuCoinService } from './KuCoinService.js';
-import { ConfigManager } from '../core/ConfigManager.js';
+import { ConfigManager } from '../core/ConfigManager';
 
 export type OrderType = 'MARKET' | 'LIMIT' | 'STOP_LOSS' | 'STOP_LIMIT' | 'TRAILING_STOP' | 'OCO';
 export type OrderSide = 'BUY' | 'SELL';

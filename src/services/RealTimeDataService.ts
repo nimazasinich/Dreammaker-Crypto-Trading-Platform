@@ -3,7 +3,7 @@
  * WebSocket service for live market data streaming
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { wsUrl } from '../lib/ws';
 
 export interface RealTimeUpdate {

@@ -6,7 +6,7 @@
  */
 
 import { Request, Response } from 'express';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { hfDataEngineAdapter } from '../services/HFDataEngineAdapter.js';
 
 export class HFDataEngineController {

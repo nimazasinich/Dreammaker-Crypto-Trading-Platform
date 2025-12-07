@@ -1,6 +1,6 @@
 // Notification service for signal alerts
 import { FinalSignal } from './types';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { notifyHighSeverity, notifyLiquidation } from '../services/telegram.js';
 import { broadcastLiquidationRisk } from '../server/wsBroadcast.js';
 

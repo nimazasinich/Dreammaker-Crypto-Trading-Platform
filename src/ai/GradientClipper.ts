@@ -1,4 +1,4 @@
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 export interface GradientClipConfig {
   maxNorm: number;

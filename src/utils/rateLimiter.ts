@@ -45,7 +45,7 @@ export { SmartRateLimiter } from './SmartRateLimiter.js';
 /**
  * Enhanced Rate Limiter with Retry Logic
  */
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 const logger = Logger.getInstance();
 

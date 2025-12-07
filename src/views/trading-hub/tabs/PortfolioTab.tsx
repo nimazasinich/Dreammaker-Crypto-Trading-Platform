@@ -134,7 +134,7 @@ export const PortfolioTab: React.FC<TradingTabProps> = ({
 
     return (
         <div className="space-y-6">
-            {ModalComponent}
+            <ModalComponent />
 
             {/* Portfolio Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

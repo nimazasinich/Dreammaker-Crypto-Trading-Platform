@@ -5,7 +5,7 @@
  * All external API calls (NewsAPI, CryptoPanic, Alternative.me) have been removed.
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { cryptoAPI } from './CryptoAPI';
 
 export interface NewsItem {

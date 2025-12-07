@@ -1,6 +1,6 @@
 import { PredictionData, TrainingMetrics } from '../types';
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 class AIPredictionService {
   private isTraining = false;
   private currentEpoch = 0;

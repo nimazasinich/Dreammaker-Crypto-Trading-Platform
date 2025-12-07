@@ -1,6 +1,6 @@
 // src/components/connectors/RealPriceChartConnector.tsx
 import React, { useState, useEffect } from 'react';
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import { MarketData } from '../../types';
 import { useLiveData } from '../LiveDataContext';
 import { PriceChart } from '../market/PriceChart';

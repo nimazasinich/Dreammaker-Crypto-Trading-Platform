@@ -1,5 +1,5 @@
 // src/services/FibonacciDetector.ts
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { OHLCVData } from './MultiProviderMarketDataService.js';
 
 export interface FibonacciLevel {

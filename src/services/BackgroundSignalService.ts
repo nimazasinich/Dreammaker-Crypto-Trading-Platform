@@ -4,7 +4,7 @@
  * Automatically starts when app loads and runs continuously
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { SignalAgent } from './SignalAgent.js';
 import { ExtremePoint } from './ExtremePointsDetector.js';
 import { MarketData } from '../types/index.js';
@@ -225,6 +225,7 @@ class BackgroundSignalService {
       const volume = 1000000 + Math.random() * 5000000;
 
       data.push({
+        symbol,
         timestamp: now - i * 3600000,
         open,
         high,

@@ -13,7 +13,7 @@
  * - Honest about success/failure (NO FAKE FILLS)
  */
 
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import { ExchangeClient, PlaceOrderParams, PlaceOrderResult } from '../../services/exchange/ExchangeClient.js';
 import { RiskGuard } from './RiskGuard.js';
 import { Database } from '../../data/Database.js';

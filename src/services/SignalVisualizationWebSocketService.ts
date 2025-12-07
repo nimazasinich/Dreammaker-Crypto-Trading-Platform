@@ -1,6 +1,6 @@
 // SignalVisualizationWebSocketService.ts - WebSocket service for real-time signal visualization
 import { WebSocketServer, WebSocket } from 'ws';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { SignalGeneratorService, Signal } from '../services/SignalGeneratorService.js';
 import { SMCAnalyzer } from '../services/SMCAnalyzer.js';
 import { ElliottWaveAnalyzer } from '../services/ElliottWaveAnalyzer.js';

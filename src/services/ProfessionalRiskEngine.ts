@@ -12,7 +12,7 @@
  * - Whale Movement Impact
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { realDataManager } from './RealDataManager.js';
 
 const logger = Logger.getInstance();

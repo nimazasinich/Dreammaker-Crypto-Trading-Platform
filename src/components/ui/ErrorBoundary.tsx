@@ -1,6 +1,6 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;

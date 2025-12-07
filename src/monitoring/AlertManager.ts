@@ -1,5 +1,5 @@
 // src/monitoring/AlertManager.ts
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 export interface Alert {
   id: string;

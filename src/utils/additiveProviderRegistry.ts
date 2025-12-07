@@ -1,7 +1,7 @@
 // src/utils/additiveProviderRegistry.ts
 // Additive Provider Registry - جلوگیری از overwrite و حذف providerهای موجود
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 const logger = Logger.getInstance();
 

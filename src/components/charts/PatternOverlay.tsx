@@ -4,7 +4,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import { AdvancedChart } from '../AdvancedChart.js';
 import { fmt } from '../../utils/num.js';
 import { apiUrl } from '../../lib/api';

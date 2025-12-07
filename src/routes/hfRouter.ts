@@ -3,7 +3,7 @@
  * Consolidated Hugging Face integration endpoints
  */
 import express from 'express';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { HFDataEngineController } from '../controllers/HFDataEngineController.js';
 import { HFSentimentService } from '../services/HFSentimentService.js';
 import { HFOHLCVService } from '../services/HFOHLCVService.js';

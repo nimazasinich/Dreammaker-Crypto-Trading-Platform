@@ -3,7 +3,7 @@
  * Real gradient calculation using backpropagation algorithm
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 export type ActivationFunction = 'leakyReLU' | 'sigmoid' | 'tanh' | 'linear';
 

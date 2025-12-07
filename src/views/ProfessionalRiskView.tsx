@@ -4,7 +4,7 @@ import { RiskGauge } from '../components/risk/RiskGauge';
 import { LiquidationBar } from '../components/risk/LiquidationBar';
 import { StressTestCard } from '../components/risk/StressTestCard';
 import { RiskAlertCard } from '../components/risk/RiskAlertCard';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { API_BASE, USE_MOCK_DATA } from '../config/env';
 import { TradingDashboard } from '../components/trading/TradingDashboard';
 import { Portfolio } from '../components/portfolio/Portfolio';
@@ -35,11 +35,22 @@ interface RiskAlert {
   title: string;
   description: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
+  action?: string;
+  impactScore?: number;
+  timestamp?: number;
 }
 
 interface StressTest {
   scenario: string;
   impact: number;
+  description?: string;
+  priceImpact?: number;
+  portfolioImpact?: number;
+  wouldLiquidate?: boolean;
+  affectedPositions?: number;
+  recoveryTime?: string;
+  probability?: number | 'high' | 'medium' | 'low';
+  severity?: 'critical' | 'high' | 'medium' | 'low';
 }
 
 interface SignalUpdate {
@@ -496,7 +507,7 @@ const ProfessionalMetricsContent: React.FC = () => {
                   symbol={pos.symbol}
                   currentPrice={pos.currentPrice}
                   liquidationPrice={pos.liquidationPrice}
-                  side={pos.side}
+                  side={pos.side.toUpperCase() as 'LONG' | 'SHORT'}
                   leverage={pos.leverage}
                   distancePercent={parseFloat(pos.liquidationDistance)}
                 />
@@ -518,7 +529,16 @@ const ProfessionalMetricsContent: React.FC = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {metrics.alerts.slice(0, 6).map((alert: RiskAlert, idx: number) => (
-              <RiskAlertCard key={idx} {...alert} />
+              <RiskAlertCard 
+                key={idx} 
+                severity={alert.severity as 'critical' | 'high' | 'medium' | 'low'}
+                type={alert.type as any}
+                title={alert.title}
+                description={alert.description}
+                action={alert.action || 'Review'}
+                impactScore={alert.impactScore || 0.5}
+                timestamp={alert.timestamp || Date.now()}
+              />
             ))}
           </div>
         </div>
@@ -536,7 +556,16 @@ const ProfessionalMetricsContent: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
           {(metrics.stressTests || []).map((test: StressTest, idx: number) => (
-            <StressTestCard key={idx} {...test} />
+            <StressTestCard 
+              key={idx} 
+              scenario={test.scenario}
+              description={test.description || test.scenario}
+              priceImpact={test.priceImpact || test.impact}
+              portfolioImpact={test.portfolioImpact || test.impact}
+              wouldLiquidate={test.wouldLiquidate || false}
+              probability={typeof test.probability === 'number' ? (test.probability > 0.7 ? 'high' : test.probability > 0.4 ? 'medium' : 'low') : (test.probability || 'medium')}
+              severity={test.severity || 'medium'}
+            />
           ))}
         </div>
       </div>

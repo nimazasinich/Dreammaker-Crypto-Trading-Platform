@@ -6,7 +6,7 @@
 import { MarketData } from '../types/index.js';
 
 export interface HarmonicPattern {
-  type: 'GARTLEY' | 'BUTTERFLY' | 'BAT' | 'CRAB' | 'SHARK' | 'CYPHER';
+  type: 'GARTLEY' | 'BUTTERFLY' | 'BAT' | 'CRAB' | 'SHARK' | 'CYPHER' | 'ABCD';
   direction: 'BULLISH' | 'BEARISH';
   points: {
     X: { price: number; timestamp: number };
@@ -18,11 +18,18 @@ export interface HarmonicPattern {
   prz: { // Potential Reversal Zone
     upper: number;
     lower: number;
+    confluence?: number;
   };
   reliabilityScore: number;
   confidence?: number;
   targetLevels: number[];
   stopLoss: number;
+  fibonacciLevels?: Array<{
+    level: number;
+    price: number;
+    type: 'RETRACEMENT' | 'EXTENSION';
+  }>;
+  completionProbability?: number;
 }
 
 // Fibonacci ratios for each pattern

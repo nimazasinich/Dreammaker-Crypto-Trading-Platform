@@ -5,7 +5,7 @@
  * All fixtures are pre-recorded, deterministic datasets
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 const logger = Logger.getInstance();
 

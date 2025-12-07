@@ -22,12 +22,12 @@ import { PerformanceChart } from '../../../components/strategy/PerformanceChart'
 
 export const InsightsTab: React.FC = () => {
     const [symbol, setSymbol] = useState('BTCUSDT');
-    const { results, isLoading, error, execute } = useStrategyPipeline();
+    const { data: results, isLoading, error, runDefaultPipeline: execute } = useStrategyPipeline();
 
     // Auto-execute pipeline on mount
     useEffect(() => {
-        execute(symbol);
-    }, [symbol]);
+        if (execute) execute();
+    }, [symbol, execute]);
 
     if (isLoading) {
         return (
@@ -71,7 +71,7 @@ export const InsightsTab: React.FC = () => {
                     </select>
 
                     <button
-                        onClick={() => execute(symbol)}
+                        onClick={() => execute && execute()}
                         className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
                     >
                         <Zap className="w-4 h-4" />
@@ -96,19 +96,15 @@ export const InsightsTab: React.FC = () => {
 
                         {results.strategy1 && (
                             <>
-                                <ScoreGauge score={results.strategy1.score} size="md" />
+                                <ScoreGauge score={results.strategy1.symbols?.[0]?.core || 0.5} size="md" />
                                 <div className="mt-4 space-y-2 text-sm">
                                     <div className="flex justify-between">
-                                        <span className="text-muted-foreground">Action:</span>
-                                        <span className={`font-medium ${results.strategy1.action === 'BUY' ? 'text-green-500' :
-                                            results.strategy1.action === 'SELL' ? 'text-red-500' : 'text-gray-500'
-                                            }`}>
-                                            {results.strategy1.action}
-                                        </span>
+                                        <span className="text-muted-foreground">Symbols:</span>
+                                        <span className="font-medium">{results.strategy1.symbols?.length || 0}</span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span className="text-muted-foreground">Confidence:</span>
-                                        <span className="font-medium">{(results.strategy1.confidence * 100).toFixed(0)}%</span>
+                                        <span className="text-muted-foreground">Avg Score:</span>
+                                        <span className="font-medium">{(results.strategy1.meta?.avgScore || 0).toFixed(2)}</span>
                                     </div>
                                 </div>
                             </>
@@ -129,19 +125,15 @@ export const InsightsTab: React.FC = () => {
 
                         {results.strategy2 && (
                             <>
-                                <ScoreGauge score={results.strategy2.score} size="md" />
+                                <ScoreGauge score={results.strategy2.symbols?.[0]?.core || 0.5} size="md" />
                                 <div className="mt-4 space-y-2 text-sm">
                                     <div className="flex justify-between">
-                                        <span className="text-muted-foreground">Action:</span>
-                                        <span className={`font-medium ${results.strategy2.action === 'BUY' ? 'text-green-500' :
-                                            results.strategy2.action === 'SELL' ? 'text-red-500' : 'text-gray-500'
-                                            }`}>
-                                            {results.strategy2.action}
-                                        </span>
+                                        <span className="text-muted-foreground">Symbols:</span>
+                                        <span className="font-medium">{results.strategy2.symbols?.length || 0}</span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span className="text-muted-foreground">Confidence:</span>
-                                        <span className="font-medium">{(results.strategy2.confidence * 100).toFixed(0)}%</span>
+                                        <span className="text-muted-foreground">Avg Score:</span>
+                                        <span className="font-medium">{(results.strategy2.meta?.avgScore || 0).toFixed(2)}</span>
                                     </div>
                                 </div>
                             </>
@@ -162,19 +154,15 @@ export const InsightsTab: React.FC = () => {
 
                         {results.strategy3 && (
                             <>
-                                <ScoreGauge score={results.strategy3.score} size="md" />
+                                <ScoreGauge score={results.strategy3.symbols?.[0]?.core || 0.5} size="md" />
                                 <div className="mt-4 space-y-2 text-sm">
                                     <div className="flex justify-between">
-                                        <span className="text-muted-foreground">Action:</span>
-                                        <span className={`font-medium ${results.strategy3.action === 'BUY' ? 'text-green-500' :
-                                            results.strategy3.action === 'SELL' ? 'text-red-500' : 'text-gray-500'
-                                            }`}>
-                                            {results.strategy3.action}
-                                        </span>
+                                        <span className="text-muted-foreground">Symbols:</span>
+                                        <span className="font-medium">{results.strategy3.symbols?.length || 0}</span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span className="text-muted-foreground">Confidence:</span>
-                                        <span className="font-medium">{(results.strategy3.confidence * 100).toFixed(0)}%</span>
+                                        <span className="text-muted-foreground">Avg Score:</span>
+                                        <span className="font-medium">{(results.strategy3.meta?.avgScore || 0).toFixed(2)}</span>
                                     </div>
                                 </div>
                             </>
@@ -187,7 +175,12 @@ export const InsightsTab: React.FC = () => {
             {results && (
                 <div className="bg-card p-6 rounded-lg shadow-lg">
                     <h4 className="text-lg font-semibold mb-4">Strategy Performance Comparison</h4>
-                    <PerformanceChart data={results} />
+                    <PerformanceChart 
+                        data={results}
+                        currentScore={results.strategy1.symbols?.[0]?.core || 0.5}
+                        currentConfidence={results.strategy1.symbols?.[0]?.confidence || 0.85}
+                        currentAction={results.strategy1.symbols?.[0]?.action || "HOLD"}
+                    />
                 </div>
             )}
 

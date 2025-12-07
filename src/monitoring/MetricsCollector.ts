@@ -1,5 +1,5 @@
 // src/monitoring/MetricsCollector.ts
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 export interface Metric {
   name: string;
@@ -83,7 +83,20 @@ export class MetricsCollector {
     }
   }
 
-  getMetrics(name?: string, since?: number): Metric[] {
+  getMetrics(name?: string, since?: number): Metric[] | { cpu: number; memory: number; disk: number } {
+    // If called with no arguments, return aggregated system metrics
+    if (name === undefined && since === undefined) {
+      const cpuMetric = this.metrics.find(m => m.name === 'cpu');
+      const memMetric = this.metrics.find(m => m.name === 'memory');
+      const diskMetric = this.metrics.find(m => m.name === 'disk');
+      
+      return {
+        cpu: cpuMetric?.value || 0,
+        memory: memMetric?.value || 0,
+        disk: diskMetric?.value || 0
+      };
+    }
+
     let filtered = this.metrics;
 
     if (name) {

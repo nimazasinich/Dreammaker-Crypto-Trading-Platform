@@ -12,7 +12,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import { TuningRunResult } from '../../types/index.js';
 
 interface TuningIndexEntry {

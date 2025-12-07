@@ -14,7 +14,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import { BacktestService } from '../../services/backtestService.js';
 import {
   TuningRunResult,

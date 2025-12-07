@@ -68,9 +68,9 @@ export const BuilderTab: React.FC = () => {
             {/* Strategy Template Editor */}
             <div className="bg-card p-6 rounded-lg shadow-lg">
                 <StrategyTemplateEditor
-                    template={selectedTemplate}
-                    onSave={(template) => {
-                        setSelectedTemplate(template);
+                    template={selectedTemplate as any}
+                    onSave={(template: any) => {
+                        if (template) setSelectedTemplate(template);
                         handleSaveStrategy();
                     }}
                 />

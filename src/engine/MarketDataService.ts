@@ -1,7 +1,7 @@
 // Market Data Service for the Signal Engine
 import { OHLC } from './types';
 import { RealMarketDataService } from '../services/RealMarketDataService.js';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 const logger = Logger.getInstance();
 

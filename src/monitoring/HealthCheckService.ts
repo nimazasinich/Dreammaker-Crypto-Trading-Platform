@@ -1,9 +1,9 @@
 // src/monitoring/HealthCheckService.ts
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { Database } from '../data/Database.js';
 import { RedisService } from '../services/RedisService.js';
 import { BinanceService } from '../services/BinanceService.js';
-import { ConfigManager } from '../core/ConfigManager.js';
+import { ConfigManager } from '../core/ConfigManager';
 
 export interface HealthStatus {
   status: 'healthy' | 'degraded' | 'unhealthy';
@@ -50,6 +50,14 @@ export class HealthCheckService {
       HealthCheckService.instance = new HealthCheckService();
     }
     return HealthCheckService.instance;
+  }
+
+  async checkHealth(): Promise<HealthStatus> {
+    return await this.performHealthCheck();
+  }
+
+  async check(): Promise<HealthStatus> {
+    return await this.performHealthCheck();
   }
 
   async performHealthCheck(): Promise<HealthStatus> {
@@ -174,7 +182,7 @@ export class HealthCheckService {
     const startTime = Date.now();
     try {
       // Check if real data mode is enabled
-      if (!this.config.isRealDataMode()) {
+      if (!this.config.isRealDataMode) {
         return {
           status: 'healthy',
           lastCheck: Date.now()
@@ -249,7 +257,7 @@ export class HealthCheckService {
       ...health,
       dependencies: {
         config: {
-          realDataMode: this.config.isRealDataMode(),
+          realDataMode: this.config.isRealDataMode,
           tradingEnabled: this.config.getExchangeConfig().tradingEnabled
         },
         environment: process.env.NODE_ENV || 'development'

@@ -1,4 +1,4 @@
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { BinanceService } from './BinanceService.js';
 import { KuCoinService } from './KuCoinService.js';
 import { Database } from '../data/Database.js';
@@ -8,7 +8,7 @@ import { MultiProviderMarketDataService } from './MultiProviderMarketDataService
 import { SentimentNewsService } from './SentimentNewsService.js';
 import { RealTradingService } from './RealTradingService.js';
 import { HFOHLCVService } from './HFOHLCVService.js';
-import { ConfigManager } from '../core/ConfigManager.js';
+import { ConfigManager } from '../core/ConfigManager';
 // COMMENTED OUT: Missing FallbackDataProvider - need to be created or removed
 // import { FallbackDataProvider } from '../providers/FallbackDataProvider.js';
 import cron from 'node-cron';
@@ -68,7 +68,7 @@ export class MarketDataIngestionService {
       // Always use multi-provider service (primary source)
       if (!this.bootFlags.startOnBoot) {
         this.logger.info('Skipping ingestion at boot (START_INGEST_ON_BOOT=false)');
-      } else if (this.config.isRealDataMode()) {
+      } else if (this.config.isRealDataMode) {
         this.logger.info('Starting multi-provider market data ingestion (boot-gated)');
         await this.startRealTimeDataCollection();
         await this.startHistoricalDataCollection(this.bootFlags.histLimit);
@@ -470,6 +470,7 @@ export class MarketDataIngestionService {
 
     // Use SentimentNewsService for news streaming
     this.newsStreamCleanup = this.sentimentNewsService.startNewsStream(
+      ['BTC', 'ETH'],
       async (newsItem) => {
         try {
           await this.redisService.publish('news_update', { 
@@ -480,8 +481,7 @@ export class MarketDataIngestionService {
         } catch (error) {
           this.logger.error('News publish error', {}, error as Error);
         }
-      },
-      newsInterval
+      }
     );
 
     this.logger.info('News collection started', { interval: newsInterval });
@@ -492,7 +492,7 @@ export class MarketDataIngestionService {
 
     // Initial sentiment fetch
     try {
-      const sentiment = await this.sentimentNewsService.getAggregatedSentiment();
+      const sentiment = await this.sentimentNewsService.getAggregatedSentiment(['BTC', 'ETH']);
       await this.redisService.publish('sentiment_update', sentiment);
       this.logger.info('Initial sentiment data published', { sentiment });
     } catch (error) {
@@ -502,12 +502,12 @@ export class MarketDataIngestionService {
     // Periodic sentiment updates
     this.sentimentIntervalId = setInterval(async () => {
       try {
-        const sentiment = await this.sentimentNewsService.getAggregatedSentiment();
-        await this.redisService.publish('sentiment_update', sentiment);
-        this.logger.debug('Sentiment analysis completed', {
-          overallSentiment: sentiment.overallSentiment,
-          score: sentiment.overallScore
-        });
+      const sentiment = await this.sentimentNewsService.getAggregatedSentiment(['BTC', 'ETH']);
+      await this.redisService.publish('sentiment_update', sentiment);
+      this.logger.debug('Sentiment analysis completed', {
+        overallSentiment: sentiment.overall > 0.5 ? 'BULLISH' : sentiment.overall < -0.5 ? 'BEARISH' : 'NEUTRAL',
+        score: sentiment.overall
+      });
       } catch (error) {
         this.logger.error('Sentiment analysis error', {}, error as Error);
       }

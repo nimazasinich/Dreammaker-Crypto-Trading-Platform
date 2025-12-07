@@ -6,7 +6,7 @@
  */
 
 import { MarketData } from '../types';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { cryptoAPI } from './CryptoAPI';
 
 interface TechnicalIndicators {

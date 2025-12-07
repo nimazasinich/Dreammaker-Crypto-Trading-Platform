@@ -28,8 +28,8 @@
  */
 
 import axios, { AxiosInstance } from 'axios';
-import { Logger } from '../core/Logger.js';
-import { ConfigManager } from '../core/ConfigManager.js';
+import { Logger } from '../core/Logger';
+import { ConfigManager } from '../core/ConfigManager';
 import { TokenBucket } from '../utils/rateLimiter.js';
 import { TTLCache } from '../utils/cache.js';
 

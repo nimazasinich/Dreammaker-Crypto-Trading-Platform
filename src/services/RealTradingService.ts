@@ -1,6 +1,6 @@
 // src/services/RealTradingService.ts
 // REFACTORED: Now uses DatasourceClient instead of RealMarketDataService
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 export class RealTradingService {
   private logger = Logger.getInstance();

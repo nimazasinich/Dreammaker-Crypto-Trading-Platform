@@ -5,7 +5,7 @@
  * All external API calls (CoinGecko, CryptoCompare, Binance) have been removed.
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { cryptoAPI } from './CryptoAPI';
 
 export interface HistoricalDataPoint {

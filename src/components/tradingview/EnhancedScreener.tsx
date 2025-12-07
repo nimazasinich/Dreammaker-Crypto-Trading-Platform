@@ -20,7 +20,10 @@ interface CryptoData {
 
 interface EnhancedScreenerProps {
   theme?: 'light' | 'dark';
+  onSymbolClick?: (symbol: string) => void;
 }
+
+export type { EnhancedScreenerProps };
 
 const EnhancedScreener: React.FC<EnhancedScreenerProps> = ({ theme = 'light' }) => {
   const [searchQuery, setSearchQuery] = useState('');

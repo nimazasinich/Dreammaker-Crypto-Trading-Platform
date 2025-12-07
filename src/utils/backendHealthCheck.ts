@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { API_BASE } from '../config/env.js';
 
 const logger = Logger.getInstance();

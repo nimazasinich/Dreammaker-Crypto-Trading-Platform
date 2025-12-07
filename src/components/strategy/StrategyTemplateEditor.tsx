@@ -12,10 +12,15 @@ import {
 import { showToast } from '../ui/Toast';
 import { useConfirmModal } from '../ui/ConfirmModal';
 
-export const StrategyTemplateEditor: React.FC = () => {
+interface StrategyTemplateEditorProps {
+    template?: StrategyTemplate;
+    onSave?: (template: StrategyTemplate) => void;
+}
+
+export const StrategyTemplateEditor: React.FC<StrategyTemplateEditorProps> = ({ template: initialTemplate, onSave: onSaveCallback }) => {
     const { confirm, ModalComponent } = useConfirmModal();
-    const [selectedTemplate, setSelectedTemplate] = useState<StrategyTemplate>(STRATEGY_TEMPLATES.trendFollowing);
-    const [editedTemplate, setEditedTemplate] = useState<StrategyTemplate>(selectedTemplate);
+    const [selectedTemplate, setSelectedTemplate] = useState<StrategyTemplate>(initialTemplate || STRATEGY_TEMPLATES.trendFollowing);
+    const [editedTemplate, setEditedTemplate] = useState<StrategyTemplate>(initialTemplate || selectedTemplate);
     const [isEditing, setIsEditing] = useState(false);
     const [savedTemplates, setSavedTemplates] = useState<StrategyTemplate[]>([]);
 

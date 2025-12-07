@@ -106,9 +106,9 @@ export async function newsLayer(symbol: string): Promise<LayerScore> {
       }
     }
 
-    // Most recent news timestamp (use 'published' property)
-    if ((relevantNews?.length || 0) > 0 && relevantNews[0].published) {
-      const latestNewsTime = new Date(relevantNews[0].published);
+    // Most recent news timestamp (use 'publishedAt' property)
+    if ((relevantNews?.length || 0) > 0 && relevantNews[0].publishedAt) {
+      const latestNewsTime = new Date(relevantNews[0].publishedAt);
       const hoursAgo = (Date.now() - latestNewsTime.getTime()) / (1000 * 60 * 60);
       reasons.push(`Latest: ${hoursAgo.toFixed(0)}h ago`);
     }

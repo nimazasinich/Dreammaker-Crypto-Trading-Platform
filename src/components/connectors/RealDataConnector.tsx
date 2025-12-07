@@ -4,7 +4,7 @@
  */
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import DatasourceClient from '../../services/DatasourceClient';
 import { dataManager } from '../../services/dataManager';
 

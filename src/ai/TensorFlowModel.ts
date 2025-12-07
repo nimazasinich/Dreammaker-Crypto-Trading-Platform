@@ -1,5 +1,5 @@
 // src/ai/TensorFlowModel.ts
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { MarketData } from '../types/index.js';
 
 const logger = Logger.getInstance();

@@ -6,7 +6,7 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 const logger = Logger.getInstance();
 

@@ -8,7 +8,7 @@
  * 4. Providing request budgeting
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 export interface BootstrapState {
   isBootstrapping: boolean;

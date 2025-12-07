@@ -1,12 +1,12 @@
 // src/controllers/SystemController.ts
 import { Request, Response } from 'express';
-import { Logger } from '../core/Logger.js';
-import { ConfigManager } from '../core/ConfigManager.js';
+import { Logger } from '../core/Logger';
+import { ConfigManager } from '../core/ConfigManager';
 import { Database } from '../data/Database.js';
 import { RedisService } from '../services/RedisService.js';
 import { MultiProviderMarketDataService } from '../services/MultiProviderMarketDataService.js';
 import { BinanceService } from '../services/BinanceService.js';
-import { AdvancedCache } from '../core/AdvancedCache.js';
+import { AdvancedCache } from '../core/AdvancedCache';
 import { hfDataEngineAdapter } from '../services/HFDataEngineAdapter.js';
 import { getPrimarySource } from '../config/dataSource.js';
 
@@ -130,7 +130,7 @@ export class SystemController {
                     system: cpuUsage.system
                 },
                 config: {
-                    realDataMode: this.config.isRealDataMode(),
+                    realDataMode: this.config.isRealDataMode,
                     tradingEnabled: this.config.getExchangeConfig().tradingEnabled
                 }
             };
@@ -186,8 +186,8 @@ export class SystemController {
     async getConfig(req: Request, res: Response): Promise<void> {
         try {
             const config = {
-                realDataMode: this.config.isRealDataMode(),
-                demoMode: this.config.isDemoMode(),
+                realDataMode: this.config.isRealDataMode,
+                demoMode: this.config.isDemoMode,
                 exchange: this.config.getExchangeConfig(),
                 marketData: this.config.getMarketDataConfig(),
                 timestamp: Date.now()

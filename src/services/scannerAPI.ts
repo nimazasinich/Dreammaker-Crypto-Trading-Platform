@@ -1,7 +1,7 @@
 // Complete Scanner API Integration
 // This file ensures all scanner components can fetch real data from backend
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { API_BASE } from '../config/env.js';
 
 const logger = Logger.getInstance();

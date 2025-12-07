@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createChart, IChartApi, ISeriesApi, CandlestickData as LWCandlestickData } from 'lightweight-charts';
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import { CandlestickData } from '../../types';
 import { marketDataService } from '../../services/marketDataService';
 import { RefreshCw } from 'lucide-react';
@@ -137,15 +137,24 @@ export const LightweightPriceChart: React.FC<LightweightPriceChartProps> = ({
       },
     });
 
-    // Add candlestick series
-    const candlestickSeries = chart.addCandlestickSeries({
-      upColor: '#10b981',
-      downColor: '#ef4444',
-      borderUpColor: '#10b981',
-      borderDownColor: '#ef4444',
-      wickUpColor: '#10b981',
-      wickDownColor: '#ef4444',
-    });
+    // Add candlestick series (v4 API)
+    const candlestickSeries = (chart as any).addCandlestickSeries ? 
+      (chart as any).addCandlestickSeries({
+        upColor: '#10b981',
+        downColor: '#ef4444',
+        borderUpColor: '#10b981',
+        borderDownColor: '#ef4444',
+        wickUpColor: '#10b981',
+        wickDownColor: '#ef4444',
+      }) : 
+      chart.addSeries({ type: 'Candlestick' } as any, {
+        upColor: '#10b981',
+        downColor: '#ef4444',
+        borderUpColor: '#10b981',
+        borderDownColor: '#ef4444',
+        wickUpColor: '#10b981',
+        wickDownColor: '#ef4444',
+      } as any);
 
     chartRef.current = chart;
     candlestickSeriesRef.current = candlestickSeries;

@@ -5,7 +5,7 @@
  */
 
 import axios, { AxiosError } from 'axios';
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 
 const logger = Logger.getInstance();
 

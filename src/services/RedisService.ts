@@ -1,6 +1,6 @@
 import Redis from 'ioredis';
-import { Logger } from '../core/Logger.js';
-import { ConfigManager } from '../core/ConfigManager.js';
+import { Logger } from '../core/Logger';
+import { ConfigManager } from '../core/ConfigManager';
 import { MarketData } from '../types/index.js';
 import { DISABLE_REDIS } from '../config/flags.js';
 import { logThrottled } from '../utils/logOnce.js';

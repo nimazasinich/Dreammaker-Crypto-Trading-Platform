@@ -4,7 +4,7 @@
  */
 import express from 'express';
 import { StrategyPipelineController } from '../controllers/StrategyPipelineController.js';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import fs from 'fs/promises';
 import path from 'path';
 

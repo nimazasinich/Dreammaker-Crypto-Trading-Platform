@@ -10,7 +10,7 @@
  * - Never fails - always has alternatives
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { CentralizedAPIConfig, APIConfig, APICategory, CORSProxy } from '../config/CentralizedAPIConfig.js';
 import { TTLCache } from '../utils/cache.js';
 import { TokenBucket } from '../utils/rateLimiter.js';

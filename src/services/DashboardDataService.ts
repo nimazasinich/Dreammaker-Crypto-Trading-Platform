@@ -6,7 +6,7 @@
  */
 
 import { dataService, ServiceResponse } from './DataService';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 const logger = Logger.getInstance();
 

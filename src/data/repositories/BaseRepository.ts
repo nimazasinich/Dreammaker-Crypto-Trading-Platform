@@ -1,5 +1,5 @@
 import { Database, Statement } from 'better-sqlite3';
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 
 export abstract class BaseRepository<T> {
   protected db: Database;

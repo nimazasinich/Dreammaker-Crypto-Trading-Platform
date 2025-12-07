@@ -3,7 +3,7 @@
  * Backtests trading strategies using real historical data
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { RealMarketDataService } from './RealMarketDataService.js';
 import { BacktestEngine } from '../ai/BacktestEngine.js';
 import { MarketData, BacktestResult } from '../types/index.js';

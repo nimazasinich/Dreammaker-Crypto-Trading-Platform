@@ -10,6 +10,7 @@ interface LoadingSpinnerProps {
   color?: string;
   className?: string;
   label?: string;
+  message?: string;
   fullScreen?: boolean;
   overlay?: boolean;
 }

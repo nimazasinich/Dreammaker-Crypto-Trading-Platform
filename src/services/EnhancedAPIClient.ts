@@ -13,7 +13,7 @@
  */
 
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { TTLCache } from '../utils/cache.js';
 import { CORSProxyService } from './CORSProxyService.js';
 import type { APIConfig } from '../config/CentralizedAPIConfig.js';

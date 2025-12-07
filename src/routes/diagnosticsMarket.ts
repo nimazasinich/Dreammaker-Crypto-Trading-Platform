@@ -3,7 +3,7 @@
  * Diagnostics and data quality checks for market data
  */
 import express from 'express';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { DataValidationService } from '../services/DataValidationService.js';
 import { HistoricalDataService } from '../services/HistoricalDataService.js';
 

@@ -1,6 +1,6 @@
 // src/controllers/AIController.ts
 import { Request, Response } from 'express';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { TrainingEngine } from '../ai/TrainingEngine.js';
 import { BullBearAgent } from '../ai/BullBearAgent.js';
 import { BacktestEngine } from '../ai/BacktestEngine.js';

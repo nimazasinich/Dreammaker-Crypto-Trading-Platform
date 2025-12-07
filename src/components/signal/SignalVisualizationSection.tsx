@@ -1,6 +1,6 @@
 // SignalVisualizationSection.tsx - Main integration component for signal visualization
 import React, { useState, useEffect } from 'react';
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import { SignalStagePipeline, StageData } from './SignalStagePipeline';
 import { SignalExamplesPanel } from './SignalExamplesPanel';
 import { ControlsPanel } from './ControlsPanel';

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Send, Save, Settings } from 'lucide-react';
 import axios from 'axios';
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import { showToast } from '../ui/Toast';
 import { useConfirmModal } from '../ui/ConfirmModal';
 

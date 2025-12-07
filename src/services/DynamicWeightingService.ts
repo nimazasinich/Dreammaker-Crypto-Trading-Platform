@@ -1,5 +1,5 @@
 // src/services/DynamicWeightingService.ts
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { TTLCache } from '../utils/cache.js';
 
 export interface WeightConfig {

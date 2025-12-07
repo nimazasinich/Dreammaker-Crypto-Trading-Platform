@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function ScoreGauge({ score = 0 }:{ score?: number }) {
+export default function ScoreGauge({ score = 0, size }:{ score?: number; size?: string }) {
   const pct = Math.max(0, Math.min(1, score)) * 100;
   return (
     <div className="w-full p-4 rounded-xl border border-white/20 bg-white/10 backdrop-blur">

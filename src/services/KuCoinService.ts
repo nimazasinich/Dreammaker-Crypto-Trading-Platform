@@ -2,8 +2,8 @@ import axios, { AxiosInstance } from 'axios';
 import { createHmac } from 'crypto';
 import WebSocket from 'ws';
 import { MarketData } from '../types/index.js';
-import { Logger } from '../core/Logger.js';
-import { ConfigManager } from '../core/ConfigManager.js';
+import { Logger } from '../core/Logger';
+import { ConfigManager } from '../core/ConfigManager';
 
 interface RateLimitInfo {
   requestsPerSecond: number;

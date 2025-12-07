@@ -1,4 +1,4 @@
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 export enum InitializationMode {
   UNIFORM = 'uniform',

@@ -4,7 +4,7 @@
  */
 
 import { Request, Response } from 'express';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { Database } from '../data/Database.js';
 import { QuantumScoringService } from '../scoring/service.js';
 import { WeightParliament } from '../scoring/weights.js';

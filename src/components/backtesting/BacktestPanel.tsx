@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import {
   PlayCircle,
   PauseCircle,

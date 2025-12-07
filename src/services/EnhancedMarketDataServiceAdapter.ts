@@ -5,7 +5,7 @@
  * Provides backward compatibility while leveraging new multi-source capabilities
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { UnifiedDataService, UnifiedPriceData } from './UnifiedDataService.js';
 import type { PriceData } from './MultiProviderMarketDataService.js';
 

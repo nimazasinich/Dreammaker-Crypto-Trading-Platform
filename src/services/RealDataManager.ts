@@ -1,4 +1,4 @@
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { DataMode } from '../types/modes';
 import { API_BASE } from '../config/env.js';
 import { isStrictRealData, canUseMockData, canUseSyntheticData } from '../config/dataPolicy.js';

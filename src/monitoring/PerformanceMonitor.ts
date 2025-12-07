@@ -1,5 +1,5 @@
 // src/monitoring/PerformanceMonitor.ts
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import os from 'os';
 
 export interface PerformanceMetrics {
@@ -38,6 +38,15 @@ export class PerformanceMonitor {
       PerformanceMonitor.instance = new PerformanceMonitor();
     }
     return PerformanceMonitor.instance;
+  }
+
+  getMetrics(): { cpu: number; memory: number; disk: number } {
+    const memUsage = process.memoryUsage();
+    return {
+      cpu: 0, // Placeholder - would need actual CPU monitoring
+      memory: (memUsage.heapUsed / memUsage.heapTotal) * 100,
+      disk: 0 // Placeholder - would need disk monitoring
+    };
   }
 
   collectMetrics(): PerformanceMetrics {

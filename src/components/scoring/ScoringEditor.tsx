@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import DatasourceClient from '../../services/DatasourceClient';
 import { showToast } from '../ui/Toast';
 import { useConfirmModal } from '../ui/ConfirmModal';

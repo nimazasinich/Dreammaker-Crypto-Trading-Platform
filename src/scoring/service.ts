@@ -14,7 +14,7 @@ import {
 import { ConstitutionalConverter } from './converter.js';
 import { SupremeJudicialCombiner } from './combiner.js';
 import { WeightParliament } from './weights.js';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { MarketData } from '../types/index.js';
 
 // Import detector services

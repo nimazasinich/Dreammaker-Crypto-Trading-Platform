@@ -4,7 +4,7 @@
  * Ensures all frontend components can access backend functionality
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { dataManager } from './dataManager.js';
 import { TechnicalAnalysisService } from './TechnicalAnalysisService.js';
 import { HistoricalDataService } from './HistoricalDataService.js';

@@ -3,7 +3,7 @@
 
 import rateLimit from 'express-rate-limit';
 import type { Request, Response } from 'express';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 const logger = Logger.getInstance();
 

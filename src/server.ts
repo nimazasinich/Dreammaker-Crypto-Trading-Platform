@@ -48,8 +48,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import { createServer } from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
-import { Logger } from './core/Logger.js';
-import { ConfigManager } from './core/ConfigManager.js';
+import { Logger } from './core/Logger';
+import { ConfigManager } from './core/ConfigManager';
 import { Database } from './data/Database.js';
 import { BinanceService } from './services/BinanceService.js';
 import { KuCoinService } from './services/KuCoinService.js';
@@ -1514,9 +1514,9 @@ app.get('/api/providers/categories', async (req, res) => {
 app.get('/api/providers/:category', async (req, res) => {
   try {
     const { category } = req.params;
-    const { ProviderManager } = await import('./core/ProviderManager.js');
+    const { ProviderManager } = await import('./core/ProviderManager');
     const providerManager = ProviderManager.getInstance();
-    const providers = providerManager.getProviders(category);
+    const providers = providerManager.getProviders();
 
     res.json({
       success: true,
@@ -1765,7 +1765,7 @@ app.get('/api/market/cryptocompare-prices', async (req, res) => {
 app.get('/api/market/prices', async (req, res) => {
   try {
     const { symbols } = req.query;
-    const useRealData = config.isRealDataMode();
+    const useRealData = config.isRealDataMode;
     
     if (useRealData) {
       const symbolList = typeof symbols === 'string' 
@@ -2686,12 +2686,12 @@ app.get('/api/market/historical', async (req, res) => {
 app.get('/api/news/latest', async (req, res) => {
   try {
     const { limit = 20 } = req.query;
-    const news = await sentimentNewsService.getCryptoNews(Number(limit));
+    const news = await sentimentNewsService.getCryptoNews(String(limit));
     
     res.json({
       success: true,
-      news,
-      count: news.length,
+      news: news.articles || news,
+      count: news.articles ? news.articles.length : (news as any).length || 0,
       timestamp: Date.now()
     });
   } catch (error) {
@@ -2707,12 +2707,12 @@ app.get('/api/news/latest', async (req, res) => {
 app.get('/api/news/crypto', async (req, res) => {
   try {
     const { limit = 20 } = req.query;
-    const news = await sentimentNewsService.getCryptoNews(Number(limit));
+    const news = await sentimentNewsService.getCryptoNews(String(limit));
     
     res.json({
       success: true,
-      news,
-      count: news.length,
+      news: news.articles || news,
+      count: news.articles ? news.articles.length : (news as any).length || 0,
       source: 'SentimentNewsService',
       timestamp: Date.now()
     });
@@ -2728,7 +2728,7 @@ app.get('/api/news/crypto', async (req, res) => {
 // Market sentiment endpoint - ??????? ????? ?????
 app.get('/api/sentiment', async (req, res) => {
   try {
-    const sentiment = await sentimentNewsService.getAggregatedSentiment();
+    const sentiment = await sentimentNewsService.getAggregatedSentiment(['BTC', 'ETH']);
     
     res.json({
       success: true,
@@ -2750,7 +2750,7 @@ app.get('/api/market/analysis/:symbol', async (req, res) => {
     const { symbol } = req.params;
     const cleanSymbol = symbol.replace('USDT', '').toUpperCase();
 
-    if (!config.isRealDataMode()) {
+    if (!config.isRealDataMode) {
       return res.status(400).json({
         error: 'Real data mode is not enabled',
         message: 'Enable realDataMode in config to use this endpoint'
@@ -2776,7 +2776,7 @@ app.get('/api/market/analysis/:symbol', async (req, res) => {
 // Test endpoint for real data - ??? ???????? ?????
 app.get('/api/test/real-data', async (req, res) => {
   try {
-    if (!config.isRealDataMode()) {
+    if (!config.isRealDataMode) {
       return res.status(400).json({
         error: 'Real data mode is not enabled',
         message: 'Enable realDataMode in config to use this endpoint'
@@ -2787,7 +2787,7 @@ app.get('/api/test/real-data', async (req, res) => {
     const btcPrice = await multiProviderService.getRealTimePrice('BTC');
     
     // Get market sentiment
-    const sentiment = await sentimentNewsService.getAggregatedSentiment();
+    const sentiment = await sentimentNewsService.getAggregatedSentiment(['BTC', 'ETH']);
 
     res.json({
       success: true,
@@ -2802,8 +2802,8 @@ app.get('/api/test/real-data', async (req, res) => {
           timestamp: btcPrice.timestamp
         },
         sentiment: {
-          overallScore: sentiment.overallScore,
-          overallSentiment: sentiment.overallSentiment,
+          overallScore: sentiment.overall || 0,
+          overallSentiment: sentiment.overall > 0.5 ? 'BULLISH' : sentiment.overall < -0.5 ? 'BEARISH' : 'NEUTRAL',
           timestamp: sentiment.timestamp
         }
       },
@@ -3613,10 +3613,10 @@ app.get('/api/whale/transactions', async (req, res) => {
       .slice(0, Number(limit))
       .map(txn => ({
         amount: txn.amount,
-        direction: txn.direction,
+        direction: txn.type === 'buy' ? 'OUT' : 'IN',
         exchange: txn.exchange,
         timestamp: txn.timestamp,
-        walletCluster: txn.walletCluster,
+        walletCluster: 'unknown',
         usdValue: txn.amount * 50000 // Approximate USD value (would use real price)
       }));
     
@@ -4012,7 +4012,7 @@ async function handleSubscription(ws: WebSocket, data: any) {
       const symbolList = Array.isArray(symbols) ? symbols : [symbols];
       const cleanSymbols = (symbolList || []).map(s => s.replace('USDT', '').toUpperCase());
       
-      if (config.isRealDataMode()) {
+      if (config.isRealDataMode) {
         // Use multi-provider real-time streaming
         const cleanup = multiProviderService.startRealTimeStream(
           cleanSymbols,

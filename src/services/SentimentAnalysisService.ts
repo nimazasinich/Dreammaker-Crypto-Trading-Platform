@@ -1,5 +1,5 @@
 // src/services/SentimentAnalysisService.ts
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { SentimentData } from '../types/index.js';
 import { SentimentNewsService } from './SentimentNewsService.js';
 import { HFSentimentService } from './HFSentimentService.js';
@@ -70,7 +70,8 @@ export class SentimentAnalysisService {
       // Analyze news sentiment using HF models
       try {
         const startNews = Date.now();
-        const newsItems = await this.sentimentNewsService.getCryptoNews(50);
+        const newsResult = await this.sentimentNewsService.getCryptoNews(String(50));
+        const newsItems = newsResult.articles || [];
         const baseSymbol = symbol.replace('USDT', '').replace('USD', '').toLowerCase();
         
         // Filter news items for this symbol
@@ -91,8 +92,8 @@ export class SentimentAnalysisService {
           const newsScores = (symbolNews || []).map((item, index) => {
             const hfScore = hfResults.results[index]?.sentiment || 0;
             // Combine HF sentiment with item sentiment if available
-            if (item.sentiment === 'positive') return 30 + (hfScore * 70);
-            if (item.sentiment === 'negative') return -30 + (hfScore * 70);
+            if (item.sentiment && item.sentiment > 0.5) return 30 + (hfScore * 70);
+            if (item.sentiment && item.sentiment < -0.5) return -30 + (hfScore * 70);
             return hfScore * 100;
           });
           news = newsScores.reduce((sum, score) => sum + score, 0) / newsScores.length;
@@ -283,7 +284,8 @@ export class SentimentAnalysisService {
    */
   private async extractNewsImpact(symbol: string): Promise<SentimentData['newsImpact']> {
     try {
-      const newsItems = await this.sentimentNewsService.getCryptoNews(20);
+      const newsResult = await this.sentimentNewsService.getCryptoNews(String(20));
+      const newsItems = newsResult.articles || [];
       const baseSymbol = symbol.replace('USDT', '').replace('USD', '').toLowerCase();
       
       const symbolNews = newsItems
@@ -303,7 +305,7 @@ export class SentimentAnalysisService {
           return {
             headline: item.title,
             source: item.source,
-            timestamp: item.published.getTime(),
+            timestamp: new Date(item.publishedAt).getTime(),
             impact: (hfResult?.sentiment || 0) * 100,
             category: this.categorizeNewsHeadline(item.title)
           };

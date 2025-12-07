@@ -325,11 +325,7 @@ export const SpectacularLoader: React.FC = () => {
             {/* Animated icon */}
             <CurrentIcon 
               size={72} 
-              className="relative text-white drop-shadow-2xl" 
-              style={{ 
-                animation: 'icon-float 2.5s ease-in-out infinite',
-                filter: 'drop-shadow(0 0 20px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 40px rgba(255, 255, 255, 0.4))',
-              }} 
+              className="relative text-white drop-shadow-2xl animate-[icon-float_2.5s_ease-in-out_infinite]" 
             />
 
             {/* Corner accents */}
@@ -490,9 +486,6 @@ export const SpectacularLoader: React.FC = () => {
                 <CurrentIcon 
                   size={28} 
                   className="text-white drop-shadow-lg" 
-                  style={{
-                    filter: 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.6))',
-                  }}
                 />
               </div>
             </div>

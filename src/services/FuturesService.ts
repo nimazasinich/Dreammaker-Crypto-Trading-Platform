@@ -2,7 +2,7 @@
  * Futures Service
  * Orchestrates futures trading operations using adapter and repositories
  */
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { FEATURE_FUTURES, EXCHANGE_KUCOIN } from '../config/flags.js';
 // COMMENTED OUT: Missing futures provider files - need to be created or removed
 // import { IFuturesExchange } from '../providers/futures/IFuturesExchange.js';

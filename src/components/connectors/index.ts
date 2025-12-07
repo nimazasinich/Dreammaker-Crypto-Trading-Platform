@@ -1,7 +1,7 @@
 // Connector components - REFACTORED to use centralized data contexts
 // Memory leak issue FIXED: Now uses DataContext/LiveDataContext instead of independent API calls
 
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 const logger = Logger.getInstance();
 
 // Re-enabled after refactoring to prevent memory leaks

@@ -1,6 +1,6 @@
 // Structured error response utility for consistent API error handling
 import { Response } from 'express';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 
 const logger = Logger.getInstance();
 

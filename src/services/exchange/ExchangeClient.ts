@@ -6,7 +6,7 @@
  * NO FAKE DATA - all responses are from real testnet API or structured errors.
  */
 
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import { KuCoinFuturesService } from '../KuCoinFuturesService.js';
 import { TradingMarket } from '../../types/index.js';
 

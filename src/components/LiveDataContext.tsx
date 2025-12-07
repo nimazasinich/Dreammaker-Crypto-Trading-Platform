@@ -132,7 +132,7 @@ export const LiveDataProvider: React.FC<LiveDataProviderProps> = ({ children }) 
           if (checkInterval) clearInterval(checkInterval);
           return;
         }
-        const ws = (dataManager as DataManagerWithWS).ws;
+        const ws = (dataManager as unknown as DataManagerWithWS).ws;
         const connected = ws && ws.readyState === WebSocket.OPEN;
         setIsConnected(connected);
       }, 30000); // Reduced from 5 seconds to 30 seconds to prevent unnecessary overhead

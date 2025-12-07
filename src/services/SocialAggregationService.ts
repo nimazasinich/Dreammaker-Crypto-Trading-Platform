@@ -1,6 +1,6 @@
 // src/services/SocialAggregationService.ts
 import axios, { AxiosInstance } from 'axios';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { TokenBucket } from '../utils/rateLimiter.js';
 import { TTLCache } from '../utils/cache.js';
 import { HFSentimentService } from './HFSentimentService.js';

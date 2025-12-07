@@ -4,7 +4,7 @@
  * Uses cached data, local storage, and reasonable default values
  */
 
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import { RealPriceData } from './RealDataManager';
 
 const logger = Logger.getInstance();

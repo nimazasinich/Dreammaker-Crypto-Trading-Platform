@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Logger } from '../core/Logger.js';
+import { Logger } from '../core/Logger';
 import {
   Settings, Save, RotateCcw, Sliders, Shield, Zap, Award,
   TrendingUp, Bell, Globe, Lock, User, Database, RefreshCw, AlertCircle

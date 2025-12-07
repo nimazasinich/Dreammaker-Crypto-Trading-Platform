@@ -1,6 +1,6 @@
 // src/components/connectors/RealPortfolioConnector.tsx
 import React, { useState, useEffect } from 'react';
-import { Logger } from '../../core/Logger.js';
+import { Logger } from '../../core/Logger';
 import { realDataManager, RealPortfolioData } from '../../services/RealDataManager';
 import { Portfolio } from '../portfolio/Portfolio';
 
@@ -10,7 +10,10 @@ interface RealPortfolioConnectorProps {
     bsc?: string;
     trx?: string;
   };
+  children?: React.ReactNode | ((portfolioData: any) => React.ReactNode);
 }
+
+export type { RealPortfolioConnectorProps };
 
 /**
  * RealPortfolioConnector - Wraps Portfolio component with real blockchain balance data
