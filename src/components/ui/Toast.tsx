@@ -52,8 +52,8 @@ export interface ToastOptions {
 let toastIdCounter = 0;
 const toastListeners = new Set<(toasts: Toast[]) => void>();
 let currentToasts: Toast[] = [];
-let defaultPosition: ToastPosition = 'top-right';
-let defaultDuration = 5000;
+const defaultPosition: ToastPosition = 'top-right';
+const defaultDuration = 5000;
 
 const notifyListeners = () => {
   toastListeners.forEach(listener => listener([...currentToasts]));
