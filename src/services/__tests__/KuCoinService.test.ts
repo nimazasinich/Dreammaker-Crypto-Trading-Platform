@@ -340,7 +340,7 @@ describe('KuCoinService', () => {
     // Clean up timers and WebSocket connections
     const service = KuCoinService.getInstance();
     service.closeAllConnections();
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 });
 
@@ -403,7 +403,7 @@ describe('KuCoinService API Compliance', () => {
     // Clean up timers and WebSocket connections
     const service = KuCoinService.getInstance();
     service.closeAllConnections();
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 });
 

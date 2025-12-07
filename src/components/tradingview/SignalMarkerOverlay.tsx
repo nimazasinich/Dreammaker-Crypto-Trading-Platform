@@ -21,9 +21,11 @@ const SignalMarkerOverlay: React.FC<SignalMarkerOverlayProps> = ({
   chartHeight = 600,
   chartWidth = 1200
 }) => {
-  if (!signals || signals.length === 0) return null;
+  // Hooks must be called before any early returns
   const [hoveredSignal, setHoveredSignal] = useState<string | null>(null);
   const [expandedSignal, setExpandedSignal] = useState<string | null>(null);
+
+  if (!signals || signals.length === 0) return null;
 
   // Calculate marker positions (simplified - in real implementation, would map to actual chart coordinates)
   const getMarkerPosition = (signal: ExtremePoint, index: number) => {
