@@ -47,31 +47,30 @@ const EnhancedScreener: React.FC<EnhancedScreenerProps> = ({ theme = 'light' }) 
     danger: '#ef4444',
   };
 
-  // Fetch crypto data
+  // Fetch crypto data from HuggingFace API
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const symbols = ['BTC', 'ETH', 'BNB', 'SOL', 'XRP', 'ADA', 'DOGE', 'DOT', 'AVAX', 'LINK', 'MATIC', 'UNI'];
-        const response = await fetch(`https://api.binance.com/api/v3/ticker/24hr`);
+        // Use HuggingFace API to get top coins
+        const response = await fetch('https://Really-amin-Datasourceforcryptocurrency-2.hf.space/api/service/top?n=50');
         if (response.ok) {
-          const tickers = await response.json();
-          const filtered = tickers
-            .filter((t: any) => t.symbol.endsWith('USDT') && symbols.some(s => t.symbol.startsWith(s)))
-            .slice(0, 50)
-            .map((t: any) => ({
-              symbol: t.symbol.replace('USDT', ''),
-              name: t.symbol.replace('USDT', ''),
-              price: parseFloat(t.lastPrice),
-              change24h: parseFloat(t.priceChangePercent),
-              volume24h: parseFloat(t.quoteVolume),
-              marketCap: parseFloat(t.quoteVolume) * parseFloat(t.lastPrice),
-              rank: 0,
+          const data = await response.json();
+          if (data.data && Array.isArray(data.data)) {
+            const formatted = data.data.map((coin: any, index: number) => ({
+              symbol: coin.symbol || coin.name,
+              name: coin.name || coin.symbol,
+              price: coin.price || 0,
+              change24h: coin.change_24h || 0,
+              volume24h: coin.volume_24h || 0,
+              marketCap: coin.market_cap || 0,
+              rank: index + 1,
             }));
-          setCryptoData(filtered);
+            setCryptoData(formatted);
+          }
         }
       } catch (error) {
-        console.error('Failed to fetch crypto data:', error);
+        console.error('Failed to fetch crypto data from HuggingFace:', error);
       } finally {
         setIsLoading(false);
       }
