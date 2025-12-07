@@ -141,6 +141,13 @@ export class Logger {
     }
 
     /**
+     * Critical level log - alias for error (for critical situations)
+     */
+    critical(message: string, data?: Record<string, unknown>, error?: Error): void {
+        this.log('error', message, data, error);
+    }
+
+    /**
      * Core logging method
      */
     private log(

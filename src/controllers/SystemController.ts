@@ -6,7 +6,7 @@ import { Database } from '../data/Database.js';
 import { RedisService } from '../services/RedisService.js';
 import { MultiProviderMarketDataService } from '../services/MultiProviderMarketDataService.js';
 import { BinanceService } from '../services/BinanceService.js';
-import { AdvancedCache } from '../core/AdvancedCache';
+import { AdvancedCache } from '../utils/cache';
 import { hfDataEngineAdapter } from '../services/HFDataEngineAdapter.js';
 import { getPrimarySource } from '../config/dataSource.js';
 
