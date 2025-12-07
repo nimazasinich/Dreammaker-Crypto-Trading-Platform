@@ -1,0 +1,205 @@
+# Updated Requirements for Crypto Intelligence Hub V2
+# =====================================================
+# این فایل شامل تمام dependencies مورد نیاز برای نسخه ارتقا یافته است
+
+# ============================================================================
+# EXISTING DEPENDENCIES (Keep these)
+# ============================================================================
+
+# Core Web Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+flask==3.0.0
+flask-cors==4.0.0
+python-multipart==0.0.6
+python-dotenv==1.0.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# Database
+sqlalchemy==2.0.23
+aiosqlite==0.19.0
+
+# HTTP and async (UPDATED VERSION)
+aiohttp==3.9.3  # Updated for better proxy support
+httpx==0.25.2
+requests==2.31.0
+
+# AI/ML - HuggingFace
+transformers==4.36.0
+torch==2.1.1
+sentencepiece==0.1.99
+huggingface-hub==0.19.4
+
+# Utilities
+numpy==1.26.2
+pandas==2.1.4
+python-dateutil==2.8.2
+
+# WebSocket support
+websockets==12.0
+
+# Data validation
+jsonschema==4.20.0
+
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+
+
+# ============================================================================
+# NEW DEPENDENCIES (Add these for V2)
+# ============================================================================
+
+# --- Proxy Management ---
+aiohttp-socks==0.8.4  # SOCKS proxy support
+asyncio-throttle==1.0.2  # Rate limiting for async requests
+
+# --- DNS over HTTPS ---
+dnspython==2.4.2  # Advanced DNS operations (optional)
+aiodns==3.1.1  # Async DNS resolver (optional)
+
+# --- Caching (HIGHLY RECOMMENDED) ---
+redis==5.0.1  # Redis client
+aioredis==2.0.1  # Async Redis client
+cachetools==5.3.2  # Already in requirements, keep it
+
+# --- Rate Limiting ---
+slowapi==0.1.9  # Already in requirements, keep it
+limits==3.7.0  # Rate limiting utilities
+
+# --- Background Tasks ---
+apscheduler==3.10.4  # Task scheduling
+celery==5.3.4  # Distributed task queue (optional, for heavy workloads)
+flower==2.0.1  # Celery monitoring (optional)
+
+# --- Monitoring & Observability ---
+prometheus-client==0.19.0  # Prometheus metrics
+structlog==23.2.0  # Structured logging
+python-json-logger==2.0.7  # JSON logging
+
+# --- Circuit Breaker Pattern ---
+pybreaker==1.0.1  # Circuit breaker implementation
+
+# --- Retry Logic ---
+tenacity==8.2.3  # Retry with exponential backoff
+
+# --- Web Scraping (for proxy lists) ---
+beautifulsoup4==4.12.2  # HTML parsing
+lxml==4.9.3  # XML/HTML parser
+httpx-socks==0.8.0  # SOCKS support for httpx
+
+# --- Additional Utilities ---
+tqdm==4.66.1  # Progress bars
+colorama==0.4.6  # Colored terminal output
+
+
+# ============================================================================
+# OPTIONAL DEPENDENCIES
+# ============================================================================
+
+# --- Advanced Proxy Features ---
+# free-proxy==1.1.1  # Auto-fetch free proxies (alternative)
+# proxybroker==0.3.2  # Advanced proxy finder
+
+# --- Database (if you want to use PostgreSQL instead of SQLite) ---
+# psycopg2-binary==2.9.9  # PostgreSQL driver
+# asyncpg==0.29.0  # Async PostgreSQL
+
+# --- Message Queue (for Celery) ---
+# kombu==5.3.4  # Celery dependencies
+# billiard==4.2.0
+
+# --- Production Server ---
+# gunicorn==21.2.0  # Production WSGI server
+
+
+# ============================================================================
+# DEVELOPMENT DEPENDENCIES
+# ============================================================================
+
+# --- Code Quality ---
+black==23.12.1  # Code formatter
+isort==5.13.2  # Import sorter
+flake8==7.0.0  # Linter
+mypy==1.7.1  # Type checker
+
+# --- Testing ---
+pytest-cov==4.1.0  # Test coverage
+pytest-mock==3.12.0  # Mocking
+locust==2.20.0  # Load testing
+
+# --- Documentation ---
+mkdocs==1.5.3  # Documentation generator
+mkdocs-material==9.5.3  # Material theme
+
+
+# ============================================================================
+# INSTALLATION INSTRUCTIONS
+# ============================================================================
+
+# Minimal installation (just proxy features):
+# pip install -r requirements.txt
+
+# Full installation (with caching, monitoring, etc.):
+# pip install -r requirements.txt
+# pip install redis prometheus-client structlog apscheduler
+
+# Development installation:
+# pip install -r requirements.txt
+# pip install black isort flake8 pytest-cov
+
+
+# ============================================================================
+# DOCKER USAGE
+# ============================================================================
+
+# If using Docker, add to Dockerfile:
+# RUN pip install --no-cache-dir -r requirements.txt
+
+
+# ============================================================================
+# NOTES
+# ============================================================================
+
+# 1. aiohttp 3.9.3+ is required for better proxy support
+# 2. Redis is highly recommended for production caching
+# 3. APScheduler is needed for background data collection
+# 4. Prometheus-client is optional but recommended for monitoring
+# 5. All async libraries (aiohttp, aioredis, etc.) work together seamlessly
+
+
+# ============================================================================
+# VERSION COMPATIBILITY
+# ============================================================================
+
+# Python Version: 3.11+
+# FastAPI: 0.104+
+# aiohttp: 3.9+
+# Redis: 5.0+ (server)
+
+
+# ============================================================================
+# UPGRADE FROM OLD VERSION
+# ============================================================================
+
+# To upgrade from old requirements.txt:
+# 1. Backup old requirements: cp requirements.txt requirements.old.txt
+# 2. Update aiohttp: pip install --upgrade aiohttp==3.9.3
+# 3. Install new packages: pip install asyncio-throttle redis apscheduler
+# 4. Test: python -m pytest tests/
+
+
+# ============================================================================
+# MINIMAL REQUIREMENTS FOR PROXY ONLY
+# ============================================================================
+
+# If you only want proxy functionality without other features:
+"""
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+aiohttp==3.9.3
+aiohttp-socks==0.8.4
+asyncio-throttle==1.0.2
+python-dotenv==1.0.0
+"""

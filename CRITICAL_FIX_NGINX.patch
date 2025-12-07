@@ -1,0 +1,12 @@
+--- Dockerfile.huggingface.ORIGINAL	2025-12-03 00:20:00.000000000 +0000
++++ Dockerfile.huggingface.FIXED	2025-12-03 00:20:00.000000000 +0000
+@@ -30,7 +30,7 @@
+     echo 'server {' > /etc/nginx/http.d/default.conf && \
+     echo '  listen 7860;' >> /etc/nginx/http.d/default.conf && \
+     echo '  root /app/dist;' >> /etc/nginx/http.d/default.conf && \
+     echo '  location / { try_files $uri /index.html; }' >> /etc/nginx/http.d/default.conf && \
+-    echo '  location /api/ { proxy_pass http://127.0.0.1:8000/; proxy_http_version 1.1; }' >> /etc/nginx/http.d/default.conf && \
++    echo '  location /api/ { proxy_pass http://127.0.0.1:8000; proxy_http_version 1.1; }' >> /etc/nginx/http.d/default.conf && \
+     echo '  location /ws { ' >> /etc/nginx/http.d/default.conf && \
+     echo '    proxy_pass http://127.0.0.1:8000/ws;' >> /etc/nginx/http.d/default.conf && \
+     echo '    proxy_http_version 1.1;' >> /etc/nginx/http.d/default.conf && \

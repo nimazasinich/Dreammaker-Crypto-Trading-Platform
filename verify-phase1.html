@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 1 Verification Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        
+        .status.ready {
+            background: #10b981;
+            color: white;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .test-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 20px;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .test-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .test-card h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        
+        .test-card p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .test-card .url {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px;
+            border-radius: 6px;
+            margin-top: 10px;
+            word-break: break-all;
+        }
+        
+        .checklist {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .checklist-item:hover {
+            border-color: #667eea;
+        }
+        
+        .checklist-item.checked {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+        
+        .checklist-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+        
+        .checklist-item label {
+            flex: 1;
+            cursor: pointer;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .progress-bar {
+            background: #e5e7eb;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .info-box {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .info-box h3 {
+            color: #1e40af;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
+        .info-box p {
+            color: #1e3a8a;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .warning-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .warning-box h3 {
+            color: #92400e;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
+        .warning-box p {
+            color: #78350f;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s;
+            font-size: 14px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Phase 1 Verification Tool</h1>
+        <p class="subtitle">Trading Pages Merge - Testing Dashboard</p>
+        <span class="status ready">✅ Ready for Testing</span>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress">0% Complete</div>
+        </div>
+        
+        <div class="info-box">
+            <h3>📋 Quick Start</h3>
+            <p>Click any test card below to open that URL in a new tab. Check off items as you verify them. Your progress is saved automatically.</p>
+        </div>
+        
+        <!-- Direct Tab Access Tests -->
+        <div class="section">
+            <h2>1. Direct Tab Access Tests</h2>
+            <div class="test-grid">
+                <a href="http://localhost:5173/trading-hub?tab=futures" target="_blank" class="test-card">
+                    <h3>🔥 Futures Tab</h3>
+                    <p>Test direct access to Futures trading</p>
+                    <div class="url">?tab=futures</div>
+                </a>
+                
+                <a href="http://localhost:5173/trading-hub?tab=technical" target="_blank" class="test-card">
+                    <h3>📊 Technical Analysis Tab</h3>
+                    <p>Test direct access to Technical Analysis</p>
+                    <div class="url">?tab=technical</div>
+                </a>
+                
+                <a href="http://localhost:5173/trading-hub?tab=risk" target="_blank" class="test-card">
+                    <h3>🛡️ Risk Management Tab</h3>
+                    <p>Test direct access to Risk Management</p>
+                    <div class="url">?tab=risk</div>
+                </a>
+                
+                <a href="http://localhost:5173/trading-hub?tab=positions" target="_blank" class="test-card">
+                    <h3>📋 Positions Tab</h3>
+                    <p>Test direct access to Positions (Phase 1)</p>
+                    <div class="url">?tab=positions</div>
+                </a>
+                
+                <a href="http://localhost:5173/trading-hub?tab=portfolio" target="_blank" class="test-card">
+                    <h3>💼 Portfolio Tab</h3>
+                    <p>Test direct access to Portfolio (Phase 1)</p>
+                    <div class="url">?tab=portfolio</div>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Legacy Redirect Tests -->
+        <div class="section">
+            <h2>2. Legacy Route Redirects</h2>
+            <div class="warning-box">
+                <h3>⚠️ Important</h3>
+                <p>These URLs should automatically redirect to Trading Hub with the correct tab. Watch the URL bar!</p>
+            </div>
+            <div class="test-grid">
+                <a href="http://localhost:5173/positions" target="_blank" class="test-card">
+                    <h3>🔄 /positions Redirect</h3>
+                    <p>Should redirect to trading-hub?tab=positions</p>
+                    <div class="url">/positions → /trading-hub?tab=positions</div>
+                </a>
+                
+                <a href="http://localhost:5173/portfolio" target="_blank" class="test-card">
+                    <h3>🔄 /portfolio Redirect</h3>
+                    <p>Should redirect to trading-hub?tab=portfolio</p>
+                    <div class="url">/portfolio → /trading-hub?tab=portfolio</div>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Manual Testing Checklist -->
+        <div class="section">
+            <h2>3. Manual Testing Checklist</h2>
+            <div class="checklist" id="checklist">
+                <!-- Navigation Tests -->
+                <div class="checklist-item">
+                    <input type="checkbox" id="check1" onchange="updateProgress()">
+                    <label for="check1">All 5 tabs are visible in Trading Hub</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check2" onchange="updateProgress()">
+                    <label for="check2">Clicking tabs updates the URL with ?tab=name</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check3" onchange="updateProgress()">
+                    <label for="check3">Browser back/forward buttons work correctly</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check4" onchange="updateProgress()">
+                    <label for="check4">Keyboard shortcuts work (Cmd/Ctrl + 1-5)</label>
+                </div>
+                
+                <!-- Redirect Tests -->
+                <div class="checklist-item">
+                    <input type="checkbox" id="check5" onchange="updateProgress()">
+                    <label for="check5">/positions redirects to trading-hub?tab=positions</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check6" onchange="updateProgress()">
+                    <label for="check6">/portfolio redirects to trading-hub?tab=portfolio</label>
+                </div>
+                
+                <!-- Positions Tab Tests -->
+                <div class="checklist-item">
+                    <input type="checkbox" id="check7" onchange="updateProgress()">
+                    <label for="check7">Positions tab displays open positions correctly</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check8" onchange="updateProgress()">
+                    <label for="check8">Positions tab shows real-time price updates</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check9" onchange="updateProgress()">
+                    <label for="check9">Close/Reduce/Reverse buttons work in Positions</label>
+                </div>
+                
+                <!-- Portfolio Tab Tests -->
+                <div class="checklist-item">
+                    <input type="checkbox" id="check10" onchange="updateProgress()">
+                    <label for="check10">Portfolio tab displays holdings summary</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check11" onchange="updateProgress()">
+                    <label for="check11">Portfolio tab shows Risk Center</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check12" onchange="updateProgress()">
+                    <label for="check12">Portfolio tab has real-time updates</label>
+                </div>
+                
+                <!-- WebSocket Tests -->
+                <div class="checklist-item">
+                    <input type="checkbox" id="check13" onchange="updateProgress()">
+                    <label for="check13">No duplicate WebSocket connections (check DevTools)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check14" onchange="updateProgress()">
+                    <label for="check14">No memory leaks after 10+ tab switches</label>
+                </div>
+                
+                <!-- Sidebar Tests -->
+                <div class="checklist-item">
+                    <input type="checkbox" id="check15" onchange="updateProgress()">
+                    <label for="check15">Sidebar shows "Trading Hub" with "5 Tabs" badge</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check16" onchange="updateProgress()">
+                    <label for="check16">No standalone "Positions" entry in sidebar</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check17" onchange="updateProgress()">
+                    <label for="check17">No standalone "Portfolio" entry in sidebar</label>
+                </div>
+                
+                <!-- Performance Tests -->
+                <div class="checklist-item">
+                    <input type="checkbox" id="check18" onchange="updateProgress()">
+                    <label for="check18">Tab switching is smooth (< 100ms)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check19" onchange="updateProgress()">
+                    <label for="check19">No console errors (except deprecation warnings)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check20" onchange="updateProgress()">
+                    <label for="check20">No layout shifts or flickering</label>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="section">
+            <h2>4. Quick Actions</h2>
+            <a href="http://localhost:5173/trading-hub" target="_blank" class="btn">Open Trading Hub</a>
+            <a href="http://localhost:5173/" target="_blank" class="btn btn-secondary">Open Dashboard</a>
+            <button class="btn btn-secondary" onclick="resetProgress()">Reset Progress</button>
+        </div>
+        
+        <div class="info-box">
+            <h3>💡 Pro Tips</h3>
+            <p>
+                • Open DevTools (F12) → Network → WS to monitor WebSocket connections<br>
+                • Use DevTools → Memory to check for memory leaks<br>
+                • Test in multiple browsers (Chrome, Firefox, Safari)<br>
+                • Your progress is saved in localStorage
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        // Load saved progress
+        function loadProgress() {
+            for (let i = 1; i <= 20; i++) {
+                const checkbox = document.getElementById(`check${i}`);
+                const saved = localStorage.getItem(`phase1_check${i}`);
+                if (saved === 'true') {
+                    checkbox.checked = true;
+                    checkbox.parentElement.classList.add('checked');
+                }
+            }
+            updateProgress();
+        }
+        
+        // Update progress bar
+        function updateProgress() {
+            let checked = 0;
+            for (let i = 1; i <= 20; i++) {
+                const checkbox = document.getElementById(`check${i}`);
+                if (checkbox.checked) {
+                    checked++;
+                    checkbox.parentElement.classList.add('checked');
+                    localStorage.setItem(`phase1_check${i}`, 'true');
+                } else {
+                    checkbox.parentElement.classList.remove('checked');
+                    localStorage.setItem(`phase1_check${i}`, 'false');
+                }
+            }
+            
+            const percentage = Math.round((checked / 20) * 100);
+            const progressBar = document.getElementById('progress');
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = percentage + '% Complete';
+            
+            if (percentage === 100) {
+                progressBar.textContent = '✅ All Tests Complete!';
+            }
+        }
+        
+        // Reset progress
+        function resetProgress() {
+            if (confirm('Reset all progress? This cannot be undone.')) {
+                for (let i = 1; i <= 20; i++) {
+                    localStorage.removeItem(`phase1_check${i}`);
+                    const checkbox = document.getElementById(`check${i}`);
+                    checkbox.checked = false;
+                    checkbox.parentElement.classList.remove('checked');
+                }
+                updateProgress();
+            }
+        }
+        
+        // Initialize
+        loadProgress();
+    </script>
+</body>
+</html>

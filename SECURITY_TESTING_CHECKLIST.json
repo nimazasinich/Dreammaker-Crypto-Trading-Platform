@@ -1,0 +1,305 @@
+{
+  "version": "1.0.0",
+  "date": "2025-12-03",
+  "projectName": "Dreammaker Crypto Trading Platform",
+  "securityTests": {
+    "1_secrets_management": {
+      "category": "Secrets & Credentials",
+      "priority": "CRITICAL",
+      "tests": [
+        {
+          "id": "SEC-001",
+          "test": "Verify no hardcoded secrets in codebase",
+          "command": "grep -r 'hf_[A-Za-z0-9]' src/ --include='*.ts' --include='*.tsx'",
+          "expectedResult": "No matches found",
+          "status": "PASS"
+        },
+        {
+          "id": "SEC-002",
+          "test": "Verify all env files are in .gitignore",
+          "command": "git check-ignore env env.real env.mock env.staging env.production",
+          "expectedResult": "All files are ignored",
+          "status": "PASS"
+        },
+        {
+          "id": "SEC-003",
+          "test": "Verify env.example has only placeholders",
+          "command": "grep -E '(hf_|[0-9a-f]{8}-[0-9a-f]{4})' env.example",
+          "expectedResult": "No real secrets found",
+          "status": "PASS"
+        },
+        {
+          "id": "SEC-004",
+          "test": "Rotate all exposed API keys",
+          "manual": true,
+          "steps": [
+            "List all API keys that were in git history",
+            "Log into each service (HuggingFace, Etherscan, etc.)",
+            "Revoke old keys",
+            "Generate new keys",
+            "Update env file with new keys"
+          ],
+          "status": "TODO"
+        }
+      ]
+    },
+    "2_cors_configuration": {
+      "category": "CORS Security",
+      "priority": "CRITICAL",
+      "tests": [
+        {
+          "id": "SEC-101",
+          "test": "Verify CORS allows only whitelisted origins",
+          "command": "curl -H 'Origin: http://evil.com' -H 'Access-Control-Request-Method: GET' -X OPTIONS http://localhost:8001/api/health",
+          "expectedResult": "No Access-Control-Allow-Origin header or blocked",
+          "status": "TODO"
+        },
+        {
+          "id": "SEC-102",
+          "test": "Verify CORS allows legitimate origin",
+          "command": "curl -H 'Origin: http://localhost:5173' -H 'Access-Control-Request-Method: GET' -X OPTIONS http://localhost:8001/api/health",
+          "expectedResult": "Access-Control-Allow-Origin: http://localhost:5173",
+          "status": "TODO"
+        },
+        {
+          "id": "SEC-103",
+          "test": "Verify FRONTEND_ORIGIN is set in production",
+          "command": "Check production env file has FRONTEND_ORIGIN=https://yourdomain.com",
+          "manual": true,
+          "status": "TODO"
+        }
+      ]
+    },
+    "3_content_security_policy": {
+      "category": "CSP Headers",
+      "priority": "HIGH",
+      "tests": [
+        {
+          "id": "SEC-201",
+          "test": "Verify CSP header is present",
+          "command": "curl -I http://localhost:8001/api/health | grep -i content-security-policy",
+          "expectedResult": "Content-Security-Policy header found",
+          "status": "TODO"
+        },
+        {
+          "id": "SEC-202",
+          "test": "Verify CSP allows WebSocket connections",
+          "command": "curl -I http://localhost:8001/api/health | grep 'connect-src' | grep -E '(ws:|wss:)'",
+          "expectedResult": "CSP includes ws:// and wss:// in connect-src",
+          "status": "TODO"
+        },
+        {
+          "id": "SEC-203",
+          "test": "Verify CSP blocks unsafe-inline in production",
+          "manual": true,
+          "note": "Check if unsafe-inline is removed or restricted in production CSP",
+          "status": "TODO"
+        }
+      ]
+    },
+    "4_rate_limiting": {
+      "category": "Rate Limiting",
+      "priority": "HIGH",
+      "tests": [
+        {
+          "id": "SEC-301",
+          "test": "Verify general API rate limiting works",
+          "command": "for i in {1..150}; do curl -s http://localhost:8001/api/market?limit=10 & done; wait",
+          "expectedResult": "Some requests return 429 Too Many Requests",
+          "status": "TODO"
+        },
+        {
+          "id": "SEC-302",
+          "test": "Verify trading rate limiting works",
+          "script": "scripts/test-trade-rate-limit.sh",
+          "expectedResult": "After 20 requests/min, returns 429",
+          "status": "TODO"
+        },
+        {
+          "id": "SEC-303",
+          "test": "Verify rate limit headers are present",
+          "command": "curl -I http://localhost:8001/api/market | grep -i ratelimit",
+          "expectedResult": "RateLimit-Limit, RateLimit-Remaining headers found",
+          "status": "TODO"
+        }
+      ]
+    },
+    "5_error_handling": {
+      "category": "Error Responses",
+      "priority": "MEDIUM",
+      "tests": [
+        {
+          "id": "SEC-401",
+          "test": "Verify 404 returns JSON not HTML",
+          "command": "curl -H 'Accept: application/json' http://localhost:8001/api/nonexistent",
+          "expectedResult": "{\"error\":\"Cannot GET /api/nonexistent\",\"status\":404,...}",
+          "status": "TODO"
+        },
+        {
+          "id": "SEC-402",
+          "test": "Verify 500 errors return JSON not HTML",
+          "manual": true,
+          "note": "Trigger a server error and verify response is JSON",
+          "status": "TODO"
+        },
+        {
+          "id": "SEC-403",
+          "test": "Verify error messages don't leak sensitive info",
+          "manual": true,
+          "note": "Check that stack traces are not included in production errors",
+          "status": "TODO"
+        }
+      ]
+    },
+    "6_input_validation": {
+      "category": "Input Validation",
+      "priority": "HIGH",
+      "tests": [
+        {
+          "id": "SEC-501",
+          "test": "Verify XSS protection - script tags removed",
+          "command": "curl -X POST http://localhost:8001/api/trade/execute -H 'Content-Type: application/json' -d '{\"symbol\":\"<script>alert(1)</script>BTC\"}'",
+          "expectedResult": "Symbol sanitized, script tags removed",
+          "status": "TODO"
+        },
+        {
+          "id": "SEC-502",
+          "test": "Verify invalid symbol rejected",
+          "command": "curl -X GET http://localhost:8001/api/market/history?symbol=INVALID!!!",
+          "expectedResult": "400 error with validation message",
+          "status": "TODO"
+        },
+        {
+          "id": "SEC-503",
+          "test": "Verify trade order validation",
+          "command": "curl -X POST http://localhost:8001/api/trade/execute -H 'Content-Type: application/json' -d '{\"symbol\":\"BTC\",\"side\":\"INVALID\"}'",
+          "expectedResult": "400 error: side must be BUY or SELL",
+          "status": "TODO"
+        }
+      ]
+    },
+    "7_authentication_authorization": {
+      "category": "Auth & AuthZ",
+      "priority": "CRITICAL",
+      "tests": [
+        {
+          "id": "SEC-601",
+          "test": "Verify protected endpoints require authentication",
+          "note": "NOT YET IMPLEMENTED - TODOs added in code",
+          "endpoints": [
+            "/api/trade/execute",
+            "/api/trading/portfolio",
+            "/api/scoring/weights (POST)"
+          ],
+          "status": "NOT_IMPLEMENTED"
+        },
+        {
+          "id": "SEC-602",
+          "test": "Verify JWT tokens are HTTP-only cookies",
+          "note": "NOT YET IMPLEMENTED - Don't use localStorage for tokens",
+          "status": "NOT_IMPLEMENTED"
+        },
+        {
+          "id": "SEC-603",
+          "test": "Verify password complexity requirements",
+          "note": "NOT YET IMPLEMENTED",
+          "status": "NOT_IMPLEMENTED"
+        }
+      ]
+    },
+    "8_security_headers": {
+      "category": "Security Headers",
+      "priority": "MEDIUM",
+      "tests": [
+        {
+          "id": "SEC-701",
+          "test": "Verify Strict-Transport-Security header",
+          "command": "curl -I http://localhost:8001/api/health | grep -i strict-transport-security",
+          "expectedResult": "HSTS header with max-age=31536000",
+          "status": "TODO"
+        },
+        {
+          "id": "SEC-702",
+          "test": "Verify X-Content-Type-Options: nosniff",
+          "command": "curl -I http://localhost:8001/api/health | grep -i x-content-type-options",
+          "expectedResult": "X-Content-Type-Options: nosniff",
+          "status": "TODO"
+        },
+        {
+          "id": "SEC-703",
+          "test": "Verify X-Frame-Options: DENY",
+          "command": "curl -I http://localhost:8001/api/health | grep -i x-frame-options",
+          "expectedResult": "X-Frame-Options: DENY",
+          "status": "TODO"
+        },
+        {
+          "id": "SEC-704",
+          "test": "Verify X-XSS-Protection enabled",
+          "command": "curl -I http://localhost:8001/api/health | grep -i x-xss-protection",
+          "expectedResult": "X-XSS-Protection: 1",
+          "status": "TODO"
+        }
+      ]
+    },
+    "9_health_endpoint": {
+      "category": "Health Check",
+      "priority": "LOW",
+      "tests": [
+        {
+          "id": "SEC-801",
+          "test": "Verify health endpoint returns 200 OK",
+          "command": "curl -o /dev/null -s -w '%{http_code}' http://localhost:8001/api/health",
+          "expectedResult": "200",
+          "status": "TODO"
+        },
+        {
+          "id": "SEC-802",
+          "test": "Verify health endpoint returns JSON",
+          "command": "curl -H 'Accept: application/json' http://localhost:8001/api/health",
+          "expectedResult": "{\"timestamp\":...,\"status\":\"healthy\",...}",
+          "status": "TODO"
+        }
+      ]
+    },
+    "10_websocket_security": {
+      "category": "WebSocket Security",
+      "priority": "MEDIUM",
+      "tests": [
+        {
+          "id": "SEC-901",
+          "test": "Verify WebSocket requires authentication",
+          "note": "NOT YET IMPLEMENTED - Add auth check on ws connection",
+          "status": "NOT_IMPLEMENTED"
+        },
+        {
+          "id": "SEC-902",
+          "test": "Verify WebSocket connection rate limiting",
+          "note": "Rate limiter created but needs testing",
+          "status": "TODO"
+        },
+        {
+          "id": "SEC-903",
+          "test": "Verify WebSocket validates message format",
+          "manual": true,
+          "status": "TODO"
+        }
+      ]
+    }
+  },
+  "automatedTestScript": {
+    "filename": "scripts/security-test-suite.sh",
+    "description": "Automated security test runner",
+    "status": "TO_BE_CREATED"
+  },
+  "summary": {
+    "totalTests": 35,
+    "completed": 3,
+    "pending": 22,
+    "notImplemented": 10,
+    "criticalPriority": 8,
+    "highPriority": 8,
+    "mediumPriority": 12,
+    "lowPriority": 2
+  }
+}
+

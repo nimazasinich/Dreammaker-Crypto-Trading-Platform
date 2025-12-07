@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Cursor Agent COMMAND CENTER</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --sidebar-color: #2d2d2d;
+            --accent-color: #f39c12;
+            --highlight-color: #FFEB3B;
+            --text-color: #cccccc;
+            --header-color: #ffffff;
+            --border-color: #444444;
+            --success-color: #4caf50;
+            --error-color: #e74c3c;
+            --code-bg: #101010;
+            --transition-speed: 0.3s;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: var(--sidebar-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .navbar-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: var(--header-color);
+        }
+
+        .navbar-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color var(--transition-speed);
+            white-space: nowrap;
+        }
+
+        .nav-btn:hover {
+            background-color: #e67e22;
+        }
+
+        .nav-btn.download {
+            background-color: var(--success-color);
+        }
+
+        .nav-btn.download:hover {
+            background-color: #43a047;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            color: var(--header-color);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--text-color);
+            font-size: 1.05em;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            background-color: transparent;
+            color: var(--text-color);
+            border: 2px solid transparent;
+            padding: 10px 16px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all var(--transition-speed);
+        }
+
+        .tab-btn:hover {
+            color: var(--accent-color);
+            border-bottom-color: var(--accent-color);
+        }
+
+        .tab-btn.active {
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 4px;
+            border-color: var(--accent-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .card {
+            background-color: var(--sidebar-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: all var(--transition-speed);
+        }
+
+        .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+        }
+
+        .card h2 {
+            color: var(--header-color);
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .card h3 {
+            color: var(--header-color);
+            font-size: 1.1em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            background-color: rgba(243, 156, 18, 0.05);
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            transition: all var(--transition-speed);
+        }
+
+        .option-label:hover {
+            background-color: rgba(243, 156, 18, 0.15);
+            border-color: var(--accent-color);
+        }
+
+        .option-label input[type="checkbox"] {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--accent-color);
+        }
+
+        .badge {
+            background-color: var(--error-color);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-left: 8px;
+            display: inline-block;
+        }
+
+        .badge.safe {
+            background-color: var(--success-color);
+        }
+
+        .code-block {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #d4d4d4;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-x: auto;
+            margin: 16px 0;
+            max-height: 400px;
+            overflow-y: auto;
+            line-height: 1.5;
+        }
+
+        .code-block::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .code-block::-webkit-scrollbar-track {
+            background: var(--sidebar-color);
+        }
+
+        .code-block::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all var(--transition-speed);
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            background-color: #e67e22;
+            transform: translateY(-2px);
+        }
+
+        .btn-download {
+            background-color: var(--success-color);
+        }
+
+        .btn-download:hover {
+            background-color: #43a047;
+        }
+
+        .info-box {
+            background-color: rgba(243, 156, 18, 0.1);
+            border-left: 4px solid var(--accent-color);
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            color: var(--text-color);
+        }
+
+        .tool-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            background-color: var(--code-bg);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .tool-table th {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .tool-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tool-table tr:hover {
+            background-color: rgba(243, 156, 18, 0.1);
+        }
+
+        .tool-table code {
+            background-color: var(--sidebar-color);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            color: var(--accent-color);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--success-color);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .install-commands {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .install-command {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .install-command code {
+            font-family: monospace;
+            color: var(--accent-color);
+        }
+
+        .install-command button {
+            background-color: transparent;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            white-space: nowrap;
+            max-width: 120px;
+        }
+
+        .install-command button:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .prompt-section {
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8em; }
+            .options-grid { grid-template-columns: 1fr; }
+            .button-group { flex-direction: column; }
+            .btn { width: 100%; }
+            .navbar { flex-direction: column; }
+            .install-commands { grid-template-columns: 1fr; }
+            .tabs { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="navbar-title">⚡ Ultimate Cursor Agent COMMAND CENTER</div>
+    <div class="navbar-buttons">
+        <button class="nav-btn" onclick="resetAll()">🔄 Reset All</button>
+        <button class="nav-btn download" onclick="downloadAll()">📦 Download All</button>
+    </div>
+</div>
+
+<div class="container">
+    <div class="header">
+        <h1>🚀 Cursor Agent COMMAND CENTER</h1>
+        <p>All-in-one solution to optimize your Cursor AI editor with advanced configurations, DevOps prompts, and performance enhancements</p>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab(event, 'tools')">🛠️ Tools & MCP</button>
+        <button class="tab-btn" onclick="switchTab(event, 'prompts')">🤖 Mega-Prompts</button>
+        <button class="tab-btn" onclick="switchTab(event, 'settings')">⚙️ Performance</button>
+        <button class="tab-btn" onclick="switchTab(event, 'rules')">🧠 Agent Rules</button>
+        <button class="tab-btn" onclick="switchTab(event, 'ignore')">🧹 Ignore</button>
+        <button class="tab-btn" onclick="switchTab(event, 'memory')">💾 Memory</button>
+    </div>
+
+    <!-- TOOLS & MCP TAB -->
+    <div id="tools" class="tab-content active">
+        <div class="card">
+            <h2>🛠️ Tools & MCP Configuration</h2>
+            <p>This section contains powerful tools and configurations for connecting your Cursor agent to databases, APIs, and external services.</p>
+            
+            <h3>MCP (Model Context Protocol) Setup</h3>
+            <div class="code-block" id="mcp-setup">
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
+    },
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres", "postgresql://localhost/mydb"]
+    }
+  }
+}
+            </div>
+            <div class="button-group">
+                <button class="btn" onclick="copyToClipboard('mcp-setup')">📋 Copy MCP Configuration</button>
+                <button class="btn btn-download" onclick="downloadFile('mcp-setup', 'mcp.json')">💾 Download mcp.json</button>
+            </div>
+            
+            <h3>Available Servers</h3>
+            <table class="tool-table">
+                <tr><th>Server</th><th>Purpose</th></tr>
+                <tr><td>Filesystem</td><td>Local file access</td></tr>
+                <tr><td>PostgreSQL</td><td>Database operations</td></tr>
+                <tr><td>Snowflake</td><td>Cloud data warehouse</td></tr>
+                <tr><td>Browserbase</td><td>Web browsing automation</td></tr>
+            </table>
+            
+            <h3>Install/Uninstall Commands</h3>
+            <div class="install-commands">
+                <div class="install-command">
+                    <div>
+                        <strong>Install MCP</strong>
+                        <code>npm install mcp-agent --save</code>
+                    </div>
+                    <button onclick="copyInstallCmd('npm install mcp-agent --save')">Copy</button>
+                </div>
+                <div class="install-command">
+                    <div>
+                        <strong>Uninstall MCP</strong>
+                        <code>npm uninstall mcp-agent</code>
+                    </div>
+                    <button onclick="copyInstallCmd('npm uninstall mcp-agent')">Copy</button>
+                </div>
+                <div class="install-command">
+                    <div>
+                        <strong>Install YOLO Mode</strong>
+                        <code>npm install yolo-mode --save</code>
+                    </div>
+                    <button onclick="copyInstallCmd('npm install yolo-mode --save')">Copy</button>
+                </div>
+                <div class="install-command">
+                    <div>
+                        <strong>Uninstall YOLO Mode</strong>
+                        <code>npm uninstall yolo-mode</code>
+                    </div>
+                    <button onclick="copyInstallCmd('npm uninstall yolo-mode')">Copy</button>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <strong>💡 Tip:</strong> Copy any command and paste it in your terminal to install the tool
+            </div>
+        </div>
+    </div>
+
+    <!-- MEGA-PROMPTS TAB -->
+    <div id="prompts" class="tab-content">
+        <div class="card">
+            <h2>🤖 Mega-Prompt for Full DevOps Automation</h2>
+            <p>Execute all stages of the application lifecycle, including building, testing, and deployment using the following Mega-Prompt:</p>
+
+            <div class="prompt-section">
+                <h3>Stage 1: Build, Test & Debug</h3>
+                <div class="code-block" id="mega-prompt-1">
+**ROLE:** You are a Senior DevOps/Full-Stack Engineer responsible for the complete building and testing of a service.
+**GOAL:** Build a simple Todo List application using React for the frontend, Node.js/Express for the backend, and SQLite for the database.
+
+**TASKS:**
+1. Generate a `README.md` file with the complete project structure and setup steps.
+2. Create the project structure (folders, files).
+3. Write frontend (React) and backend (Node/Express) code for a simple API.
+4. Run **automated tests** (TestSprite/Jest) for the API.
+5. Debug and fix any failing tests.
+                </div>
+                <button class="btn" onclick="copyToClipboard('mega-prompt-1')">📋 Copy Prompt Stage 1</button>
+            </div>
+            
+            <div class="prompt-section">
+                <h3>Stage 2: Deployment & CI/CD</h3>
+                <div class="code-block" id="mega-prompt-2">
+**ROLE:** You are a Senior DevOps Engineer responsible for deployment and CI/CD pipeline setup.
+**GOAL:** Deploy the Todo List application to a cloud platform and set up a CI/CD pipeline.
+
+**TASKS:**
+1. Create Dockerfile for both frontend and backend.
+2. Set up Docker Compose for local development.
+3. Configure GitHub Actions for CI/CD.
+4. Deploy to a cloud platform (AWS, GCP, or Azure).
+5. Set up monitoring and logging.
+                </div>
+                <button class="btn" onclick="copyToClipboard('mega-prompt-2')">📋 Copy Prompt Stage 2</button>
+            </div>
+            
+            <div class="info-box">
+                <strong>💡 Usage:</strong> Copy these prompts and paste them in your Cursor chat to automate your development workflow
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS TAB -->
+    <div id="settings" class="tab-content">
+        <div class="card">
+            <h2>⚙️ Performance Settings (settings.json)</h2>
+            <p>Optimize your Cursor editor by disabling resource-heavy features. Save up to 2GB RAM!</p>
+
+            <div class="options-grid">
+                <label class="option-label">
+                    <input type="checkbox" id="opt-shadow" checked onchange="updateSettings()">
+                    <span>Disable Shadow Workspace <span class="badge safe">2GB RAM</span></span>
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" id="opt-watcher" checked onchange="updateSettings()">
+                    <span>Optimize File Watcher <span class="badge safe">CPU</span></span>
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" id="opt-minimap" checked onchange="updateSettings()">
+                    <span>Disable Minimap <span class="badge safe">GPU</span></span>
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" id="opt-smooth" checked onchange="updateSettings()">
+                    <span>Disable Smooth Scroll <span class="badge safe">Snappier</span></span>
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" id="opt-ghost" checked onchange="updateSettings()">
+                    <span>Disable Ghost Text <span class="badge safe">AI</span></span>
+                </label>
+            </div>
+
+            <h3>Generated Configuration</h3>
+            <div class="code-block" id="json-output">{}</div>
+
+            <div class="button-group">
+                <button class="btn" onclick="copyToClipboard('json-output')">📋 Copy</button>
+                <button class="btn btn-download" onclick="downloadFile('json-output', 'settings.json')">💾 Download</button>
+            </div>
+
+            <div class="info-box">
+                <strong>Installation:</strong> Press Ctrl+Shift+P → "Open Settings (JSON)" → Paste inside brackets
+            </div>
+        </div>
+    </div>
+
+    <!-- RULES TAB -->
+    <div id="rules" class="tab-content">
+        <div class="card">
+            <h2>🧠 Agent Behavior Rules (.cursorrules)</h2>
+            <p>Configure how your Cursor agent should behave and code.</p>
+
+            <div class="options-grid">
+                <label class="option-label">
+                    <input type="checkbox" id="rule-concise" checked onchange="updateRules()">
+                    <span>Be Concise</span>
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" id="rule-lines" checked onchange="updateRules()">
+                    <span>Keep Functions < 40 Lines</span>
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" id="rule-style" checked onchange="updateRules()">
+                    <span>Enforce Project Style</span>
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" id="rule-ts" checked onchange="updateRules()">
+                    <span>TypeScript Types</span>
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" id="rule-docs" checked onchange="updateRules()">
+                    <span>JSDoc Comments</span>
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" id="rule-tests" checked onchange="updateRules()">
+                    <span>Write Tests</span>
+                </label>
+            </div>
+
+            <h3>Generated Rules</h3>
+            <div class="code-block" id="rules-output"># Agent Rules</div>
+
+            <div class="button-group">
+                <button class="btn" onclick="copyToClipboard('rules-output')">📋 Copy</button>
+                <button class="btn btn-download" onclick="downloadFile('rules-output', '.cursorrules')">💾 Download</button>
+            </div>
+
+            <div class="info-box">
+                <strong>Installation:</strong> Create .cursorrules in project root and paste content
+            </div>
+        </div>
+    </div>
+
+    <!-- IGNORE TAB -->
+    <div id="ignore" class="tab-content">
+        <div class="card">
+            <h2>🧹 Brain Drain Blocker (.cursorignore)</h2>
+            <p>Prevent your agent from wasting tokens on large files.</p>
+
+            <div class="options-grid">
+                <label class="option-label">
+                    <input type="checkbox" class="ignore-opt" value="node" checked onchange="updateIgnore()">
+                    <span>Node.js / JavaScript</span>
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" class="ignore-opt" value="python" checked onchange="updateIgnore()">
+                    <span>Python</span>
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" class="ignore-opt" value="web" onchange="updateIgnore()">
+                    <span>Web Assets</span>
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" class="ignore-opt" value="java" onchange="updateIgnore()">
+                    <span>Java / Kotlin</span>
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" class="ignore-opt" value="go" onchange="updateIgnore()">
+                    <span>Go / Rust</span>
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" class="ignore-opt" value="data" checked onchange="updateIgnore()">
+                    <span>Data / Logs</span>
+                </label>
+            </div>
+
+            <h3>Generated Ignore List</h3>
+            <div class="code-block" id="ignore-output"># Ignore List</div>
+
+            <div class="button-group">
+                <button class="btn" onclick="copyToClipboard('ignore-output')">📋 Copy</button>
+                <button class="btn btn-download" onclick="downloadFile('ignore-output', '.cursorignore')">💾 Download</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MEMORY TAB -->
+    <div id="memory" class="tab-content">
+        <div class="card">
+            <h2>💾 Project Memory (project.md)</h2>
+            <p>Give your agent long-term project memory. Reference as @project.md in chat.</p>
+
+            <h3>Memory Template</h3>
+            <div class="code-block" id="memory-output"># Project Core Memories
+> "Do not read 100 files. Read this first."
+
+## 1. Tech Stack & Style (Referenced by Agent)
+- Language: [Insert Language]
+- Framework: [Insert Framework]
+- Styling: [e.g., Use TypeScript and Tailwind Only]
+
+## 2. Architecture & Databases
+- Database: [e.g., Postgres, MongoDB]
+- Key Services: [List microservices or APIs]
+
+## 3. High-Level Goals / Current Focus
+- The goal is to finish the user profile dashboard by EOD.
+- **NEVER** modify the payment gateway code.
+
+## 4. Critical Rules
+- ALWAYS use TypeScript types, never 'any'
+- Keep functions under 40 lines when possible
+- Write tests for all new functionality
+- Follow existing project code style conventions</div>
+
+            <div class="button-group">
+                <button class="btn" onclick="copyToClipboard('memory-output')">📋 Copy</button>
+                <button class="btn btn-download" onclick="downloadFile('memory-output', 'project.md')">💾 Download</button>
+            </div>
+            
+            <h3>AI Frameworks & Tools</h3>
+            <table class="tool-table">
+                <tr>
+                    <th>Tool</th>
+                    <th>Install</th>
+                    <th>Action</th>
+                </tr>
+                <tr>
+                    <td>LangChain</td>
+                    <td><code>pip install langchain[all]</code></td>
+                    <td><button class="btn" style="padding: 6px 12px; font-size: 0.85em;" onclick="copyInstallCmd('pip install langchain[all]')">Copy</button></td>
+                </tr>
+                <tr>
+                    <td>LLaMA Index</td>
+                    <td><code>pip install llama-index</code></td>
+                    <td><button class="btn" style="padding: 6px 12px; font-size: 0.85em;" onclick="copyInstallCmd('pip install llama-index')">Copy</button></td>
+                </tr>
+                <tr>
+                    <td>AutoGPT</td>
+                    <td><code>pip install auto-gpt</code></td>
+                    <td><button class="btn" style="padding: 6px 12px; font-size: 0.85em;" onclick="copyInstallCmd('pip install auto-gpt')">Copy</button></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function switchTab(event, tabName) {
+        const contents = document.querySelectorAll('.tab-content');
+        const btns = document.querySelectorAll('.tab-btn');
+        
+        contents.forEach(c => c.classList.remove('active'));
+        btns.forEach(b => b.classList.remove('active'));
+        
+        document.getElementById(tabName).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    function updateSettings() {
+        const config = {};
+        if (document.getElementById('opt-shadow').checked) {
+            config['cursor.general.enableShadowWorkspace'] = false;
+        }
+        if (document.getElementById('opt-watcher').checked) {
+            config['files.watcherExclude'] = {
+                '**/.git/objects/**': true,
+                '**/node_modules/**': true,
+                '**/dist/**': true,
+                '**/.next/**': true,
+                '**/build/**': true
+            };
+            config['search.exclude'] = {
+                '**/node_modules': true,
+                '**/dist': true,
+                '**/build': true,
+                '**/*.lock': true
+            };
+        }
+        if (document.getElementById('opt-minimap').checked) {
+            config['editor.minimap.enabled'] = false;
+        }
+        if (document.getElementById('opt-smooth').checked) {
+            config['editor.smoothScrolling'] = false;
+            config['cursor.smoothScrolling'] = false;
+        }
+        if (document.getElementById('opt-ghost').checked) {
+            config['cursor.cpp.enablePartialAccepts'] = false;
+        }
+        document.getElementById('json-output').textContent = JSON.stringify(config, null, 2);
+    }
+
+    function updateRules() {
+        let rules = '# CURSOR AGENT BEHAVIOR RULES\n\n';
+        if (document.getElementById('rule-concise').checked) {
+            rules += 'RULE: Keep answers concise. No unnecessary filler or apologies.\n';
+        }
+        if (document.getElementById('rule-lines').checked) {
+            rules += 'RULE: Keep functions under 40 lines when possible.\n';
+        }
+        if (document.getElementById('rule-style').checked) {
+            rules += 'RULE: Always match existing project style and indentation.\n';
+        }
+        if (document.getElementById('rule-ts').checked) {
+            rules += 'RULE: Enforce strict TypeScript types. Never use "any".\n';
+        }
+        if (document.getElementById('rule-docs').checked) {
+            rules += 'RULE: Include JSDoc comments for all functions.\n';
+        }
+        if (document.getElementById('rule-tests').checked) {
+            rules += 'RULE: Always write unit tests for new code.\n';
+        }
+        document.getElementById('rules-output').textContent = rules || '# Add rules above';
+    }
+
+    function updateIgnore() {
+        let ignore = '# Cursor Agent Ignore File\n\n# Universal\npackage-lock.json\nyarn.lock\n.git/\n.DS_Store\n\n';
+        
+        if (document.querySelector('.ignore-opt[value="node"]:checked')) {
+            ignore += '# Node.js\nnode_modules/\ndist/\nbuild/\n.next/\n\n';
+        }
+        if (document.querySelector('.ignore-opt[value="python"]:checked')) {
+            ignore += '# Python\n__pycache__/\n*.pyc\nvenv/\n.venv/\n\n';
+        }
+        if (document.querySelector('.ignore-opt[value="web"]:checked')) {
+            ignore += '# Web\n*.svg\n*.png\n*.jpg\n*.ico\n*.woff2\npublic/assets/\n\n';
+        }
+        if (document.querySelector('.ignore-opt[value="java"]:checked')) {
+            ignore += '# Java\n.gradle/\ntarget/\n\n';
+        }
+        if (document.querySelector('.ignore-opt[value="go"]:checked')) {
+            ignore += '# Go/Rust\nvendor/\ntarget/\n\n';
+        }
+        if (document.querySelector('.ignore-opt[value="data"]:checked')) {
+            ignore += '# Data\n*.csv\nlogs/\n*.log\n*.sqlite\n';
+        }
+        document.getElementById('ignore-output').textContent = ignore;
+    }
+
+    function copyToClipboard(elementId) {
+        const text = document.getElementById(elementId).textContent;
+        navigator.clipboard.writeText(text);
+        showToast('Copied to clipboard!');
+    }
+
+    function downloadFile(elementId, filename) {
+        const text = document.getElementById(elementId).textContent;
+        const blob = new Blob([text], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast(`Downloaded ${filename}`);
+    }
+
+    function copyInstallCmd(cmd) {
+        navigator.clipboard.writeText(cmd);
+        showToast('Command copied!');
+    }
+
+    function downloadAll() {
+        downloadFile('json-output', 'settings.json');
+        setTimeout(() => downloadFile('rules-output', '.cursorrules'), 200);
+        setTimeout(() => downloadFile('ignore-output', '.cursorignore'), 400);
+        setTimeout(() => downloadFile('mcp-setup', 'mcp.json'), 600);
+        setTimeout(() => downloadFile('memory-output', 'project.md'), 800);
+    }
+
+    function resetAll() {
+        document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+            if (cb.id.includes('opt-') || cb.id.includes('rule-')) cb.checked = true;
+            else cb.checked = false;
+        });
+        updateSettings();
+        updateRules();
+        updateIgnore();
+        showToast('Settings reset!');
+    }
+
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    // Initialize
+    updateSettings();
+    updateRules();
+    updateIgnore();
+</script>
+
+</body>
+</html>

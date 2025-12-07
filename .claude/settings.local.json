@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(if [ -d \"node_modules\" ])",
+      "Bash(then echo \"Node modules already installed\")",
+      "Bash(else echo \"Node modules NOT installed\")",
+      "Bash(fi)",
+      "Bash(if [ -f \".env\" ])",
+      "Bash(then echo \".env file exists\")",
+      "Bash(else echo \".env file does NOT exist\")",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(npm run dev:server:*)",
+      "Bash(timeout /t 5)",
+      "Bash(curl:*)",
+      "Bash(npm run dev:client:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx tsc:*)",
+      "Bash(find:*)",
+      "Bash(git checkout:*)",
+      "Bash(if [ -d \"src\" ])",
+      "Bash(then echo \"src exists\")",
+      "Bash(else echo \"src does not exist\")",
+      "Bash(npm run typecheck:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git diff-tree:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

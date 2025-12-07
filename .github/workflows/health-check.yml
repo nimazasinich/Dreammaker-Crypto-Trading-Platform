@@ -1,0 +1,232 @@
+name: 🏥 Health Check
+
+on:
+  # اجرا بعد از هر push به main/develop
+  push:
+    branches: [main, develop]
+
+  # اجرا بعد از هر pull request
+  pull_request:
+    branches: [main]
+
+  # اجرا به صورت دوره‌ای (هر 6 ساعت)
+  schedule:
+    - cron: '0 */6 * * *'
+
+  # امکان اجرای دستی
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to test'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+
+jobs:
+  health-check:
+    name: Run Health Checks
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        environment: [staging, production]
+      fail-fast: false
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🏥 Run health check - ${{ matrix.environment }}
+        env:
+          STAGING_API_BASE: ${{ secrets.STAGING_API_BASE }}
+          STAGING_WS_URL: ${{ secrets.STAGING_WS_URL }}
+          PROD_API_BASE: ${{ secrets.PROD_API_BASE }}
+          PROD_WS_URL: ${{ secrets.PROD_WS_URL }}
+        run: |
+          npm run health:check -- \
+            --env ${{ matrix.environment }} \
+            --parallel \
+            --fail-on-error \
+            --format json \
+            --output ./reports/health-check-${{ matrix.environment }}.json
+
+      - name: 📊 Generate markdown report
+        if: always()
+        env:
+          STAGING_API_BASE: ${{ secrets.STAGING_API_BASE }}
+          STAGING_WS_URL: ${{ secrets.STAGING_WS_URL }}
+          PROD_API_BASE: ${{ secrets.PROD_API_BASE }}
+          PROD_WS_URL: ${{ secrets.PROD_WS_URL }}
+        run: |
+          npm run health:check -- \
+            --env ${{ matrix.environment }} \
+            --parallel \
+            --format markdown \
+            --output ./reports/health-check-${{ matrix.environment }}.md
+
+      - name: 📤 Upload JSON report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: health-check-report-${{ matrix.environment }}-json
+          path: reports/health-check-${{ matrix.environment }}.json
+          retention-days: 30
+
+      - name: 📤 Upload Markdown report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: health-check-report-${{ matrix.environment }}-md
+          path: reports/health-check-${{ matrix.environment }}.md
+          retention-days: 30
+
+      - name: 💬 Comment PR with results
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const reportPath = './reports/health-check-${{ matrix.environment }}.md';
+
+            if (fs.existsSync(reportPath)) {
+              const report = fs.readFileSync(reportPath, 'utf8');
+
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `## 🏥 Health Check Report - ${{ matrix.environment }}\n\n${report}`
+              });
+            }
+
+      - name: 🚨 Create issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const reportPath = './reports/health-check-${{ matrix.environment }}.json';
+            let failedTests = '';
+
+            if (fs.existsSync(reportPath)) {
+              const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+              const failed = report.results.filter(r => !r.passed);
+
+              if (failed.length > 0) {
+                failedTests = '\n\n### Failed Tests:\n\n';
+                failed.forEach(test => {
+                  failedTests += `- **${test.name}** (${test.category})\n`;
+                  failedTests += `  - Error: ${test.error}\n`;
+                });
+              }
+            }
+
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚨 Health Check Failed - ${{ matrix.environment }}`,
+              body: `## Health Check Failure\n\n` +
+                    `**Environment:** ${{ matrix.environment }}\n` +
+                    `**Workflow:** ${context.workflow}\n` +
+                    `**Run:** ${context.runId}\n` +
+                    `**Commit:** ${context.sha}\n` +
+                    failedTests +
+                    `\n\n[View workflow run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`,
+              labels: ['health-check', 'bug', 'urgent']
+            });
+
+      - name: 📢 Send Slack notification
+        if: failure()
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "🚨 Health Check Failed - ${{ matrix.environment }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Health Check Failed*\n*Environment:* ${{ matrix.environment }}\n*Workflow:* ${{ github.workflow }}\n*Commit:* ${{ github.sha }}"
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Workflow"
+                      },
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+  summary:
+    name: Health Check Summary
+    runs-on: ubuntu-latest
+    needs: health-check
+    if: always()
+
+    steps:
+      - name: 📥 Download all reports
+        uses: actions/download-artifact@v4
+        with:
+          path: reports/
+
+      - name: 📊 Generate summary
+        run: |
+          echo "## 🏥 Health Check Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          for env_dir in reports/health-check-report-*-json; do
+            if [ -d "$env_dir" ]; then
+              env_name=$(basename "$env_dir" | sed 's/health-check-report-//' | sed 's/-json//')
+              json_file="$env_dir/health-check-${env_name}.json"
+
+              if [ -f "$json_file" ]; then
+                total=$(jq -r '.total' "$json_file")
+                passed=$(jq -r '.passed' "$json_file")
+                failed=$(jq -r '.failed' "$json_file")
+                passRate=$(jq -r '.passRate' "$json_file")
+
+                echo "### $env_name" >> $GITHUB_STEP_SUMMARY
+                echo "" >> $GITHUB_STEP_SUMMARY
+                echo "- **Total Tests:** $total" >> $GITHUB_STEP_SUMMARY
+                echo "- **Passed:** $passed ✅" >> $GITHUB_STEP_SUMMARY
+                echo "- **Failed:** $failed ❌" >> $GITHUB_STEP_SUMMARY
+                echo "- **Pass Rate:** ${passRate}%" >> $GITHUB_STEP_SUMMARY
+                echo "" >> $GITHUB_STEP_SUMMARY
+              fi
+            fi
+          done
+
+      - name: ✅ All checks passed
+        if: success()
+        run: echo "All health checks passed successfully!"
+
+      - name: ❌ Some checks failed
+        if: failure()
+        run: |
+          echo "Some health checks failed. Please review the reports."
+          exit 1

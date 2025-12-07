@@ -1,0 +1,275 @@
+{
+  "baseUrl": "https://Really-amin-Datasourceforcryptocurrency-2.hf.space",
+  "wsUrl": "wss://Really-amin-Datasourceforcryptocurrency-2.hf.space/ws",
+  "timeout": 10000,
+  "services": [
+    {
+      "name": "Health Check",
+      "type": "REST",
+      "method": "GET",
+      "endpoint": "/api/health",
+      "category": "System",
+      "priority": "CRITICAL",
+      "expectedMinimumResponse": {
+        "status": "string",
+        "timestamp": "string",
+        "database": "string",
+        "providers_loaded": "number"
+      }
+    },
+    {
+      "name": "Models Status",
+      "type": "REST",
+      "method": "GET",
+      "endpoint": "/api/models/status",
+      "category": "AI/ML",
+      "priority": "HIGH",
+      "expectedMinimumResponse": {
+        "success": "boolean",
+        "initialized": "boolean",
+        "models_loaded": "number"
+      }
+    },
+    {
+      "name": "System Health",
+      "type": "REST",
+      "method": "GET",
+      "endpoint": "/api/system/health",
+      "category": "System",
+      "priority": "CRITICAL",
+      "expectedMinimumResponse": {
+        "status": "string"
+      }
+    },
+    {
+      "name": "Market Data - Prices (Single)",
+      "type": "REST",
+      "method": "GET",
+      "endpoint": "/api/market-data/prices?symbols=BTCUSDT",
+      "category": "Market Data",
+      "priority": "CRITICAL",
+      "expectedMinimumResponse": {
+        "data": "array"
+      }
+    },
+    {
+      "name": "Market Data - Prices (Batch)",
+      "type": "REST",
+      "method": "GET",
+      "endpoint": "/api/market-data/prices?symbols=BTCUSDT,ETHUSDT,BNBUSDT",
+      "category": "Market Data",
+      "priority": "HIGH",
+      "expectedMinimumResponse": {
+        "data": "array"
+      }
+    },
+    {
+      "name": "Rate Service - Single Pair",
+      "type": "REST",
+      "method": "GET",
+      "endpoint": "/api/service/rate?pair=BTC/USDT",
+      "category": "Rate Service",
+      "priority": "HIGH",
+      "expectedMinimumResponse": {
+        "data": {
+          "price": "number",
+          "pair": "string"
+        }
+      }
+    },
+    {
+      "name": "Rate Service - Batch Pairs",
+      "type": "REST",
+      "method": "GET",
+      "endpoint": "/api/service/rate/batch?pairs=BTC/USDT,ETH/USDT,BNB/USDT",
+      "category": "Rate Service",
+      "priority": "HIGH",
+      "expectedMinimumResponse": {
+        "data": "array"
+      }
+    },
+    {
+      "name": "OHLC Data - BTC 1h",
+      "type": "REST",
+      "method": "GET",
+      "endpoint": "/api/market/ohlc?symbol=BTC&interval=1h&limit=100",
+      "category": "Market Data",
+      "priority": "HIGH",
+      "expectedMinimumResponse": {
+        "data": "array"
+      }
+    },
+    {
+      "name": "OHLC Data - ETH 15m",
+      "type": "REST",
+      "method": "GET",
+      "endpoint": "/api/market/ohlc?symbol=ETH&interval=15m&limit=50",
+      "category": "Market Data",
+      "priority": "MEDIUM",
+      "expectedMinimumResponse": {
+        "data": "array"
+      }
+    },
+    {
+      "name": "Trading Portfolio",
+      "type": "REST",
+      "method": "GET",
+      "endpoint": "/api/trading/portfolio",
+      "category": "Trading",
+      "priority": "MEDIUM",
+      "expectedMinimumResponse": {}
+    },
+    {
+      "name": "Trading Market - BTC",
+      "type": "REST",
+      "method": "GET",
+      "endpoint": "/api/trading/market/BTCUSDT",
+      "category": "Trading",
+      "priority": "MEDIUM",
+      "expectedMinimumResponse": {}
+    },
+    {
+      "name": "Open Positions",
+      "type": "REST",
+      "method": "GET",
+      "endpoint": "/api/trade/open-positions",
+      "category": "Trading",
+      "priority": "MEDIUM",
+      "expectedMinimumResponse": {}
+    },
+    {
+      "name": "Binance Health",
+      "type": "REST",
+      "method": "GET",
+      "endpoint": "/api/binance/health",
+      "category": "Exchange",
+      "priority": "HIGH",
+      "expectedMinimumResponse": {
+        "status": "string"
+      }
+    },
+    {
+      "name": "HF Engine Health",
+      "type": "REST",
+      "method": "GET",
+      "endpoint": "/api/hf-engine/health",
+      "category": "Data Engine",
+      "priority": "CRITICAL",
+      "expectedMinimumResponse": {
+        "status": "string"
+      }
+    },
+    {
+      "name": "Data Pipeline Status",
+      "type": "REST",
+      "method": "GET",
+      "endpoint": "/api/data-pipeline/status",
+      "category": "System",
+      "priority": "HIGH",
+      "expectedMinimumResponse": {}
+    },
+    {
+      "name": "System Config",
+      "type": "REST",
+      "method": "GET",
+      "endpoint": "/api/system/config",
+      "category": "System",
+      "priority": "LOW",
+      "expectedMinimumResponse": {}
+    },
+    {
+      "name": "WebSocket - Market Data Subscribe",
+      "type": "WS",
+      "endpoint": "/ws",
+      "category": "WebSocket",
+      "priority": "CRITICAL",
+      "subscribePayload": {
+        "action": "subscribe",
+        "service": "market_data",
+        "symbols": ["BTCUSDT", "ETHUSDT"]
+      },
+      "expectedMinimumResponse": {
+        "type": "string",
+        "service": "string",
+        "data": {}
+      },
+      "waitForMessages": 2,
+      "messageTimeout": 10000
+    },
+    {
+      "name": "WebSocket - Price Updates",
+      "type": "WS",
+      "endpoint": "/ws",
+      "category": "WebSocket",
+      "priority": "HIGH",
+      "subscribePayload": {
+        "action": "subscribe",
+        "service": "price_updates",
+        "pairs": ["BTC/USDT", "ETH/USDT"]
+      },
+      "expectedMinimumResponse": {
+        "type": "string",
+        "data": {
+          "price": "number"
+        }
+      },
+      "waitForMessages": 1,
+      "messageTimeout": 8000
+    },
+    {
+      "name": "WebSocket - OHLC Stream",
+      "type": "WS",
+      "endpoint": "/ws",
+      "category": "WebSocket",
+      "priority": "MEDIUM",
+      "subscribePayload": {
+        "action": "subscribe",
+        "service": "ohlc_stream",
+        "symbol": "BTCUSDT",
+        "interval": "1h"
+      },
+      "expectedMinimumResponse": {
+        "type": "string",
+        "data": {
+          "open": "number",
+          "high": "number",
+          "low": "number",
+          "close": "number"
+        }
+      },
+      "waitForMessages": 1,
+      "messageTimeout": 15000
+    },
+    {
+      "name": "WebSocket - Signal Updates",
+      "type": "WS",
+      "endpoint": "/ws/signals/live",
+      "category": "WebSocket",
+      "priority": "MEDIUM",
+      "subscribePayload": {
+        "action": "subscribe",
+        "symbols": ["BTC", "ETH"]
+      },
+      "expectedMinimumResponse": {
+        "type": "string"
+      },
+      "waitForMessages": 1,
+      "messageTimeout": 10000
+    },
+    {
+      "name": "WebSocket - Heartbeat",
+      "type": "WS",
+      "endpoint": "/ws",
+      "category": "WebSocket",
+      "priority": "LOW",
+      "subscribePayload": {
+        "action": "ping"
+      },
+      "expectedMinimumResponse": {
+        "type": "string"
+      },
+      "waitForMessages": 1,
+      "messageTimeout": 5000
+    }
+  ]
+}

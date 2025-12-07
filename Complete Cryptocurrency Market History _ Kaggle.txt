@@ -1,0 +1,2 @@
+"all_currencies.csv"
+ https://www.kaggle.com/datasets/taniaj/cryptocurrency-market-history-coinmarketcap#:~:text=calendar_view_week-,all_currencies.csv,-chevron_right

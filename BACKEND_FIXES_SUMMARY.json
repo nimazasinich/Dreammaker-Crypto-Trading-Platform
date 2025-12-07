@@ -1,0 +1,316 @@
+{
+  "fixSession": {
+    "date": "2025-12-03",
+    "summary": "Backend WebSocket and API fixes to resolve 1006 abnormal closures and 404 errors",
+    "rootCauses": [
+      "Frontend auto-connect disabled in .env.real",
+      "Multiple components creating individual WebSocket connections",
+      "Server sending initial message before client handlers ready",
+      "Missing API endpoints causing 404 errors",
+      "No protocol-level ping/pong handlers"
+    ]
+  },
+  
+  "filesModified": [
+    {
+      "file": "src/server.ts",
+      "changes": [
+        "Added 5 missing API endpoints (/market/prices, /api/portfolio/risk-metrics, /ml/training/metrics, /analysis/smc, /analysis/elliott)",
+        "Added 100ms delay to initial WebSocket 'connected' message",
+        "Added protocol-level ping/pong handlers",
+        "Enhanced close event logging with code and reason"
+      ],
+      "linesChanged": "~150 lines added/modified"
+    },
+    {
+      "file": "src/components/scanner/ScannerFeedPanel.tsx",
+      "changes": [
+        "Replaced individual WebSocket creation with centralized useWebSocket hook",
+        "Removed manual reconnection logic (now handled by WebSocketManager)",
+        "Updated connection state to use isConnected from hook"
+      ],
+      "linesChanged": "~60 lines reduced (simplified)"
+    },
+    {
+      "file": "package.json",
+      "changes": [
+        "Added npm run test:ws (basic 30s test)",
+        "Added npm run test:ws:stress (10 connections)",
+        "Added npm run test:ws:long (2 minute test)"
+      ],
+      "linesChanged": "3 scripts added"
+    }
+  ],
+
+  "filesCreated": [
+    {
+      "file": "scripts/test-websocket.js",
+      "purpose": "Standalone WebSocket diagnostic tool",
+      "features": [
+        "Tests connection lifecycle independently from React",
+        "Measures time to first message",
+        "Implements ping/pong heartbeat",
+        "Detects abnormal closures (1006)",
+        "Supports stress testing with multiple connections",
+        "Provides health assessment with exit codes"
+      ],
+      "lines": 470
+    },
+    {
+      "file": "scripts/WEBSOCKET_DIAGNOSTICS.md",
+      "purpose": "Complete usage guide for diagnostic tool",
+      "sections": [
+        "Quick Start",
+        "What It Tests",
+        "Understanding Output",
+        "Common Issues & Solutions",
+        "Command Line Options",
+        "Troubleshooting Tips"
+      ],
+      "lines": 350
+    },
+    {
+      "file": "docs/WEBSOCKET_BEST_PRACTICES.md",
+      "purpose": "Production-grade WebSocket architecture patterns",
+      "sections": [
+        "Core Principles (5 patterns)",
+        "Common Anti-Patterns (5 to avoid)",
+        "Production Monitoring",
+        "Additional Resources (15+ links)",
+        "Production Checklist (18 items)"
+      ],
+      "lines": 550
+    }
+  ],
+
+  "backendAPIEndpoints": {
+    "added": [
+      {
+        "endpoint": "GET /market/prices",
+        "description": "Market data with multi-symbol support",
+        "parameters": ["symbols", "timeframe", "limit"],
+        "response": {
+          "data": [
+            {
+              "symbol": "BTCUSDT",
+              "price": 96234.56,
+              "change24h": 2.34,
+              "volume24h": 1234567890,
+              "timestamp": 1733200000000
+            }
+          ]
+        }
+      },
+      {
+        "endpoint": "GET /api/portfolio/risk-metrics",
+        "description": "Portfolio risk calculations",
+        "response": {
+          "metrics": {
+            "totalValue": 10000,
+            "totalPnL": 500,
+            "sharpeRatio": 1.5,
+            "maxDrawdown": -5.2,
+            "winRate": 65,
+            "riskScore": 7.5
+          }
+        }
+      },
+      {
+        "endpoint": "GET /ml/training/metrics",
+        "description": "ML model training metrics",
+        "response": {
+          "metrics": {
+            "currentEpoch": 45,
+            "totalEpochs": 100,
+            "trainingLoss": 0.023,
+            "validationLoss": 0.028,
+            "accuracy": 0.87
+          }
+        }
+      },
+      {
+        "endpoint": "GET /analysis/smc",
+        "description": "Smart Money Concepts analysis",
+        "parameters": ["symbol", "timeframe"],
+        "response": {
+          "analysis": {
+            "orderBlocks": [],
+            "fairValueGaps": [],
+            "breaksOfStructure": []
+          }
+        }
+      },
+      {
+        "endpoint": "GET /analysis/elliott",
+        "description": "Elliott Wave analysis",
+        "parameters": ["symbol", "timeframe"],
+        "response": {
+          "waves": [],
+          "currentWave": "Wave 3",
+          "nextTarget": 98500
+        }
+      }
+    ]
+  },
+
+  "webSocketImprovements": {
+    "timing": {
+      "before": "Server sent 'connected' message immediately (0ms delay)",
+      "after": "Server waits 100ms before sending, checking connection state",
+      "benefit": "Prevents race condition where client handlers not ready"
+    },
+    "keepAlive": {
+      "before": "Only application-level ping/pong (JSON messages)",
+      "after": "Both protocol-level (WebSocket frames) AND application-level",
+      "benefit": "Prevents idle timeout from proxies/firewalls"
+    },
+    "clientConnections": {
+      "before": "Each component (ScannerFeedPanel, etc.) created own WebSocket",
+      "after": "All components use shared WebSocketManager via useWebSocket hook",
+      "benefit": "Eliminates connection conflicts and resource exhaustion"
+    },
+    "closeLogging": {
+      "before": "Basic close logging",
+      "after": "Logs close code, reason, and abnormal closure detection",
+      "benefit": "Better debugging of connection issues"
+    }
+  },
+
+  "diagnosticCapabilities": {
+    "beforeFixes": [
+      "Could only see WebSocket errors in browser console",
+      "No way to test backend independently",
+      "No quantitative metrics (time to connect, message count, etc.)"
+    ],
+    "afterFixes": [
+      "Standalone diagnostic script (no React needed)",
+      "Precise timing metrics (connection time, time to first message)",
+      "Health assessment with exit codes (CI/CD ready)",
+      "Stress testing with multiple simultaneous connections",
+      "Ping/pong verification",
+      "Abnormal closure detection"
+    ]
+  },
+
+  "nextSteps": {
+    "required": [
+      {
+        "step": 1,
+        "action": "Run baseline diagnostic test",
+        "command": "npm run test:ws",
+        "expected": "Code 1006 errors (confirms current issue)"
+      },
+      {
+        "step": 2,
+        "action": "Edit .env.real file",
+        "changes": {
+          "VITE_WS_CONNECT_ON_START": "true (was false)",
+          "VITE_DISABLE_INITIAL_LOAD": "false (was true)"
+        }
+      },
+      {
+        "step": 3,
+        "action": "Restart frontend",
+        "terminal": "Terminal 10",
+        "commands": ["Ctrl+C", "npm run dev:client:real"]
+      },
+      {
+        "step": 4,
+        "action": "Re-run diagnostic test",
+        "command": "npm run test:ws",
+        "expected": "✅ Healthy (no 1006 errors)"
+      },
+      {
+        "step": 5,
+        "action": "Run stress test",
+        "command": "npm run test:ws:stress",
+        "expected": "All 10 connections stable"
+      }
+    ],
+    "optional": [
+      {
+        "action": "Long-duration stability test",
+        "command": "npm run test:ws:long",
+        "purpose": "Verify no idle timeouts over 2 minutes"
+      },
+      {
+        "action": "Multi-tab browser test",
+        "purpose": "Confirm shared WebSocketManager handles multiple consumers"
+      },
+      {
+        "action": "Full UI/UX test suite",
+        "purpose": "Verify all views load data correctly"
+      }
+    ]
+  },
+
+  "expectedOutcomes": {
+    "webSocket": {
+      "connectionEstablished": "< 500ms",
+      "timeToFirstMessage": "100-200ms after connection",
+      "closeCode": "1000 (Normal Closure) when client disconnects",
+      "messagesReceived": "> 0 (price updates every 3 seconds)",
+      "pingPongRatio": "1:1 (all pings get pongs)",
+      "abnormalClosures": "0 (no code 1006 errors)"
+    },
+    "api": {
+      "marketPrices": "200 OK with price data",
+      "portfolioRiskMetrics": "200 OK with metrics object",
+      "mlTrainingMetrics": "200 OK with training stats",
+      "smcAnalysis": "200 OK with SMC data",
+      "elliottAnalysis": "200 OK with Elliott waves"
+    },
+    "ui": {
+      "dashboardView": "Loads market data, no blank cards",
+      "chartingView": "Displays price charts, real-time updates",
+      "portfolioView": "Shows positions and risk metrics",
+      "scannerView": "Live feed updates without reconnection loops",
+      "networkTab": "No 404 errors, no repeated WebSocket connections"
+    }
+  },
+
+  "references": {
+    "webSocketCloseCode1006": [
+      "https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent/code",
+      "https://stackoverflow.com/questions/19304157/getting-the-reason-why-websockets-closed-with-close-code-1006",
+      "https://github.com/websockets/ws/issues/1520"
+    ],
+    "webSocketArchitecture": [
+      "https://ably.com/topic/websocket-architecture-best-practices",
+      "https://docs.bird.com/pusher/channels/channels/troubleshooting/what-is-meant-by-channels-error-1006",
+      "https://www.pubnub.com/guides/websocket-connection-management/"
+    ],
+    "keepAlive": [
+      "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers#pings_and_pongs_the_heartbeat_of_websockets",
+      "https://docs.aws.amazon.com/apigateway/latest/developerguide/websocket-api.html"
+    ]
+  },
+
+  "testingChecklist": {
+    "backend": [
+      "WebSocket connects successfully",
+      "No immediate closures (code 1006)",
+      "Messages flow regularly",
+      "Ping/pong works correctly",
+      "Multiple connections supported",
+      "Graceful shutdown (code 1000)"
+    ],
+    "frontend": [
+      "Single WebSocket connection established",
+      "All components receive data via hook",
+      "No duplicate connections",
+      "Reconnection works after network loss",
+      "Connection status indicator accurate",
+      "Real-time updates appear"
+    ],
+    "integration": [
+      "Dashboard shows live prices",
+      "Charts update in real-time",
+      "Scanner feed displays candidates",
+      "Portfolio metrics calculate correctly",
+      "No 404 errors in Network tab",
+      "No console errors"
+    ]
+  }
+}
+

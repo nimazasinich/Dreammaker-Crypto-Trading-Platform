@@ -1,0 +1,1512 @@
+# کدهای جدید برای اضافه کردن به فایل اصلی
+
+# ================ توابع پایگاه دانش ================
+def get_knowledge_base():
+    """دریافت پایگاه دانش یادگیری ماشین"""
+    knowledge_base = {
+        "terms": {
+            "یادگیری ماشین": {
+                "title": "یادگیری ماشین (Machine Learning)",
+                "description": "یادگیری ماشین شاخه‌ای از هوش مصنوعی است که به سیستم‌ها اجازه می‌دهد بدون برنامه‌ریزی صریح، از داده‌ها یاد بگیرند و عملکرد خود را بهبود بخشند.",
+                "examples": ["طبقه‌بندی تصاویر", "پیش‌بینی قیمت", "تشخیص احساسات"],
+                "related": ["یادگیری عمیق", "هوش مصنوعی", "داده‌کاوی"]
+            },
+            "یادگیری عمیق": {
+                "title": "یادگیری عمیق (Deep Learning)",
+                "description": "یادگیری عمیق زیرمجموعه‌ای از یادگیری ماشین است که از شبکه‌های عصبی با لایه‌های متعدد برای یادگیری از داده‌های بزرگ استفاده می‌کند.",
+                "examples": ["تشخیص چهره", "ترجمه ماشینی", "تشخیص گفتار"],
+                "related": ["شبکه عصبی", "یادگیری ماشین", "هوش مصنوعی"]
+            },
+            "شبکه عصبی": {
+                "title": "شبکه عصبی (Neural Network)",
+                "description": "شبکه‌های عصبی الگوریتم‌های یادگیری ماشین هستند که از ساختار مغز انسان الهام گرفته‌اند و از نورون‌های مصنوعی متصل به هم تشکیل شده‌اند.",
+                "examples": ["شبکه عصبی پیشخور", "شبکه عصبی بازگشتی", "شبکه عصبی کانولوشنی"],
+                "related": ["یادگیری عمیق", "یادگیری ماشین", "نورون مصنوعی"]
+            },
+            "داده‌کاوی": {
+                "title": "داده‌کاوی (Data Mining)",
+                "description": "داده‌کاوی فرآیند کشف الگوها و روابط پنهان در مجموعه‌های بزرگ داده است.",
+                "examples": ["تحلیل سبد خرید", "بخش‌بندی مشتریان", "تشخیص تقلب"],
+                "related": ["یادگیری ماشین", "تحلیل داده‌ها", "هوش تجاری"]
+            },
+            "طبقه‌بندی": {
+                "title": "طبقه‌بندی (Classification)",
+                "description": "طبقه‌بندی یک وظیفه یادگیری ماشین است که در آن الگوریتم یاد می‌گیرد داده‌ها را به دسته‌های از پیش تعیین شده تقسیم کند.",
+                "examples": ["طبقه‌بندی ایمیل‌های هرزنامه", "تشخیص بیماری", "طبقه‌بندی تصاویر"],
+                "related": ["یادگیری با نظارت", "رگرسیون", "درخت تصمیم"]
+            },
+            "رگرسیون": {
+                "title": "رگرسیون (Regression)",
+                "description": "رگرسیون یک وظیفه یادگیری ماشین است که در آن الگوریتم یاد می‌گیرد یک مقدار عددی پیوسته را پیش‌بینی کند.",
+                "examples": ["پیش‌بینی قیمت خانه", "پیش‌بینی فروش", "پیش‌بینی دما"],
+                "related": ["یادگیری با نظارت", "طبقه‌بندی", "رگرسیون خطی"]
+            }
+        },
+        "algorithms": {
+            "classification": {
+                "decision_tree": {
+                    "name": "درخت تصمیم",
+                    "description": "الگوریتمی که داده‌ها را با استفاده از شرط‌های تصمیم‌گیری به صورت درختی طبقه‌بندی می‌کند.",
+                    "pros": ["قابل تفسیر", "نیاز به پیش‌پردازش کم", "می‌تواند با داده‌های عددی و طبقه‌ای کار کند"],
+                    "cons": ["احتمال بیش‌برازش", "حساس به تغییرات کوچک در داده‌ها", "ممکن است برای روابط پیچیده مناسب نباشد"],
+                    "use_cases": ["پیش‌بینی ریسک اعتباری", "تشخیص بیماری", "طبقه‌بندی مشتریان"],
+                    "parameters": {
+                        "max_depth": "حداکثر عمق درخت",
+                        "min_samples_split": "حداقل تعداد نمونه‌ها برای تقسیم",
+                        "criterion": "معیار ارزیابی (gini یا entropy)"
+                    }
+                },
+                "random_forest": {
+                    "name": "جنگل تصادفی",
+                    "description": "ترکیبی از چندین درخت تصمیم که با نمونه‌های تصادفی از داده‌ها و ویژگی‌ها آموزش می‌بینند.",
+                    "pros": ["دقت بالا", "مقاوم در برابر بیش‌برازش", "می‌تواند اهمیت ویژگی‌ها را تخمین بزند"],
+                    "cons": ["کمتر قابل تفسیر نسبت به درخت تصمیم", "زمان آموزش و پیش‌بینی طولانی‌تر", "مصرف حافظه بیشتر"],
+                    "use_cases": ["تشخیص تقلب", "پیش‌بینی بیماری", "طبقه‌بندی تصاویر"],
+                    "parameters": {
+                        "n_estimators": "تعداد درختان",
+                        "max_depth": "حداکثر عمق هر درخت",
+                        "bootstrap": "استفاده از نمونه‌گیری با جایگذاری"
+                    }
+                },
+                "svm": {
+                    "name": "ماشین بردار پشتیبان",
+                    "description": "الگوریتمی که یک ابرصفحه بهینه برای جداسازی داده‌های دو کلاس پیدا می‌کند.",
+                    "pros": ["موثر در فضاهای با ابعاد بالا", "حافظه کارآمد", "انواع مختلفی از توابع کرنل"],
+                    "cons": ["تنظیم پارامترها دشوار است", "زمان آموزش طولانی برای داده‌های بزرگ", "تفسیرپذیری کم"],
+                    "use_cases": ["طبقه‌بندی متن", "تشخیص چهره", "طبقه‌بندی ژن"],
+                    "parameters": {
+                        "C": "پارامتر تنظیم (جریمه خطا)",
+                        "kernel": "تابع کرنل (linear، polynomial، rbf)",
+                        "gamma": "ضریب کرنل"
+                    }
+                },
+                "logistic_regression": {
+                    "name": "رگرسیون لجستیک",
+                    "description": "الگوریتم آماری که احتمال تعلق یک نمونه به یک کلاس را محاسبه می‌کند.",
+                    "pros": ["ساده و کارآمد", "ارائه احتمالات", "کم‌برازش کمتر"],
+                    "cons": ["فرض روابط خطی", "عملکرد ضعیف‌تر در ویژگی‌های غیرخطی", "حساس به مقادیر پرت"],
+                    "use_cases": ["تحلیل ریسک", "پذیرش تبلیغات", "تشخیص بیماری"],
+                    "parameters": {
+                        "C": "قدرت تنظیم (inverse of regularization strength)",
+                        "penalty": "نوع تنظیم (l1، l2)",
+                        "solver": "الگوریتم بهینه‌سازی"
+                    }
+                },
+                "knn": {
+                    "name": "نزدیک‌ترین همسایه",
+                    "description": "الگوریتمی که کلاس یک نمونه را براساس کلاس‌های K نمونه نزدیک به آن تعیین می‌کند.",
+                    "pros": ["ساده و بدون فرضیات", "بدون نیاز به آموزش", "موثر برای مرزهای تصمیم‌گیری پیچیده"],
+                    "cons": ["کند در پیش‌بینی", "نیاز به حافظه زیاد", "حساس به مقیاس ویژگی‌ها"],
+                    "use_cases": ["سیستم‌های توصیه‌گر", "تشخیص ناهنجاری", "طبقه‌بندی تصاویر"],
+                    "parameters": {
+                        "n_neighbors": "تعداد همسایه‌ها",
+                        "weights": "وزن‌دهی (uniform یا distance)",
+                        "p": "پارامتر فاصله مینکوفسکی"
+                    }
+                },
+                "naive_bayes": {
+                    "name": "بیز ساده",
+                    "description": "الگوریتم احتمالاتی بر اساس قاعده بیز با فرض استقلال ویژگی‌ها.",
+                    "pros": ["سریع و کارآمد", "خوب برای داده‌های کم", "موثر برای طبقه‌بندی متن"],
+                    "cons": ["فرض استقلال ویژگی‌ها غیرواقعی است", "حساس به ویژگی‌های نویزی", "کارایی کمتر در داده‌های پیچیده"],
+                    "use_cases": ["فیلترینگ هرزنامه", "طبقه‌بندی اسناد", "تحلیل احساسات"],
+                    "parameters": {
+                        "alpha": "پارامتر هموارسازی",
+                        "fit_prior": "یادگیری احتمالات پیشین",
+                        "class_prior": "احتمالات پیشین کلاس‌ها"
+                    }
+                }
+            },
+            "regression": {
+                "linear_regression": {
+                    "name": "رگرسیون خطی",
+                    "description": "الگوریتمی که رابطه خطی بین متغیرهای مستقل و وابسته را مدل می‌کند.",
+                    "pros": ["ساده و قابل تفسیر", "سریع", "نیاز به حافظه کم"],
+                    "cons": ["فرض روابط خطی", "حساس به مقادیر پرت", "نمی‌تواند روابط پیچیده را مدل کند"],
+                    "use_cases": ["پیش‌بینی قیمت", "تحلیل عوامل موثر", "تخمین فروش"],
+                    "parameters": {
+                        "fit_intercept": "شامل عرض از مبدا",
+                        "normalize": "نرمال‌سازی داده‌ها",
+                        "copy_X": "کپی از داده‌های ورودی"
+                    }
+                },
+                "decision_tree_regressor": {
+                    "name": "درخت تصمیم رگرسیون",
+                    "description": "الگوریتم درخت تصمیم برای پیش‌بینی مقادیر پیوسته.",
+                    "pros": ["می‌تواند روابط غیرخطی را مدل کند", "نیاز به پیش‌پردازش کم", "قابل تفسیر"],
+                    "cons": ["احتمال بیش‌برازش", "ناپایدار برای تغییرات کوچک در داده‌ها", "دقت کمتر نسبت به بعضی مدل‌های دیگر"],
+                    "use_cases": ["پیش‌بینی قیمت خانه", "برآورد مصرف انرژی", "پیش‌بینی فروش"],
+                    "parameters": {
+                        "max_depth": "حداکثر عمق درخت",
+                        "min_samples_split": "حداقل تعداد نمونه‌ها برای تقسیم",
+                        "criterion": "معیار ارزیابی (mse، mae)"
+                    }
+                },
+                "random_forest_regressor": {
+                    "name": "جنگل تصادفی رگرسیون",
+                    "description": "ترکیبی از چندین درخت تصمیم رگرسیون که با نمونه‌های تصادفی آموزش می‌بینند.",
+                    "pros": ["دقت بالا", "می‌تواند روابط غیرخطی را مدل کند", "کمتر مستعد بیش‌برازش"],
+                    "cons": ["کمتر قابل تفسیر", "زمان آموزش و پیش‌بینی طولانی‌تر", "مصرف حافظه بیشتر"],
+                    "use_cases": ["پیش‌بینی قیمت املاک", "برآورد مصرف انرژی", "پیش‌بینی عملکرد"],
+                    "parameters": {
+                        "n_estimators": "تعداد درختان",
+                        "max_depth": "حداکثر عمق هر درخت",
+                        "bootstrap": "استفاده از نمونه‌گیری با جایگذاری"
+                    }
+                },
+                "svr": {
+                    "name": "رگرسیون بردار پشتیبان",
+                    "description": "نسخه رگرسیونی ماشین بردار پشتیبان که یک تابع با حداکثر حاشیه خطا می‌سازد.",
+                    "pros": ["موثر در فضاهای با ابعاد بالا", "انعطاف‌پذیر با کرنل‌های مختلف", "مقاوم به مقادیر پرت با کرنل مناسب"],
+                    "cons": ["تنظیم پارامترها دشوار", "زمان محاسباتی بالا برای داده‌های بزرگ", "کمتر قابل تفسیر"],
+                    "use_cases": ["پیش‌بینی مالی", "برآورد زمان", "تخمین کیفیت"],
+                    "parameters": {
+                        "C": "پارامتر تنظیم (جریمه خطا)",
+                        "epsilon": "حاشیه خطای قابل قبول",
+                        "kernel": "تابع کرنل (linear، polynomial، rbf)"
+                    }
+                },
+                "gradient_boosting_regressor": {
+                    "name": "گرادیان بوستینگ رگرسیون",
+                    "description": "الگوریتم دسته‌ای که مدل‌های ضعیف را به صورت تدریجی و با تمرکز بر خطاها بهبود می‌دهد.",
+                    "pros": ["دقت بسیار بالا", "می‌تواند روابط پیچیده را مدل کند", "انعطاف‌پذیر"],
+                    "cons": ["تنظیم پارامترها دشوار", "زمان آموزش طولانی", "احتمال بیش‌برازش"],
+                    "use_cases": ["رتبه‌بندی جستجو", "پیش‌بینی قیمت", "برآورد ریسک"],
+                    "parameters": {
+                        "n_estimators": "تعداد مراحل بوستینگ",
+                        "learning_rate": "نرخ یادگیری",
+                        "max_depth": "حداکثر عمق درخت‌های پایه"
+                    }
+                }
+            },
+            "clustering": {
+                "kmeans": {
+                    "name": "K میانگین",
+                    "description": "الگوریتمی که داده‌ها را به K خوشه تقسیم می‌کند و هر نمونه به نزدیک‌ترین میانگین خوشه تعلق می‌گیرد.",
+                    "pros": ["ساده و سریع", "مقیاس‌پذیر", "قابل تفسیر"],
+                    "cons": ["نیاز به تعیین تعداد خوشه‌ها از قبل", "حساس به مقادیر پرت", "فرض شکل کروی خوشه‌ها"],
+                    "use_cases": ["بخش‌بندی مشتریان", "فشرده‌سازی تصویر", "خوشه‌بندی اسناد"],
+                    "parameters": {
+                        "n_clusters": "تعداد خوشه‌ها",
+                        "init": "روش مقداردهی اولیه (k-means++، random)",
+                        "n_init": "تعداد اجرا با مقادیر اولیه متفاوت"
+                    }
+                },
+                "dbscan": {
+                    "name": "DBSCAN",
+                    "description": "الگوریتمی که خوشه‌ها را براساس تراکم نقاط شناسایی می‌کند.",
+                    "pros": ["نیازی به تعیین تعداد خوشه‌ها نیست", "می‌تواند خوشه‌های با شکل‌های دلخواه را پیدا کند", "مقاوم به نویز"],
+                    "cons": ["حساس به پارامترهای تراکم", "عملکرد ضعیف در تراکم‌های متفاوت", "مشکل در داده‌های با ابعاد بالا"],
+                    "use_cases": ["تشخیص ناهنجاری", "تجزیه و تحلیل فضایی", "خوشه‌بندی تصاویر"],
+                    "parameters": {
+                        "eps": "حداکثر فاصله بین دو نمونه برای همسایگی",
+                        "min_samples": "حداقل تعداد نمونه در یک همسایگی",
+                        "metric": "معیار فاصله"
+                    }
+                },
+                "hierarchical_clustering": {
+                    "name": "خوشه‌بندی سلسله‌مراتبی",
+                    "description": "الگوریتمی که سلسله‌مراتبی از خوشه‌ها را می‌سازد، یا به صورت ادغامی یا تقسیمی.",
+                    "pros": ["نیازی به تعیین تعداد خوشه‌ها از قبل نیست", "نمایش سلسله‌مراتبی قابل تفسیر", "انعطاف‌پذیر با معیارهای مختلف"],
+                    "cons": ["محاسبات سنگین", "حساس به مقادیر پرت", "غیرقابل بازگشت (تصمیمات ادغام/تقسیم)"],
+                    "use_cases": ["طبقه‌بندی گونه‌ها", "تحلیل ژن", "مرور کلی داده‌ها"],
+                    "parameters": {
+                        "n_clusters": "تعداد خوشه‌ها",
+                        "linkage": "روش پیوند (ward، complete، average، single)",
+                        "affinity": "معیار فاصله"
+                    }
+                },
+                "gaussian_mixture": {
+                    "name": "مخلوط گاوسی",
+                    "description": "الگوریتمی که داده‌ها را به عنوان ترکیبی از چند توزیع گاوسی مدل می‌کند.",
+                    "pros": ["انعطاف‌پذیر", "ارائه احتمالات تعلق", "امکان خوشه‌های با شکل بیضوی"],
+                    "cons": ["نیاز به تعیین تعداد توزیع‌ها", "حساس به مقداردهی اولیه", "احتمال بیش‌برازش"],
+                    "use_cases": ["بخش‌بندی تصویر", "مدل‌سازی صوت", "تشخیص ناهنجاری"],
+                    "parameters": {
+                        "n_components": "تعداد مولفه‌های (خوشه‌های) گاوسی",
+                        "covariance_type": "نوع کوواریانس (full، tied، diagonal، spherical)",
+                        "init_params": "روش مقداردهی اولیه"
+                    }
+                }
+            },
+            "nlp": {
+                "word2vec": {
+                    "name": "Word2Vec",
+                    "description": "روشی برای نمایش کلمات به صورت بردارهای عددی با استفاده از شبکه‌های عصبی.",
+                    "pros": ["کارآمد", "حفظ معنا و روابط معنایی", "قابل استفاده در بسیاری از وظایف NLP"],
+                    "cons": ["نمی‌تواند چندمعنایی را مدل کند", "نیاز به داده زیاد", "آموزش زمان‌بر"],
+                    "use_cases": ["ترجمه ماشینی", "جستجوی معنایی", "طبقه‌بندی متن"],
+                    "parameters": {
+                        "size": "ابعاد بردار",
+                        "window": "اندازه پنجره",
+                        "min_count": "حداقل تعداد تکرار کلمه"
+                    }
+                },
+                "bert": {
+                    "name": "BERT",
+                    "description": "مدل زبانی عمیق دوطرفه مبتنی بر ترانسفورمر که در بسیاری از وظایف NLP کارآمد است.",
+                    "pros": ["بردارهای وابسته به زمینه", "قابلیت تنظیم دقیق برای وظایف مختلف", "دقت بالا"],
+                    "cons": ["محاسبات سنگین", "نیاز به منابع زیاد", "آموزش پیچیده"],
+                    "use_cases": ["پاسخ به سوال", "طبقه‌بندی متن", "استخراج اطلاعات"],
+                    "parameters": {
+                        "max_length": "حداکثر طول توکن",
+                        "learning_rate": "نرخ یادگیری برای تنظیم دقیق",
+                        "batch_size": "اندازه دسته"
+                    }
+                },
+                "tfidf": {
+                    "name": "TF-IDF",
+                    "description": "روش وزن‌دهی به کلمات براساس فراوانی آن‌ها در یک سند و معکوس فراوانی آن‌ها در کل مجموعه اسناد.",
+                    "pros": ["ساده و کارآمد", "مقیاس‌پذیر", "کاهش اهمیت کلمات پرتکرار عمومی"],
+                    "cons": ["بدون در نظر گرفتن معنا و ترتیب کلمات", "بردارهای تنک", "محدودیت در مدل‌سازی متون طولانی"],
+                    "use_cases": ["جستجوی متن", "طبقه‌بندی اسناد", "خلاصه‌سازی متن"],
+                    "parameters": {
+                        "max_features": "حداکثر تعداد ویژگی‌ها",
+                        "min_df": "حداقل فراوانی سند",
+                        "max_df": "حداکثر فراوانی سند"
+                    }
+                }
+            },
+            "deep_learning": {
+                "cnn": {
+                    "name": "شبکه عصبی کانولوشنی",
+                    "description": "نوعی شبکه عصبی عمیق که از عملیات کانولوشن برای استخراج ویژگی‌ها استفاده می‌کند.",
+                    "pros": ["یادگیری خودکار ویژگی‌ها", "اشتراک پارامتر", "مناسب برای داده‌های با ساختار گرید مانند تصاویر"],
+                    "cons": ["نیاز به داده زیاد", "محاسبات سنگین", "تفسیرپذیری کم"],
+                    "use_cases": ["تشخیص اشیاء", "طبقه‌بندی تصاویر", "تشخیص چهره"],
+                    "parameters": {
+                        "filters": "تعداد فیلترها",
+                        "kernel_size": "اندازه کرنل",
+                        "activation": "تابع فعال‌سازی"
+                    }
+                },
+                "rnn": {
+                    "name": "شبکه عصبی بازگشتی",
+                    "description": "نوعی شبکه عصبی که اطلاعات داخلی را ذخیره می‌کند و می‌تواند داده‌های دنباله‌ای را پردازش کند.",
+                    "pros": ["مناسب برای داده‌های دنباله‌ای", "به یاد سپاری اطلاعات پیشین", "اشتراک پارامتر در طول زمان"],
+                    "cons": ["مشکل گرادیان ناپدید/منفجر شونده", "آموزش دشوار", "عملکرد ضعیف در دنباله‌های طولانی"],
+                    "use_cases": ["تشخیص گفتار", "ترجمه ماشینی", "پیش‌بینی سری زمانی"],
+                    "parameters": {
+                        "units": "تعداد نورون‌ها",
+                        "activation": "تابع فعال‌سازی",
+                        "return_sequences": "بازگرداندن خروجی برای هر گام زمانی"
+                    }
+                },
+                "lstm": {
+                    "name": "حافظه کوتاه-مدت طولانی",
+                    "description": "نوعی شبکه عصبی بازگشتی با ساختار پیچیده‌تر که می‌تواند وابستگی‌های طولانی‌مدت را بهتر یاد بگیرد.",
+                    "pros": ["توانایی یادگیری وابستگی‌های طولانی‌مدت", "مقاوم به مشکل گرادیان ناپدید", "کنترل بهتر جریان اطلاعات"],
+                    "cons": ["محاسبات سنگین‌تر نسبت به RNN ساده", "تنظیم پارامترها دشوار", "همچنان مشکل در دنباله‌های بسیار طولانی"],
+                    "use_cases": ["تولید متن", "تحلیل احساسات", "پیش‌بینی سری زمانی"],
+                    "parameters": {
+                        "units": "تعداد نورون‌ها",
+                        "dropout": "نرخ حذف تصادفی",
+                        "recurrent_dropout": "نرخ حذف تصادفی بازگشتی"
+                    }
+                },
+                "transformer": {
+                    "name": "ترانسفورمر",
+                    "description": "معماری مبتنی بر مکانیزم توجه که برای پردازش دنباله‌ها طراحی شده و عملکرد بهتری از RNN دارد.",
+                    "pros": ["پردازش موازی", "توانایی مدل‌سازی روابط دوردست", "عملکرد عالی در وظایف NLP"],
+                    "cons": ["نیاز به داده زیاد", "محاسبات سنگین در دنباله‌های طولانی", "تنظیم پارامترها دشوار"],
+                    "use_cases": ["ترجمه ماشینی", "خلاصه‌سازی متن", "پاسخ به سوال"],
+                    "parameters": {
+                        "num_layers": "تعداد لایه‌ها",
+                        "d_model": "ابعاد مدل",
+                        "num_heads": "تعداد سرهای توجه"
+                    }
+                }
+            }
+        },
+        "tasks": {
+            "طبقه‌بندی": {
+                "description": "تقسیم داده‌ها به دسته‌های از پیش تعیین شده",
+                "recommended_algorithms": ["random_forest", "svm", "logistic_regression"],
+                "examples": ["طبقه‌بندی ایمیل به هرزنامه یا عادی", "تشخیص نوع گل از روی ویژگی‌ها", "طبقه‌بندی تصاویر"]
+            },
+            "رگرسیون": {
+                "description": "پیش‌بینی یک مقدار عددی پیوسته",
+                "recommended_algorithms": ["linear_regression", "random_forest_regressor", "gradient_boosting_regressor"],
+                "examples": ["پیش‌بینی قیمت خانه", "پیش‌بینی فروش ماهانه", "تخمین مصرف انرژی"]
+            },
+            "خوشه‌بندی": {
+                "description": "گروه‌بندی داده‌ها براساس شباهت‌ها بدون برچسب از پیش تعیین شده",
+                "recommended_algorithms": ["kmeans", "dbscan", "hierarchical_clustering"],
+                "examples": ["بخش‌بندی مشتریان", "گروه‌بندی محصولات مشابه", "تشخیص الگوهای رفتاری"]
+            },
+            "تشخیص ناهنجاری": {
+                "description": "شناسایی نقاط داده که از الگوی عادی تخطی می‌کنند",
+                "recommended_algorithms": ["isolation_forest", "local_outlier_factor", "one_class_svm"],
+                "examples": ["تشخیص تقلب", "شناسایی حملات سایبری", "تشخیص خرابی در تجهیزات"]
+            },
+            "پردازش زبان طبیعی": {
+                "description": "تحلیل و پردازش متن به صورت خودکار",
+                "recommended_algorithms": ["bert", "word2vec", "tfidf"],
+                "examples": ["تحلیل احساسات", "طبقه‌بندی متن", "استخراج اطلاعات از متن"]
+            },
+            "بینایی ماشین": {
+                "description": "تحلیل و پردازش تصاویر و ویدیوها",
+                "recommended_algorithms": ["cnn", "resnet", "yolo"],
+                "examples": ["تشخیص اشیاء در تصویر", "طبقه‌بندی تصاویر", "تشخیص چهره"]
+            },
+            "پیش‌بینی سری زمانی": {
+                "description": "پیش‌بینی مقادیر آینده براساس داده‌های گذشته",
+                "recommended_algorithms": ["arima", "lstm", "prophet"],
+                "examples": ["پیش‌بینی قیمت سهام", "پیش‌بینی تقاضا", "پیش‌بینی آب و هوا"]
+            },
+            "سیستم‌های توصیه‌گر": {
+                "description": "پیشنهاد محصولات یا محتوا به کاربران",
+                "recommended_algorithms": ["collaborative_filtering", "content_based", "matrix_factorization"],
+                "examples": ["پیشنهاد فیلم", "پیشنهاد محصول", "پیشنهاد مطلب"]
+            }
+        },
+        "data_types": {
+            "numerical": {
+                "description": "داده‌های عددی پیوسته یا گسسته",
+                "examples": ["قیمت", "سن", "دما"],
+                "preprocessing": ["normalization", "standardization", "binning"]
+            },
+            "categorical": {
+                "description": "داده‌های دسته‌ای با مقادیر محدود",
+                "examples": ["رنگ", "جنسیت", "دسته‌بندی محصول"],
+                "preprocessing": ["one-hot encoding", "label encoding", "target encoding"]
+            },
+            "text": {
+                "description": "داده‌های متنی",
+                "examples": ["ایمیل", "نظرات کاربران", "مقالات"],
+                "preprocessing": ["tokenization", "stemming", "word embeddings"]
+            },
+            "image": {
+                "description": "داده‌های تصویری",
+                "examples": ["عکس", "اسکن پزشکی", "تصاویر ماهواره‌ای"],
+                "preprocessing": ["resizing", "normalization", "data augmentation"]
+            },
+            "time_series": {
+                "description": "داده‌های ثبت شده در طول زمان",
+                "examples": ["قیمت سهام روزانه", "مصرف انرژی ساعتی", "دمای ماهانه"],
+                "preprocessing": ["resampling", "smoothing", "feature extraction"]
+            },
+            "geospatial": {
+                "description": "داده‌های مکانی و جغرافیایی",
+                "examples": ["مختصات GPS", "کدپستی", "مرزهای جغرافیایی"],
+                "preprocessing": ["clustering", "normalization", "feature extraction"]
+            }
+        },
+        "metrics": {
+            "classification": {
+                "accuracy": {
+                    "name": "دقت",
+                    "description": "نسبت پیش‌بینی‌های درست به کل پیش‌بینی‌ها",
+                    "formula": "(TP + TN) / (TP + TN + FP + FN)",
+                    "use_cases": ["داده‌های متوازن", "هزینه خطای یکسان"]
+                },
+                "precision": {
+                    "name": "صحت",
+                    "description": "نسبت پیش‌بینی‌های مثبت درست به کل پیش‌بینی‌های مثبت",
+                    "formula": "TP / (TP + FP)",
+                    "use_cases": ["هزینه بالای مثبت کاذب", "مانند تشخیص بیماری"]
+                },
+                "recall": {
+                    "name": "بازخوانی",
+                    "description": "نسبت پیش‌بینی‌های مثبت درست به کل موارد مثبت واقعی",
+                    "formula": "TP / (TP + FN)",
+                    "use_cases": ["هزینه بالای منفی کاذب", "مانند تشخیص تقلب"]
+                },
+                "f1_score": {
+                    "name": "معیار F1",
+                    "description": "میانگین هارمونیک صحت و بازخوانی",
+                    "formula": "2 * (precision * recall) / (precision + recall)",
+                    "use_cases": ["تعادل بین صحت و بازخوانی", "داده‌های نامتوازن"]
+                },
+                "auc_roc": {
+                    "name": "سطح زیر منحنی ROC",
+                    "description": "مساحت زیر منحنی ROC که توانایی مدل در تمایز بین کلاس‌ها را نشان می‌دهد",
+                    "formula": "مساحت زیر منحنی نرخ مثبت واقعی در برابر نرخ مثبت کاذب",
+                    "use_cases": ["ارزیابی عملکرد در آستانه‌های مختلف", "مقایسه مدل‌ها"]
+                }
+            },
+            "regression": {
+                "mse": {
+                    "name": "میانگین مربعات خطا",
+                    "description": "میانگین مربع تفاوت بین مقادیر پیش‌بینی شده و واقعی",
+                    "formula": "1/n * Σ(y_true - y_pred)²",
+                    "use_cases": ["حساسیت به خطاهای بزرگ", "مناسب برای بهینه‌سازی مدل"]
+                },
+                "rmse": {
+                    "name": "جذر میانگین مربعات خطا",
+                    "description": "جذر MSE، با واحد یکسان با متغیر هدف",
+                    "formula": "√(1/n * Σ(y_true - y_pred)²)",
+                    "use_cases": ["تفسیرپذیری بهتر", "رایج در اکثر مسائل رگرسیون"]
+                },
+                "mae": {
+                    "name": "میانگین قدرمطلق خطا",
+                    "description": "میانگین قدرمطلق تفاوت بین مقادیر پیش‌بینی شده و واقعی",
+                    "formula": "1/n * Σ|y_true - y_pred|",
+                    "use_cases": ["کمتر حساس به مقادیر پرت", "ساده‌تر برای تفسیر"]
+                },
+                "r2": {
+                    "name": "ضریب تعیین",
+                    "description": "نسبت واریانس توضیح داده شده به واریانس کل",
+                    "formula": "1 - Σ(y_true - y_pred)² / Σ(y_true - y_mean)²",
+                    "use_cases": ["مقایسه مدل‌ها", "تفسیر درصد واریانس توضیح داده شده"]
+                }
+            },
+            "clustering": {
+                "silhouette": {
+                    "name": "ضریب سیلوئت",
+                    "description": "معیاری برای ارزیابی کیفیت خوشه‌بندی براساس شباهت درون خوشه‌ای و تفاوت بین خوشه‌ای",
+                    "formula": "(b - a) / max(a, b) برای هر نمونه، سپس میانگین",
+                    "use_cases": ["تعیین تعداد بهینه خوشه‌ها", "ارزیابی کیفیت خوشه‌بندی"]
+                },
+                "davies_bouldin": {
+                    "name": "شاخص دیویس-بولدین",
+                    "description": "میانگین شباهت بین هر خوشه و شبیه‌ترین خوشه به آن",
+                    "formula": "1/n * Σ max_j≠i ((s_i + s_j) / d_ij)",
+                    "use_cases": ["تعیین تعداد بهینه خوشه‌ها", "مقادیر کمتر بهتر هستند"]
+                },
+                "calinski_harabasz": {
+                    "name": "شاخص کالینسکی-هارابز",
+                    "description": "نسبت پراکندگی بین خوشه‌ای به پراکندگی درون خوشه‌ای",
+                    "formula": "(BCSS / (k-1)) / (WCSS / (n-k))",
+                    "use_cases": ["تعیین تعداد بهینه خوشه‌ها", "مقادیر بیشتر بهتر هستند"]
+                }
+            }
+        }
+    }
+    
+    return knowledge_base
+
+# ================ توابع کمکی برای پیشنهاد الگوریتم‌ها ================
+def recommend_algorithms(task_type, data_description):
+    """براساس نوع وظیفه و توضیحات داده، الگوریتم‌های مناسب را پیشنهاد می‌دهد"""
+    knowledge_base = get_knowledge_base()
+    
+    # یافتن وظیفه مشابه در پایگاه دانش
+    task_found = None
+    for task_name, task_info in knowledge_base["tasks"].items():
+        if task_type.lower() in task_name.lower() or any(task_type.lower() in example.lower() for example in task_info["examples"]):
+            task_found = task_name
+            break
+    
+    if not task_found:
+        # اگر وظیفه مشخصی پیدا نشد، بر اساس کلمات کلیدی تصمیم بگیریم
+        if any(keyword in data_description.lower() for keyword in ["طبقه‌بندی", "دسته‌بندی", "پیش‌بینی کلاس", "تشخیص"]):
+            task_found = "طبقه‌بندی"
+        elif any(keyword in data_description.lower() for keyword in ["پیش‌بینی عدد", "رگرسیون", "تخمین مقدار", "پیش‌بینی قیمت"]):
+            task_found = "رگرسیون"
+        elif any(keyword in data_description.lower() for keyword in ["خوشه‌بندی", "گروه‌بندی", "دسته‌بندی بدون برچسب"]):
+            task_found = "خوشه‌بندی"
+        elif any(keyword in data_description.lower() for keyword in ["متن", "زبان", "طبیعی", "احساسات"]):
+            task_found = "پردازش زبان طبیعی"
+        elif any(keyword in data_description.lower() for keyword in ["تصویر", "عکس", "بینایی"]):
+            task_found = "بینایی ماشین"
+        elif any(keyword in data_description.lower() for keyword in ["زمانی", "سری", "پیش‌بینی آینده"]):
+            task_found = "پیش‌بینی سری زمانی"
+        else:
+            # اگر هیچ وظیفه‌ای تشخیص داده نشد، طبقه‌بندی را به عنوان پیش‌فرض برمی‌گردانیم
+            task_found = "طبقه‌بندی"
+    
+    # بازگرداندن الگوریتم‌های پیشنهادی
+    recommended_algos = knowledge_base["tasks"][task_found]["recommended_algorithms"]
+    
+    # دریافت جزئیات الگوریتم‌ها
+    algorithm_details = []
+    
+    for algo_id in recommended_algos:
+        # یافتن الگوریتم در دسته‌های مختلف
+        for category, algos in knowledge_base["algorithms"].items():
+            if algo_id in algos:
+                algorithm_details.append({
+                    "id": algo_id,
+                    "name": algos[algo_id]["name"],
+                    "description": algos[algo_id]["description"],
+                    "pros": algos[algo_id]["pros"],
+                    "cons": algos[algo_id]["cons"],
+                    "category": category
+                })
+                break
+    
+    return {
+        "task": task_found,
+        "task_description": knowledge_base["tasks"][task_found]["description"],
+        "recommended_algorithms": algorithm_details
+    }
+
+# ================ فانکشن‌های مربوط به تگ‌گذاری ================
+def generate_tags(file_description, algorithm_type):
+    """تولید تگ‌های مناسب برای فایل آموزشی براساس توضیحات و نوع الگوریتم"""
+    tags = []
+    
+    # تگ‌های مرتبط با نوع الگوریتم
+    algorithm_tags = {
+        "classification": ["classification", "طبقه‌بندی", "ml"],
+        "regression": ["regression", "رگرسیون", "ml"],
+        "clustering": ["clustering", "خوشه‌بندی", "ml"],
+        "nlp": ["nlp", "پردازش زبان طبیعی", "text"],
+        "deep_learning": ["deep-learning", "یادگیری عمیق", "neural-network"],
+        "time_series": ["time-series", "سری زمانی", "forecasting"]
+    }
+    
+    if algorithm_type in algorithm_tags:
+        tags.extend(algorithm_tags[algorithm_type])
+    
+    # تگ‌های مرتبط با توضیحات فایل
+    if "csv" in file_description.lower() or "excel" in file_description.lower():
+        tags.append("tabular-data")
+    if "image" in file_description.lower() or "تصویر" in file_description.lower():
+        tags.append("image-data")
+    if "text" in file_description.lower() or "متن" in file_description.lower():
+        tags.append("text-data")
+    if "time" in file_description.lower() or "زمان" in file_description.lower():
+        tags.append("time-series-data")
+    
+    # اضافه کردن تاریخ
+    from datetime import datetime
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    tags.append(f"created-{current_date}")
+    
+    return tags
+
+# ================ توابع مربوط به فایل‌های آموزشی ================
+def get_or_create_training_datasets():
+    """دریافت یا ایجاد لیست فایل‌های آموزشی نمونه"""
+    if "training_datasets" not in st.session_state:
+        st.session_state.training_datasets = [
+            {
+                "id": 1,
+                "name": "مجموعه داده مشتریان بانک",
+                "description": "داده‌های مشتریان بانک برای پیش‌بینی ترک مشتری",
+                "file_type": "csv",
+                "size_mb": 2.3,
+                "rows": 10000,
+                "columns": 14,
+                "task_type": "classification",
+                "tags": ["banking", "churn-prediction", "classification", "tabular-data"],
+                "created_at": "2023-11-10",
+                "last_used": "2023-12-05"
+            },
+            {
+                "id": 2,
+                "name": "قیمت خانه‌های تهران",
+                "description": "اطلاعات خانه‌های فروخته شده در تهران برای پیش‌بینی قیمت",
+                "file_type": "csv",
+                "size_mb": 5.1,
+                "rows": 22000,
+                "columns": 17,
+                "task_type": "regression",
+                "tags": ["housing", "price-prediction", "regression", "tabular-data", "tehran"],
+                "created_at": "2023-10-22",
+                "last_used": "2023-12-15"
+            },
+            {
+                "id": 3,
+                "name": "نظرات کاربران فروشگاه اینترنتی",
+                "description": "نظرات کاربران برای تحلیل احساسات",
+                "file_type": "txt",
+                "size_mb": 3.7,
+                "rows": 15000,
+                "columns": 3,
+                "task_type": "nlp",
+                "tags": ["sentiment-analysis", "nlp", "e-commerce", "text-data"],
+                "created_at": "2023-09-15",
+                "last_used": "2023-11-30"
+            },
+            {
+                "id": 4,
+                "name": "تصاویر محصولات",
+                "description": "تصاویر محصولات برای طبقه‌بندی خودکار",
+                "file_type": "zip",
+                "size_mb": 150.2,
+                "rows": 5000,
+                "columns": None,
+                "task_type": "deep_learning",
+                "tags": ["image-classification", "product-images", "deep-learning", "image-data"],
+                "created_at": "2023-08-05",
+                "last_used": "2023-12-10"
+            },
+            {
+                "id": 5,
+                "name": "سری زمانی فروش ماهانه",
+                "description": "داده‌های فروش ماهانه برای پیش‌بینی",
+                "file_type": "csv",
+                "size_mb": 1.2,
+                "rows": 120,
+                "columns": 5,
+                "task_type": "time_series",
+                "tags": ["sales-forecasting", "time-series", "monthly-data", "tabular-data"],
+                "created_at": "2023-10-01",
+                "last_used": "2023-12-18"
+            }
+        ]
+    
+    return st.session_state.training_datasets
+
+def add_training_dataset(name, description, file_type, size_mb, rows, columns, task_type, tags=None):
+    """اضافه کردن فایل آموزشی جدید"""
+    datasets = get_or_create_training_datasets()
+    
+    # ایجاد شناسه جدید
+    new_id = max([d["id"] for d in datasets]) + 1 if datasets else 1
+    
+    # ایجاد تگ‌ها اگر ارائه نشده باشند
+    if tags is None:
+        tags = generate_tags(description, task_type)
+    
+    # ایجاد رکورد جدید
+    from datetime import datetime
+    today = datetime.now().strftime("%Y-%m-%d")
+    
+    new_dataset = {
+        "id": new_id,
+        "name": name,
+        "description": description,
+        "file_type": file_type,
+        "size_mb": size_mb,
+        "rows": rows,
+        "columns": columns,
+        "task_type": task_type,
+        "tags": tags,
+        "created_at": today,
+        "last_used": today
+    }
+    
+    # اضافه کردن به لیست
+    datasets.append(new_dataset)
+    st.session_state.training_datasets = datasets
+    
+    return new_dataset
+
+# ================ توابع مربوط به ترینینگ ================
+def get_or_create_training_processes():
+    """دریافت یا ایجاد لیست فرآیندهای آموزش"""
+    if "training_processes" not in st.session_state:
+        st.session_state.training_processes = [
+            {
+                "id": 1,
+                "name": "آموزش مدل پیش‌بینی ترک مشتری",
+                "dataset_id": 1,
+                "algorithm": "random_forest",
+                "status": "completed",
+                "progress": 100,
+                "start_time": "2023-12-01 10:15:22",
+                "end_time": "2023-12-01 10:17:45",
+                "parameters": {
+                    "n_estimators": 100,
+                    "max_depth": 10,
+                    "min_samples_split": 5
+                },
+                "metrics": {
+                    "accuracy": 0.87,
+                    "precision": 0.83,
+                    "recall": 0.79,
+                    "f1_score": 0.81
+                },
+                "notes": "مدل با دقت خوبی آموزش دیده است."
+            },
+            {
+                "id": 2,
+                "name": "آموزش پیش‌بینی قیمت خانه",
+                "dataset_id": 2,
+                "algorithm": "gradient_boosting_regressor",
+                "status": "completed",
+                "progress": 100,
+                "start_time": "2023-12-10 14:30:11",
+                "end_time": "2023-12-10 14:45:22",
+                "parameters": {
+                    "n_estimators": 200,
+                    "learning_rate": 0.1,
+                    "max_depth": 5
+                },
+                "metrics": {
+                    "rmse": 123.45,
+                    "mae": 98.76,
+                    "r2": 0.83
+                },
+                "notes": "مدل نسبتاً خوب عمل می‌کند اما می‌توان با بهینه‌سازی بیشتر بهبود داد."
+            },
+            {
+                "id": 3,
+                "name": "تحلیل احساسات نظرات",
+                "dataset_id": 3,
+                "algorithm": "bert",
+                "status": "in_progress",
+                "progress": 73,
+                "start_time": "2023-12-18 09:10:33",
+                "end_time": None,
+                "parameters": {
+                    "batch_size": 16,
+                    "learning_rate": 2e-5,
+                    "epochs": 5
+                },
+                "metrics": None,
+                "notes": "آموزش مدل یادگیری عمیق زمان می‌برد."
+            }
+        ]
+    
+    return st.session_state.training_processes
+
+def create_training_process(name, dataset_id, algorithm, parameters, notes=""):
+    """ایجاد فرآیند آموزش جدید"""
+    processes = get_or_create_training_processes()
+    
+    # ایجاد شناسه جدید
+    new_id = max([p["id"] for p in processes]) + 1 if processes else 1
+    
+    # ایجاد رکورد جدید
+    from datetime import datetime
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    new_process = {
+        "id": new_id,
+        "name": name,
+        "dataset_id": dataset_id,
+        "algorithm": algorithm,
+        "status": "in_progress",
+        "progress": 0,
+        "start_time": now,
+        "end_time": None,
+        "parameters": parameters,
+        "metrics": None,
+        "notes": notes
+    }
+    
+    # اضافه کردن به لیست
+    processes.append(new_process)
+    st.session_state.training_processes = processes
+    
+    return new_process
+
+def update_training_process(process_id, status=None, progress=None, end_time=None, metrics=None, notes=None):
+    """به‌روزرسانی فرآیند آموزش"""
+    processes = get_or_create_training_processes()
+    
+    for i, process in enumerate(processes):
+        if process["id"] == process_id:
+            if status is not None:
+                processes[i]["status"] = status
+            if progress is not None:
+                processes[i]["progress"] = progress
+            if end_time is not None:
+                processes[i]["end_time"] = end_time
+            if metrics is not None:
+                processes[i]["metrics"] = metrics
+            if notes is not None:
+                processes[i]["notes"] = notes
+            
+            st.session_state.training_processes = processes
+            return True
+    
+    return False
+
+# ================ توابع رندر UI برای آموزش ================
+def render_training_dashboard():
+    """رندر داشبورد آموزش"""
+    st.markdown('<div class="page-header"><div class="page-title">داشبورد آموزش</div></div>', unsafe_allow_html=True)
+    
+    st.write("""
+    در این صفحه می‌توانید وضعیت آموزش مدل‌های خود را مشاهده و مدیریت کنید.
+    تاریخچه آموزش‌ها، تنظیمات، و نتایج ارزیابی برای هر مدل قابل مشاهده است.
+    """)
+    
+    # دکمه شروع آموزش جدید
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("آموزش مدل جدید", use_container_width=True):
+            st.session_state.active_page = "training_wizard"
+            st.session_state.wizard_step = 0
+            st.rerun()
+    
+    # دریافت لیست فرآیندهای آموزش
+    training_processes = get_or_create_training_processes()
+    
+    # دریافت لیست مجموعه داده‌ها
+    datasets = get_or_create_training_datasets()
+    dataset_map = {d["id"]: d for d in datasets}
+    
+    # نمایش آمار کلی
+    st.markdown("### آمار کلی آموزش")
+    
+    # محاسبه آمار
+    completed_count = len([p for p in training_processes if p["status"] == "completed"])
+    in_progress_count = len([p for p in training_processes if p["status"] == "in_progress"])
+    pending_count = len([p for p in training_processes if p["status"] == "pending"])
+    failed_count = len([p for p in training_processes if p["status"] == "failed"])
+    
+    # نمایش آمار در ستون‌ها
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.markdown("""
+        <div class="training-stat-card">
+            <div class="training-stat-title">آموزش‌های تکمیل شده</div>
+            <div class="training-stat-value" style="color: #36b37e;">{}</div>
+        </div>
+        """.format(completed_count), unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="training-stat-card">
+            <div class="training-stat-title">در حال آموزش</div>
+            <div class="training-stat-value" style="color: #0052cc;">{}</div>
+        </div>
+        """.format(in_progress_count), unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div class="training-stat-card">
+            <div class="training-stat-title">در انتظار</div>
+            <div class="training-stat-value" style="color: #ffab00;">{}</div>
+        </div>
+        """.format(pending_count), unsafe_allow_html=True)
+    
+    with col4:
+        st.markdown("""
+        <div class="training-stat-card">
+            <div class="training-stat-title">ناموفق</div>
+            <div class="training-stat-value" style="color: #ff5630;">{}</div>
+        </div>
+        """.format(failed_count), unsafe_allow_html=True)
+    
+    # نمایش جدول فرآیندهای آموزش
+    st.markdown("### فرآیندهای آموزش")
+    
+    # تب‌های وضعیت مختلف
+    tabs = st.tabs(["همه", "تکمیل شده", "در حال اجرا", "در انتظار", "ناموفق"])
+    
+    with tabs[0]:
+        render_training_processes_table(training_processes, dataset_map)
+    
+    with tabs[1]:
+        completed_processes = [p for p in training_processes if p["status"] == "completed"]
+        render_training_processes_table(completed_processes, dataset_map)
+    
+    with tabs[2]:
+        in_progress_processes = [p for p in training_processes if p["status"] == "in_progress"]
+        render_training_processes_table(in_progress_processes, dataset_map)
+    
+    with tabs[3]:
+        pending_processes = [p for p in training_processes if p["status"] == "pending"]
+        render_training_processes_table(pending_processes, dataset_map)
+    
+    with tabs[4]:
+        failed_processes = [p for p in training_processes if p["status"] == "failed"]
+        render_training_processes_table(failed_processes, dataset_map)
+
+def render_training_processes_table(processes, dataset_map):
+    """نمایش جدول فرآیندهای آموزش"""
+    if not processes:
+        st.info("هیچ فرآیند آموزشی در این وضعیت یافت نشد.")
+        return
+    
+    # نمایش فرآیندهای آموزش
+    for process in processes:
+        # دریافت اطلاعات مجموعه داده
+        dataset = dataset_map.get(process["dataset_id"], {"name": "نامشخص", "description": ""})
+        
+        # تعیین رنگ وضعیت
+        status_color = "#c2c2c2"  # خاکستری برای نامشخص
+        status_text = "نامشخص"
+        
+        if process["status"] == "completed":
+            status_color = "#36b37e"  # سبز
+            status_text = "تکمیل شده"
+        elif process["status"] == "in_progress":
+            status_color = "#0052cc"  # آبی
+            status_text = "در حال اجرا"
+        elif process["status"] == "pending":
+            status_color = "#ffab00"  # نارنجی
+            status_text = "در انتظار"
+        elif process["status"] == "failed":
+            status_color = "#ff5630"  # قرمز
+            status_text = "ناموفق"
+        
+        # کارت فرآیند آموزش
+        with st.expander(f"{process['name']} - {status_text}"):
+            col1, col2 = st.columns([3, 1])
+            
+            with col1:
+                st.markdown(f"**الگوریتم:** {process['algorithm']}")
+                st.markdown(f"**مجموعه داده:** {dataset['name']}")
+                
+                if process["notes"]:
+                    st.markdown(f"**یادداشت‌ها:** {process['notes']}")
+                
+                # نمایش پارامترها
+                if process["parameters"]:
+                    st.markdown("**پارامترها:**")
+                    params_str = "<ul>"
+                    for param_name, param_value in process["parameters"].items():
+                        params_str += f"<li><strong>{param_name}:</strong> {param_value}</li>"
+                    params_str += "</ul>"
+                    st.markdown(params_str, unsafe_allow_html=True)
+            
+            with col2:
+                st.markdown(f"**شروع:** {process['start_time']}")
+                if process['end_time']:
+                    st.markdown(f"**پایان:** {process['end_time']}")
+                
+                # نمایش نوار پیشرفت
+                if process["status"] == "in_progress":
+                    st.progress(process["progress"] / 100)
+                    st.markdown(f"**پیشرفت:** {process['progress']}%")
+            
+            # نمایش متریک‌ها
+            if process["metrics"]:
+                st.markdown("---")
+                st.markdown("**نتایج ارزیابی:**")
+                
+                metrics = process["metrics"]
+                cols = st.columns(len(metrics))
+                
+                for i, (metric_name, metric_value) in enumerate(metrics.items()):
+                    with cols[i]:
+                        if metric_name in ["accuracy", "precision", "recall", "f1_score", "r2", "silhouette"]:
+                            # نمایش به صورت درصد
+                            st.metric(metric_name, f"{metric_value*100:.1f}%")
+                        else:
+                            st.metric(metric_name, f"{metric_value:.4f}")
+                
+                # نمودار متریک‌ها اگر امکان‌پذیر باشد
+                if "accuracy" in metrics and "precision" in metrics and "recall" in metrics:
+                    # نمودار میله‌ای برای متریک‌های طبقه‌بندی
+                    class_metrics = {"Accuracy": metrics["accuracy"], "Precision": metrics["precision"], "Recall": metrics["recall"]}
+                    class_df = pd.DataFrame(list(class_metrics.items()), columns=["Metric", "Value"])
+                    
+                    fig = px.bar(class_df, x="Metric", y="Value", title="متریک‌های ارزیابی طبقه‌بندی",
+                                text="Value", color="Value", color_continuous_scale="Blues")
+                    fig.update_traces(texttemplate='%{text:.3f}', textposition='outside')
+                    fig.update_layout(yaxis_range=[0, 1])
+                    
+                    st.plotly_chart(fig, use_container_width=True)
+                elif "mse" in metrics and "rmse" in metrics and "mae" in metrics:
+                    # نمودار میله‌ای برای متریک‌های رگرسیون
+                    reg_metrics = {"MSE": metrics["mse"], "RMSE": metrics["rmse"], "MAE": metrics["mae"]}
+                    reg_df = pd.DataFrame(list(reg_metrics.items()), columns=["Metric", "Value"])
+                    
+                    fig = px.bar(reg_df, x="Metric", y="Value", title="متریک‌های ارزیابی رگرسیون",
+                                text="Value", color="Value", color_continuous_scale="Greens")
+                    fig.update_traces(texttemplate='%{text:.3f}', textposition='outside')
+                    
+                    st.plotly_chart(fig, use_container_width=True)
+def render_knowledge_base_page():
+    """رندر صفحه پایگاه دانش"""
+    st.markdown('<div class="page-header"><div class="page-title">پایگاه دانش یادگیری ماشین</div></div>', unsafe_allow_html=True)
+    
+    st.write("""
+    به پایگاه دانش جامع یادگیری ماشین خوش آمدید! این پایگاه شامل اطلاعات مفید درباره اصطلاحات، الگوریتم‌ها، وظایف، انواع داده و معیارهای ارزیابی است.
+    می‌توانید از این بخش برای یادگیری مفاهیم اساسی یا یافتن اطلاعات دقیق‌تر درباره الگوریتم‌های مختلف استفاده کنید.
+    """)
+    
+    # دریافت پایگاه دانش
+    knowledge_base = get_knowledge_base()
+    
+    # بخش‌های مختلف پایگاه دانش
+    tabs = st.tabs(["اصطلاحات", "الگوریتم‌ها", "وظایف", "انواع داده", "معیارهای ارزیابی"])
+    
+    # نمایش اصطلاحات
+    with tabs[0]:
+        st.subheader("اصطلاحات یادگیری ماشین")
+        
+        # جستجوی اصطلاحات
+        search_term = st.text_input("جستجوی اصطلاح:", placeholder="نام اصطلاح را وارد کنید...")
+        
+        # نمایش اصطلاحات به صورت کارت‌های توسعه‌پذیر
+        terms = knowledge_base["terms"]
+        filtered_terms = {k: v for k, v in terms.items() if not search_term or search_term.lower() in k.lower() or search_term.lower() in v["description"].lower()}
+        
+        if not filtered_terms:
+            st.info("اصطلاحی با این عبارت یافت نشد.")
+        
+        for term_key, term_info in filtered_terms.items():
+            with st.expander(f"{term_info['title']}"):
+                st.markdown(f"**توضیح:** {term_info['description']}")
+                
+                st.markdown("**مثال‌ها:**")
+                for example in term_info['examples']:
+                    st.markdown(f"- {example}")
+                
+                st.markdown("**اصطلاحات مرتبط:**")
+                for related in term_info['related']:
+                    st.markdown(f"- {related}")
+    
+    # نمایش الگوریتم‌ها
+    with tabs[1]:
+        st.subheader("الگوریتم‌های یادگیری ماشین")
+        
+        # انتخاب دسته الگوریتم
+        algorithm_categories = list(knowledge_base["algorithms"].keys())
+        category_translations = {
+            "classification": "طبقه‌بندی",
+            "regression": "رگرسیون",
+            "clustering": "خوشه‌بندی",
+            "nlp": "پردازش زبان طبیعی",
+            "deep_learning": "یادگیری عمیق"
+        }
+        
+        translated_categories = [category_translations.get(cat, cat) for cat in algorithm_categories]
+        selected_category_index = st.select_slider("دسته الگوریتم:", options=translated_categories)
+        selected_category = algorithm_categories[translated_categories.index(selected_category_index)]
+        
+        # نمایش الگوریتم‌های دسته انتخاب شده
+        algorithms = knowledge_base["algorithms"][selected_category]
+        
+        cols = st.columns(2)
+        for i, (algo_key, algo_info) in enumerate(algorithms.items()):
+            with cols[i % 2]:
+                with st.expander(f"{algo_info['name']}"):
+                    st.markdown(f"**توضیح:** {algo_info['description']}")
+                    
+                    st.markdown("**مزایا:**")
+                    for pro in algo_info['pros']:
+                        st.markdown(f"- {pro}")
+                    
+                    st.markdown("**معایب:**")
+                    for con in algo_info['cons']:
+                        st.markdown(f"- {con}")
+                    
+                    st.markdown("**موارد استفاده:**")
+                    for use_case in algo_info['use_cases']:
+                        st.markdown(f"- {use_case}")
+                    
+                    st.markdown("**پارامترهای مهم:**")
+                    for param_name, param_desc in algo_info['parameters'].items():
+                        st.markdown(f"- **{param_name}**: {param_desc}")
+    
+    # نمایش وظایف
+    with tabs[2]:
+        st.subheader("وظایف یادگیری ماشین")
+        
+        tasks = knowledge_base["tasks"]
+        for task_name, task_info in tasks.items():
+            with st.expander(f"{task_name}"):
+                st.markdown(f"**توضیح:** {task_info['description']}")
+                
+                st.markdown("**الگوریتم‌های پیشنهادی:**")
+                for algo_id in task_info['recommended_algorithms']:
+                    # یافتن نام الگوریتم
+                    algo_name = "نامشخص"
+                    for category, algos in knowledge_base["algorithms"].items():
+                        if algo_id in algos:
+                            algo_name = algos[algo_id]["name"]
+                            break
+                    
+                    st.markdown(f"- {algo_name}")
+                
+                st.markdown("**مثال‌ها:**")
+                for example in task_info['examples']:
+                    st.markdown(f"- {example}")
+    
+    # نمایش انواع داده
+    with tabs[3]:
+        st.subheader("انواع داده")
+        
+        data_types = knowledge_base["data_types"]
+        for type_name, type_info in data_types.items():
+            with st.expander(f"{type_info['description']}"):
+                st.markdown("**مثال‌ها:**")
+                for example in type_info['examples']:
+                    st.markdown(f"- {example}")
+                
+                st.markdown("**پیش‌پردازش‌های رایج:**")
+                for preprocessing in type_info['preprocessing']:
+                    st.markdown(f"- {preprocessing}")
+    
+    # نمایش معیارهای ارزیابی
+    with tabs[4]:
+        st.subheader("معیارهای ارزیابی")
+        
+        metrics = knowledge_base["metrics"]
+        metric_categories = list(metrics.keys())
+        
+        category_translations = {
+            "classification": "معیارهای طبقه‌بندی",
+            "regression": "معیارهای رگرسیون",
+            "clustering": "معیارهای خوشه‌بندی"
+        }
+        
+        for category in metric_categories:
+            st.markdown(f"### {category_translations.get(category, category)}")
+            
+            for metric_key, metric_info in metrics[category].items():
+                with st.expander(f"{metric_info['name']}"):
+                    st.markdown(f"**توضیح:** {metric_info['description']}")
+                    st.markdown(f"**فرمول:** {metric_info['formula']}")
+                    
+                    st.markdown("**موارد استفاده:**")
+                    for use_case in metric_info['use_cases']:
+                        st.markdown(f"- {use_case}")
+
+def render_training_wizard():
+    """رندر ویزارد آموزش مدل گام به گام"""
+    st.markdown('<div class="page-header"><div class="page-title">ویزارد آموزش مدل</div></div>', unsafe_allow_html=True)
+    
+    st.write("""
+    این ویزارد شما را در فرآیند آموزش یک مدل یادگیری ماشین راهنمایی می‌کند. مراحل زیر را دنبال کنید تا مدل خود را آموزش دهید.
+    """)
+    
+    # مراحل ویزارد
+    steps = ["انتخاب داده", "انتخاب الگوریتم", "تنظیم پارامترها", "آموزش و ارزیابی"]
+    
+    # تنظیم مرحله فعلی
+    if "wizard_step" not in st.session_state:
+        st.session_state.wizard_step = 0
+    
+    # نمایش شاخص پیشرفت
+    progress_html = """
+    <div class="wizard-steps">
+    """
+    
+    for i, step in enumerate(steps):
+        step_class = "active" if i == st.session_state.wizard_step else "completed" if i < st.session_state.wizard_step else ""
+        progress_html += f"""
+        <div class="wizard-step {step_class}">
+            <div class="wizard-step-number">{i+1}</div>
+            <div class="wizard-step-label">{step}</div>
+        </div>
+        """
+    
+    progress_html += """
+    </div>
+    <style>
+    .wizard-steps {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        padding: 0 40px;
+    }
+    .wizard-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        width: 120px;
+    }
+    .wizard-step:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        top: 20px;
+        right: -50%;
+        width: 100%;
+        height: 2px;
+        background-color: #e9ebee;
+        z-index: -1;
+    }
+    .wizard-step.completed:not(:last-child)::after {
+        background-color: #36b37e;
+    }
+    .wizard-step-number {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #e9ebee;
+        color: #72767d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+    .wizard-step.active .wizard-step-number {
+        background-color: #6a5af9;
+        color: #ffffff;
+    }
+    .wizard-step.completed .wizard-step-number {
+        background-color: #36b37e;
+        color: #ffffff;
+    }
+    .wizard-step-label {
+        font-size: 14px;
+        color: #72767d;
+        text-align: center;
+    }
+    .wizard-step.active .wizard-step-label {
+        color: #6a5af9;
+        font-weight: 500;
+    }
+    .wizard-step.completed .wizard-step-label {
+        color: #36b37e;
+        font-weight: 500;
+    }
+    </style>
+    """
+    
+    st.markdown(progress_html, unsafe_allow_html=True)
+    
+    # محتوای هر مرحله
+    if st.session_state.wizard_step == 0:
+        # مرحله 1: انتخاب داده
+        render_dataset_selection_step()
+    elif st.session_state.wizard_step == 1:
+        # مرحله 2: انتخاب الگوریتم
+        render_algorithm_selection_step()
+    elif st.session_state.wizard_step == 2:
+        # مرحله 3: تنظیم پارامترها
+        render_parameter_tuning_step()
+    elif st.session_state.wizard_step == 3:
+        # مرحله 4: آموزش و ارزیابی
+        render_training_evaluation_step()
+
+def render_dataset_selection_step():
+    """رندر مرحله انتخاب داده"""
+    st.subheader("مرحله 1: انتخاب داده")
+    
+    st.write("""
+    در این مرحله، شما باید مجموعه داده مورد نظر برای آموزش مدل را انتخاب کنید. می‌توانید از مجموعه داده‌های موجود استفاده کنید یا مجموعه داده جدیدی بارگذاری کنید.
+    """)
+    
+    tab1, tab2 = st.tabs(["انتخاب از داده‌های موجود", "بارگذاری داده جدید"])
+    
+    with tab1:
+        # نمایش داده‌های موجود
+        datasets = get_or_create_training_datasets()
+        
+        # فیلتر براساس نوع وظیفه
+        task_types = ["همه", "classification", "regression", "clustering", "nlp", "deep_learning", "time_series"]
+        task_type_labels = {
+            "همه": "همه وظایف",
+            "classification": "طبقه‌بندی",
+            "regression": "رگرسیون",
+            "clustering": "خوشه‌بندی",
+            "nlp": "پردازش زبان طبیعی",
+            "deep_learning": "یادگیری عمیق",
+            "time_series": "سری زمانی"
+        }
+        
+        selected_task = st.selectbox("فیلتر براساس نوع وظیفه:", task_types, format_func=lambda x: task_type_labels.get(x, x))
+        
+        # جستجو براساس نام یا توضیحات
+        search_query = st.text_input("جستجو:", placeholder="نام یا توضیحات داده را وارد کنید...")
+        
+        # فیلتر داده‌ها
+        filtered_datasets = datasets
+        if selected_task != "همه":
+            filtered_datasets = [d for d in filtered_datasets if d["task_type"] == selected_task]
+        
+        if search_query:
+            filtered_datasets = [d for d in filtered_datasets if search_query.lower() in d["name"].lower() or search_query.lower() in d["description"].lower()]
+        
+        # نمایش داده‌های فیلتر شده
+        if not filtered_datasets:
+            st.info("هیچ مجموعه داده‌ای با معیارهای جستجوی شما یافت نشد.")
+        else:
+            for dataset in filtered_datasets:
+                col1, col2, col3 = st.columns([3, 1, 1])
+                
+                with col1:
+                    # اطلاعات داده
+                    st.markdown(f"**{dataset['name']}**")
+                    st.markdown(dataset["description"])
+                    st.markdown(f"نوع: {dataset['file_type']} | اندازه: {dataset['size_mb']} MB | سطرها: {dataset['rows']} | ستون‌ها: {dataset.get('columns', 'N/A')}")
+                    
+                    # نمایش تگ‌ها
+                    tag_html = ""
+                    for tag in dataset["tags"]:
+                        tag_html += f'<span style="background-color: #efeaff; color: #6a5af9; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-right: 5px;">{tag}</span>'
+                    
+                    st.markdown(tag_html, unsafe_allow_html=True)
+                
+                with col2:
+                    st.markdown(f"تاریخ ایجاد: {dataset['created_at']}")
+                    st.markdown(f"آخرین استفاده: {dataset['last_used']}")
+                
+                with col3:
+                    if st.button("انتخاب", key=f"select_dataset_{dataset['id']}"):
+                        st.session_state.selected_dataset = dataset
+                        st.session_state.wizard_step = 1
+                        st.rerun()
+                
+                st.markdown("---")
+    
+    with tab2:
+        # فرم بارگذاری داده جدید
+        st.write("برای بارگذاری مجموعه داده جدید، فرم زیر را تکمیل کنید:")
+        
+        uploaded_file = st.file_uploader("بارگذاری فایل داده:", type=["csv", "txt", "xlsx", "zip"])
+        
+        if uploaded_file is not None:
+            # دریافت اطلاعات فایل
+            file_details = {
+                "name": uploaded_file.name,
+                "size": round(uploaded_file.size / (1024 * 1024), 2),  # تبدیل به مگابایت
+                "type": uploaded_file.name.split(".")[-1]
+            }
+            
+            st.write(f"**فایل بارگذاری شده:** {file_details['name']} ({file_details['size']} MB)")
+            
+            # فرم اطلاعات تکمیلی
+            with st.form("new_dataset_form"):
+                dataset_name = st.text_input("نام مجموعه داده:", value=file_details['name'].split(".")[0])
+                dataset_description = st.text_area("توضیحات:", placeholder="توضیحات مختصری درباره این مجموعه داده بنویسید...")
+                
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    estimated_rows = st.number_input("تعداد تقریبی سطرها:", min_value=1, value=1000)
+                    
+                    task_type_options = {
+                        "classification": "طبقه‌بندی",
+                        "regression": "رگرسیون",
+                        "clustering": "خوشه‌بندی",
+                        "nlp": "پردازش زبان طبیعی",
+                        "deep_learning": "یادگیری عمیق",
+                        "time_series": "سری زمانی"
+                    }
+                    
+                    task_type = st.selectbox("نوع وظیفه:", list(task_type_options.keys()), format_func=lambda x: task_type_options.get(x, x))
+                
+                with col2:
+                    estimated_columns = st.number_input("تعداد تقریبی ستون‌ها:", min_value=1, value=10)
+                    custom_tags = st.text_input("برچسب‌ها (با کاما جدا کنید):", placeholder="example-tag, my-dataset")
+                
+                submit = st.form_submit_button("افزودن مجموعه داده")
+                
+                if submit:
+                    # ایجاد تگ‌ها
+                    tags = []
+                    if custom_tags:
+                        tags = [tag.strip() for tag in custom_tags.split(",")]
+                    
+                    # افزودن تگ‌های خودکار
+                    auto_tags = generate_tags(dataset_description, task_type)
+                    tags.extend([tag for tag in auto_tags if tag not in tags])
+                    
+                    # افزودن مجموعه داده جدید
+                    new_dataset = add_training_dataset(
+                        name=dataset_name,
+                        description=dataset_description,
+                        file_type=file_details['type'],
+                        size_mb=file_details['size'],
+                        rows=estimated_rows,
+                        columns=estimated_columns,
+                        task_type=task_type,
+                        tags=tags
+                    )
+                    
+                    st.session_state.selected_dataset = new_dataset
+                    st.session_state.wizard_step = 1
+                    st.success("مجموعه داده با موفقیت افزوده شد!")
+                    st.rerun()
+    
+    # دکمه‌های ناوبری
+    st.markdown("---")
+    col1, col2 = st.columns([5, 1])
+    
+    with col2:
+        if "selected_dataset" in st.session_state:
+            if st.button("مرحله بعد"):
+                st.session_state.wizard_step = 1
+                st.rerun()
+
+def render_algorithm_selection_step():
+    """رندر مرحله انتخاب الگوریتم"""
+    st.subheader("مرحله 2: انتخاب الگوریتم")
+    
+    # بررسی انتخاب داده
+    if "selected_dataset" not in st.session_state:
+        st.error("لطفاً ابتدا یک مجموعه داده انتخاب کنید.")
+        if st.button("بازگشت به مرحله انتخاب داده"):
+            st.session_state.wizard_step = 0
+            st.rerun()
+        return
+    
+    dataset = st.session_state.selected_dataset
+    
+    st.write(f"""
+    مجموعه داده انتخاب شده: **{dataset['name']}**
+    
+    در این مرحله، الگوریتم مناسب برای آموزش مدل را انتخاب کنید. براساس توضیحات داده و نوع وظیفه، الگوریتم‌های پیشنهادی نمایش داده شده‌اند.
+    """)
+    
+    # دریافت پیشنهادات الگوریتم
+    recommendations = recommend_algorithms(dataset["task_type"], dataset["description"])
+    
+    # نمایش اطلاعات وظیفه
+    st.markdown(f"""
+    **وظیفه تشخیص داده شده:** {recommendations['task']}
+    
+    **توضیح:** {recommendations['task_description']}
+    """)
+    
+    # نمایش الگوریتم‌های پیشنهادی
+    st.markdown("### الگوریتم‌های پیشنهادی")
+    
+    # تب‌های الگوریتم‌های پیشنهادی و همه الگوریتم‌ها
+    tab1, tab2 = st.tabs(["الگوریتم‌های پیشنهادی", "همه الگوریتم‌ها"])
+    
+    with tab1:
+        if not recommendations["recommended_algorithms"]:
+            st.info("هیچ الگوریتم پیشنهادی یافت نشد.")
+        else:
+            for i, algo in enumerate(recommendations["recommended_algorithms"]):
+                col1, col2 = st.columns([4, 1])
+                
+                with col1:
+                    with st.expander(f"{algo['name']}"):
+                        st.markdown(f"**توضیح:** {algo['description']}")
+                        
+                        col_a, col_b = st.columns(2)
+                        
+                        with col_a:
+                            st.markdown("**مزایا:**")
+                            for pro in algo['pros']:
+                                st.markdown(f"- {pro}")
+                        
+                        with col_b:
+                            st.markdown("**معایب:**")
+                            for con in algo['cons']:
+                                st.markdown(f"- {con}")
+                
+                with col2:
+                    if st.button("انتخاب", key=f"select_algo_{i}"):
+                        st.session_state.selected_algorithm = algo
+                        st.session_state.wizard_step = 2
+                        st.rerun()
+    
+    with tab2:
+        # دریافت پایگاه دانش
+        knowledge_base = get_knowledge_base()
+        
+        # فیلتر الگوریتم‌های مرتبط با نوع وظیفه
+        relevant_categories = []
+        if dataset["task_type"] == "classification":
+            relevant_categories = ["classification"]
+        elif dataset["task_type"] == "regression":
+            relevant_categories = ["regression"]
+        elif dataset["task_type"] == "clustering":
+            relevant_categories = ["clustering"]
+        elif dataset["task_type"] == "nlp":
+            relevant_categories = ["nlp"]
+        elif dataset["task_type"] in ["deep_learning", "image_classification"]:
+            relevant_categories = ["deep_learning"]
+        elif dataset["task_type"] == "time_series":
+            relevant_categories = ["time_series"]
+        else:
+            relevant_categories = list(knowledge_base["algorithms"].keys())
+        
+        # نمایش الگوریتم‌ها براساس دسته‌بندی
+        for category in relevant_categories:
+            if category in knowledge_base["algorithms"]:
+                st.markdown(f"### الگوریتم‌های {category}")
+                
+                algorithms = knowledge_base["algorithms"][category]
+                cols = st.columns(2)
+                
+                for i, (algo_id, algo_info) in enumerate(algorithms.items()):
+                    with cols[i % 2]:
+                        col_a, col_b = st.columns([3, 1])
+                        
+                        with col_a:
+                            with st.expander(f"{algo_info['name']}"):
+                                st.markdown(f"**توضیح:** {algo_info['description']}")
+                                
+                                st.markdown("**مزایا:**")
+                                for pro in algo_info['pros'][:2]:  # نمایش 2 مزیت اول
+                                    st.markdown(f"- {pro}")
+                        
+                        with col_b:
+                            if st.button("انتخاب", key=f"select_algo_all_{category}_{algo_id}"):
+                                selected_algo = {"id": algo_id, "name": algo_info["name"], "description": algo_info["description"], 
+                                                "category": category, "pros": algo_info["pros"], "cons": algo_info["cons"]}
+                                st.session_state.selected_algorithm = selected_algo
+                                st.session_state.wizard_step = 2
+                                st.rerun()

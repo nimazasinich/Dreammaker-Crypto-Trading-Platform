@@ -1,0 +1,30 @@
+{
+  "name": "provider-validation-tests",
+  "version": "1.0.0",
+  "description": "Automated batch testing for REST and WebSocket services",
+  "main": "batch-test-runner.ts",
+  "scripts": {
+    "test": "ts-node batch-test-runner.ts",
+    "test:batch": "ts-node batch-test-runner.ts",
+    "test:watch": "nodemon --exec ts-node batch-test-runner.ts"
+  },
+  "keywords": [
+    "testing",
+    "api",
+    "websocket",
+    "validation",
+    "batch-test"
+  ],
+  "author": "",
+  "license": "Unlicense",
+  "dependencies": {
+    "ws": "^8.14.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.9.0",
+    "@types/ws": "^8.5.8",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}

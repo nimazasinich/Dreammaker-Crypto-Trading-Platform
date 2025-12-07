@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "project_root": "c:\\Users\\Dreammaker\\Downloads\\Dreammaker-legal-agent-gitlab-main (9)\\Dreammaker-legal-agent-gitlab-main",
+  "servers": [
+    {
+      "name": "filesystem",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "c:\\Users\\Dreammaker\\Downloads\\Dreammaker-legal-agent-gitlab-main (9)\\Dreammaker-legal-agent-gitlab-main"
+      ],
+      "env": {
+        "PROJECT_PATH": "c:\\Users\\Dreammaker\\Downloads\\Dreammaker-legal-agent-gitlab-main (9)\\Dreammaker-legal-agent-gitlab-main",
+        "DREAMMAKER_LOG_FILE": "%LOCALAPPDATA%\\Trae\\Logs\\dreammaker-mcp.log"
+      },
+      "version": "1.0.0",
+      "allowStdio": false
+    }
+  ]
+}

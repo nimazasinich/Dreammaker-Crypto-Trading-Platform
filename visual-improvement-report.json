@@ -1,0 +1,233 @@
+{
+  "timestamp": "2025-12-07T08:19:07.084Z",
+  "visualImprovements": [
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 52 inline styles, 99 hardcoded colors",
+      "file": "src\\views\\EnhancedDashboardView.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 33 inline styles, 10 hardcoded colors",
+      "file": "src\\views\\MarketAnalysisHub.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 16 inline styles, 5 hardcoded colors",
+      "file": "src\\views\\MarketView.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 3 inline styles, 6 hardcoded colors",
+      "file": "src\\views\\TechnicalAnalysisView.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 2 inline styles, 10 hardcoded colors",
+      "file": "src\\components\\AdvancedChart.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 33 inline styles, 0 hardcoded colors",
+      "file": "src\\components\\ai\\AIPredictor.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 1 inline styles, 24 hardcoded colors",
+      "file": "src\\components\\charts\\ChartOverlay.tsx"
+    },
+    {
+      "type": "ux",
+      "severity": "low",
+      "message": "Empty state without action button",
+      "file": "src\\components\\connectors\\RealChartDataConnector.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 53 inline styles, 60 hardcoded colors",
+      "file": "src\\components\\dashboard\\SpectacularLoader.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 30 inline styles, 0 hardcoded colors",
+      "file": "src\\components\\enhanced\\EnhancedSymbolDashboard.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 0 inline styles, 7 hardcoded colors",
+      "file": "src\\components\\icons\\CryptoIcons.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 0 inline styles, 16 hardcoded colors",
+      "file": "src\\components\\market\\LightweightPriceChart.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 0 inline styles, 9 hardcoded colors",
+      "file": "src\\components\\market\\PriceChart.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 15 inline styles, 10 hardcoded colors",
+      "file": "src\\components\\Navigation\\DockablePanel.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 27 inline styles, 46 hardcoded colors",
+      "file": "src\\components\\Navigation\\DockableSidebar.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 24 inline styles, 12 hardcoded colors",
+      "file": "src\\components\\Navigation\\EnhancedSidebar.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 18 inline styles, 26 hardcoded colors",
+      "file": "src\\components\\Navigation\\StatusAccordion.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 18 inline styles, 0 hardcoded colors",
+      "file": "src\\components\\news\\NewsFeed.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 2 inline styles, 8 hardcoded colors",
+      "file": "src\\components\\signal\\BreakoutAnimation.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 0 inline styles, 13 hardcoded colors",
+      "file": "src\\components\\signal\\SignalExamplesPanel.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 4 inline styles, 17 hardcoded colors",
+      "file": "src\\components\\signal\\SignalStagePipeline.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 1 inline styles, 19 hardcoded colors",
+      "file": "src\\components\\strategy\\PerformanceChart.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 24 inline styles, 0 hardcoded colors",
+      "file": "src\\components\\TopSignalsPanel.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 4 inline styles, 12 hardcoded colors",
+      "file": "src\\components\\tradingview\\AdvancedChart.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 28 inline styles, 19 hardcoded colors",
+      "file": "src\\components\\tradingview\\AdvancedNews.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 2 inline styles, 9 hardcoded colors",
+      "file": "src\\components\\tradingview\\DrawingToolsPanel.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 20 inline styles, 30 hardcoded colors",
+      "file": "src\\components\\tradingview\\EnhancedChartWrapper.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 27 inline styles, 14 hardcoded colors",
+      "file": "src\\components\\tradingview\\EnhancedScreener.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 1 inline styles, 8 hardcoded colors",
+      "file": "src\\components\\tradingview\\QuickActionsPanel.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 50 inline styles, 23 hardcoded colors",
+      "file": "src\\components\\tradingview\\StrategyManager.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 0 inline styles, 12 hardcoded colors",
+      "file": "src\\components\\ui\\card.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 1 inline styles, 8 hardcoded colors",
+      "file": "src\\components\\ui\\GlowingButton.tsx"
+    },
+    {
+      "type": "visual",
+      "severity": "medium",
+      "message": "Visual consistency issues: 19 inline styles, 0 hardcoded colors",
+      "file": "src\\components\\ui\\LoadingScreen.tsx"
+    }
+  ],
+  "problems": [],
+  "incompletePages": [
+    {
+      "type": "incomplete",
+      "severity": "high",
+      "message": "Incomplete implementation: 1 TODO, 0 FIXME, 0 INCOMPLETE",
+      "file": "src\\components\\connectors\\index.ts",
+      "todos": [
+        "TODO: Refactor these remaining connectors to use contexts\n/*\nexport { RealSignalFeedConnector } from './RealSignalFeedConnector';\nexport { RealPortfolioConnector } from './RealPortfolioConnector';\n*/\n\nlogger.info('✅ Chart connectors re-enabled (refactored to use DataContext/LiveDataContext)');"
+      ]
+    },
+    {
+      "type": "incomplete",
+      "severity": "high",
+      "message": "Incomplete implementation: 0 TODO, 0 FIXME, 1 INCOMPLETE",
+      "file": "src\\components\\portfolio\\RiskCenterPro.tsx",
+      "todos": [
+        "incomplete due to data availability issues.\n        </div>\n      )}\n    </div>\n  );\n}\n"
+      ]
+    }
+  ],
+  "typeSafetyIssues": [],
+  "summary": {
+    "totalFilesAnalyzed": 155,
+    "totalIssuesFound": 35,
+    "typeSafetyIssues": 0,
+    "incompletePages": 2,
+    "visualIssues": 33,
+    "problems": 0
+  }
+}

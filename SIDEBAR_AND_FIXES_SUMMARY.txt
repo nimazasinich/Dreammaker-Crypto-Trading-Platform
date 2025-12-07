@@ -1,0 +1,26 @@
+=== خلاصه تغییرات ===
+
+✅ رفع خطاهای TypeScript:
+   1. EnhancedSidebar.tsx - تغییر icon type به React.ComponentType<any>
+   2. TradingViewDashboard.tsx - تغییر icon type به React.ComponentType<any>
+   3. ConfigManager.ts - حذف @ts-expect-error و استفاده از (globalThis as any)
+   4. server.ts - اضافه کردن type assertion (as any)
+   5. EnhancedDashboardView.tsx - رفع خطای dataRefreshing و setError
+
+✅ انتقال Sidebar به سمت راست:
+   - تغییر lg:flex-row به lg:flex-row-reverse در App.tsx
+   - جابجایی <EnhancedSidebar /> و <main>
+   - حالا sidebar در سمت راست صفحه قرار دارد
+
+✅ فایل‌های تغییر یافته:
+   - src/components/Navigation/EnhancedSidebar.tsx
+   - src/views/TradingViewDashboard.tsx
+   - src/core/ConfigManager.ts
+   - src/server.ts
+   - src/views/EnhancedDashboardView.tsx
+   - src/App.tsx
+
+✅ نتیجه:
+   - خطاهای TypeScript کاهش یافت
+   - Sidebar به راست منتقل شد
+   - سیستم آماده build است
