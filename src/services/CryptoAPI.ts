@@ -440,5 +440,8 @@ export interface WhaleTransaction {
   amount: number;
   amount_usd: number;
   chain: string;
-  ts: string;
+  ts: string | number;
+  hash?: string;
+  timestamp?: number;
+  symbol?: string;
 }

@@ -492,7 +492,7 @@ export class MarketDataIngestionService {
 
     // Initial sentiment fetch
     try {
-      const sentiment = await this.sentimentNewsService.getAggregatedSentiment();
+      const sentiment = await this.sentimentNewsService.getAggregatedSentiment(['BTC', 'ETH']);
       await this.redisService.publish('sentiment_update', sentiment);
       this.logger.info('Initial sentiment data published', { sentiment });
     } catch (error) {
@@ -502,12 +502,12 @@ export class MarketDataIngestionService {
     // Periodic sentiment updates
     this.sentimentIntervalId = setInterval(async () => {
       try {
-        const sentiment = await this.sentimentNewsService.getAggregatedSentiment();
-        await this.redisService.publish('sentiment_update', sentiment);
-        this.logger.debug('Sentiment analysis completed', {
-          overallSentiment: sentiment.overallSentiment,
-          score: sentiment.overallScore
-        });
+      const sentiment = await this.sentimentNewsService.getAggregatedSentiment(['BTC', 'ETH']);
+      await this.redisService.publish('sentiment_update', sentiment);
+      this.logger.debug('Sentiment analysis completed', {
+        overallSentiment: sentiment.overall > 0.5 ? 'BULLISH' : sentiment.overall < -0.5 ? 'BEARISH' : 'NEUTRAL',
+        score: sentiment.overall
+      });
       } catch (error) {
         this.logger.error('Sentiment analysis error', {}, error as Error);
       }

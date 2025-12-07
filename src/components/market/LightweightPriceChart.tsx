@@ -137,15 +137,24 @@ export const LightweightPriceChart: React.FC<LightweightPriceChartProps> = ({
       },
     });
 
-    // Add candlestick series
-    const candlestickSeries = chart.addCandlestickSeries({
-      upColor: '#10b981',
-      downColor: '#ef4444',
-      borderUpColor: '#10b981',
-      borderDownColor: '#ef4444',
-      wickUpColor: '#10b981',
-      wickDownColor: '#ef4444',
-    });
+    // Add candlestick series (v4 API)
+    const candlestickSeries = (chart as any).addCandlestickSeries ? 
+      (chart as any).addCandlestickSeries({
+        upColor: '#10b981',
+        downColor: '#ef4444',
+        borderUpColor: '#10b981',
+        borderDownColor: '#ef4444',
+        wickUpColor: '#10b981',
+        wickDownColor: '#ef4444',
+      }) : 
+      chart.addSeries('Candlestick', {
+        upColor: '#10b981',
+        downColor: '#ef4444',
+        borderUpColor: '#10b981',
+        borderDownColor: '#ef4444',
+        wickUpColor: '#10b981',
+        wickDownColor: '#ef4444',
+      } as any);
 
     chartRef.current = chart;
     candlestickSeriesRef.current = candlestickSeries;

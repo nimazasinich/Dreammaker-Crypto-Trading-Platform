@@ -277,15 +277,15 @@ export class MarketDataController {
       const news = await this.cache.getOrSet(
         cacheKey,
         async () => {
-          return await this.sentimentNewsService.getCryptoNews(Number(limit));
+          return await this.sentimentNewsService.getCryptoNews(String(limit));
         },
         { ttl: 300, tags: ['news'] }
       );
 
       res.json({
         success: true,
-        news,
-        count: news.length,
+        news: news.articles || news,
+        count: (news.articles || news as any).length,
         timestamp: Date.now()
       });
     } catch (error) {

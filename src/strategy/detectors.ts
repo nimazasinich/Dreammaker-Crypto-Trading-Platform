@@ -386,7 +386,8 @@ export async function detectNews(symbol?: string): Promise<DetectorOutput> {
 
   try {
     // Fetch real crypto news (limit to recent 10 articles)
-    const newsData = await newsService.getCryptoNews(10);
+    const newsResult = await newsService.getCryptoNews(String(10));
+    const newsData = newsResult.articles || [];
 
     if (!newsData || newsData.length === 0) {
       logger.warn('News detector: No news data available, returning neutral');
@@ -450,11 +451,11 @@ export async function detectWhales(symbol?: string): Promise<DetectorOutput> {
     let txCount = 0;
 
     for (const tx of whaleData.largeTransactions.slice(0, 20)) {
-      // IN direction = inflow to exchange = distribution (bearish)
-      // OUT direction = outflow from exchange = accumulation (bullish)
-      if (tx.direction === 'IN') {
+      // sell = inflow to exchange = distribution (bearish)
+      // buy = outflow from exchange = accumulation (bullish)
+      if (tx.type === 'sell') {
         netFlow += (tx.amount || 0); // Inflow to exchange (distribution)
-      } else if (tx.direction === 'OUT') {
+      } else if (tx.type === 'buy') {
         netFlow -= (tx.amount || 0); // Outflow from exchange (accumulation)
       }
       txCount++;

@@ -10,6 +10,7 @@ export interface WavePoint {
   timestamp: number;
   wave: string; // '1', '2', '3', '4', '5', 'A', 'B', 'C'
   type: 'IMPULSE' | 'CORRECTIVE';
+  degree: 'MINUTE' | 'MINOR' | 'INTERMEDIATE' | 'PRIMARY';
 }
 
 export interface ElliottWaveAnalysis {
@@ -123,7 +124,8 @@ export class ElliottWaveAnalyzer {
         price: pivot.price,
         timestamp: pivot.timestamp,
         wave: waveLabel,
-        type: isImpulse ? 'IMPULSE' : 'CORRECTIVE'
+        type: isImpulse ? 'IMPULSE' : 'CORRECTIVE',
+        degree: 'MINOR'
       });
 
       waveIndex++;

@@ -248,6 +248,7 @@ export interface WebSocketPositionUpdate {
 export interface WebSocketData {
     type: 'POSITION_UPDATE' | 'PRICE_UPDATE' | 'ORDER_UPDATE';
     data: WebSocketPositionUpdate | any;
+    positionsUpdate?: Position[];
 }
 
 // ==================== API Response Types ====================

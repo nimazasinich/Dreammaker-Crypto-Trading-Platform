@@ -225,6 +225,7 @@ class BackgroundSignalService {
       const volume = 1000000 + Math.random() * 5000000;
 
       data.push({
+        symbol,
         timestamp: now - i * 3600000,
         open,
         high,

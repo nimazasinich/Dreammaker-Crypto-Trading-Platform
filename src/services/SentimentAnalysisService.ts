@@ -70,7 +70,8 @@ export class SentimentAnalysisService {
       // Analyze news sentiment using HF models
       try {
         const startNews = Date.now();
-        const newsItems = await this.sentimentNewsService.getCryptoNews(50);
+        const newsResult = await this.sentimentNewsService.getCryptoNews(String(50));
+        const newsItems = newsResult.articles || [];
         const baseSymbol = symbol.replace('USDT', '').replace('USD', '').toLowerCase();
         
         // Filter news items for this symbol
@@ -283,7 +284,8 @@ export class SentimentAnalysisService {
    */
   private async extractNewsImpact(symbol: string): Promise<SentimentData['newsImpact']> {
     try {
-      const newsItems = await this.sentimentNewsService.getCryptoNews(20);
+      const newsResult = await this.sentimentNewsService.getCryptoNews(String(20));
+      const newsItems = newsResult.articles || [];
       const baseSymbol = symbol.replace('USDT', '').replace('USD', '').toLowerCase();
       
       const symbolNews = newsItems

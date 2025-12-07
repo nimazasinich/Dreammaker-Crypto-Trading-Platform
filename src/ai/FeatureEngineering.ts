@@ -543,7 +543,26 @@ export class FeatureEngineering {
   }
 
   extractElliottWaveFeatures(data: MarketData[]): ElliottWaveFeatures {
-    return this.elliottWaveAnalyzer.analyzeElliottWaves(data);
+    const analysis = this.elliottWaveAnalyzer.analyzeElliottWaves(data);
+    if (!analysis) {
+      return {
+        currentWave: { type: 'IMPULSE', wave: '1', degree: 'MINOR' },
+        completionProbability: 0.5,
+        nextExpectedDirection: 'SIDEWAYS',
+        waveStructure: []
+      };
+    }
+    
+    return {
+      currentWave: {
+        type: analysis.currentWave.type,
+        wave: analysis.currentWave.wave,
+        degree: analysis.currentWave.degree
+      },
+      completionProbability: analysis.completionProbability,
+      nextExpectedDirection: analysis.nextExpectedDirection === 'NEUTRAL' ? 'SIDEWAYS' : analysis.nextExpectedDirection,
+      waveStructure: analysis.waveStructure || this.analyzeWaveStructure(data)
+    };
   }
 
   private analyzeWaveStructure(data: MarketData[]): Array<{ wave: string; start: number; end: number; price: number; timestamp: number }> {
@@ -580,7 +599,21 @@ export class FeatureEngineering {
   }
 
   extractHarmonicFeatures(data: MarketData[]): HarmonicFeatures {
-    const patterns = this.harmonicDetector.detectHarmonicPatterns(data);
+    const detectedPatterns = this.harmonicDetector.detectHarmonicPatterns(data);
+    
+    // Convert HarmonicPattern[] to the expected format
+    const patterns = detectedPatterns.map(p => ({
+      type: p.type,
+      points: p.points,
+      fibonacciLevels: p.fibonacciLevels || [],
+      prz: p.prz,
+      completionProbability: p.completionProbability || p.reliabilityScore || 0.5,
+      confidence: p.confidence,
+      reliabilityScore: p.reliabilityScore,
+      direction: p.direction,
+      targetLevels: p.targetLevels
+    }));
+    
     return { patterns };
   }
 

@@ -2686,12 +2686,12 @@ app.get('/api/market/historical', async (req, res) => {
 app.get('/api/news/latest', async (req, res) => {
   try {
     const { limit = 20 } = req.query;
-    const news = await sentimentNewsService.getCryptoNews(Number(limit));
+    const news = await sentimentNewsService.getCryptoNews(String(limit));
     
     res.json({
       success: true,
-      news,
-      count: news.length,
+      news: news.articles || news,
+      count: news.articles ? news.articles.length : (news as any).length || 0,
       timestamp: Date.now()
     });
   } catch (error) {
@@ -2707,12 +2707,12 @@ app.get('/api/news/latest', async (req, res) => {
 app.get('/api/news/crypto', async (req, res) => {
   try {
     const { limit = 20 } = req.query;
-    const news = await sentimentNewsService.getCryptoNews(Number(limit));
+    const news = await sentimentNewsService.getCryptoNews(String(limit));
     
     res.json({
       success: true,
-      news,
-      count: news.length,
+      news: news.articles || news,
+      count: news.articles ? news.articles.length : (news as any).length || 0,
       source: 'SentimentNewsService',
       timestamp: Date.now()
     });
@@ -2802,8 +2802,8 @@ app.get('/api/test/real-data', async (req, res) => {
           timestamp: btcPrice.timestamp
         },
         sentiment: {
-          overallScore: sentiment.overallScore,
-          overallSentiment: sentiment.overallSentiment,
+          overallScore: sentiment.overall || 0,
+          overallSentiment: sentiment.overall > 0.5 ? 'BULLISH' : sentiment.overall < -0.5 ? 'BEARISH' : 'NEUTRAL',
           timestamp: sentiment.timestamp
         }
       },
@@ -3613,10 +3613,10 @@ app.get('/api/whale/transactions', async (req, res) => {
       .slice(0, Number(limit))
       .map(txn => ({
         amount: txn.amount,
-        direction: txn.direction,
+        direction: txn.type === 'buy' ? 'OUT' : 'IN',
         exchange: txn.exchange,
         timestamp: txn.timestamp,
-        walletCluster: txn.walletCluster,
+        walletCluster: 'unknown',
         usdValue: txn.amount * 50000 // Approximate USD value (would use real price)
       }));
     
