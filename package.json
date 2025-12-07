@@ -101,7 +101,11 @@
     "release:set": "node scripts/release.mjs set",
     "postinstall": "patch-package",
     "validate:mcp": "node scripts/validate-mcp.js",
-    "sync:mcp": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/sync-trae-mcp.ps1"
+    "sync:mcp": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/sync-trae-mcp.ps1",
+    "ci:validate": "tsx scripts/ci/validate-ci-config.ts",
+    "ci:parse": "tsx scripts/ci/parse-ci-reports.ts",
+    "ci:parse:local": "tsx scripts/ci/parse-ci-reports.ts all-reports",
+    "ci:help": "cat .github/CI_GUIDE.md"
   },
   "dependencies": {
     "@octokit/rest": "^22.0.1",

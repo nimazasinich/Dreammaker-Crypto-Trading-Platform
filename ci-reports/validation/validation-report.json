@@ -1,0 +1,35 @@
+{
+  "timestamp": "2025-12-07T08:59:38.160Z",
+  "valid": true,
+  "summary": {
+    "errors": 0,
+    "warnings": 10,
+    "info": 8
+  },
+  "details": {
+    "valid": true,
+    "errors": [],
+    "warnings": [
+      "Job 'setup-validation' in config may not exist in workflow (expected: setup_validation)",
+      "Job 'code-quality' in config may not exist in workflow (expected: code_quality)",
+      "Job 'unit-tests' in config may not exist in workflow (expected: unit_tests)",
+      "Job 'integration-tests' in config may not exist in workflow (expected: integration_tests)",
+      "Job 'e2e-tests' in config may not exist in workflow (expected: e2e_tests)",
+      "Job 'build-verification' in config may not exist in workflow (expected: build_verification)",
+      "Job 'docker-build' in config may not exist in workflow (expected: docker_build)",
+      "Job 'security-scan' in config may not exist in workflow (expected: security_scan)",
+      "Job 'performance-benchmarks' in config may not exist in workflow (expected: performance_benchmarks)",
+      "Job 'generate-final-report' in config may not exist in workflow (expected: generate_final_report)"
+    ],
+    "info": [
+      "✓ Found CI Config: .github/ci-config.json",
+      "✓ Found JSON Schema: .github/ci-config-schema.json",
+      "✓ Found GitHub Workflow: .github/workflows/comprehensive-ci.yml",
+      "✓ ci-config.json has valid JSON syntax",
+      "✓ ci-config-schema.json has valid JSON syntax",
+      "✓ Found 10 jobs in configuration",
+      "✓ Found 9 report directories defined",
+      "✓ Reports directory 'ci-reports' referenced 1 times in workflow"
+    ]
+  }
+}
