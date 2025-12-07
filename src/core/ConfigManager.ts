@@ -106,6 +106,74 @@ export class ConfigManager {
     }
 
     /**
+     * Check if real data mode is enabled
+     */
+    isRealDataMode(): boolean {
+        return process.env.DATA_MODE === 'real' || process.env.VITE_DATA_MODE === 'real';
+    }
+
+    /**
+     * Check if demo mode is enabled
+     */
+    isDemoMode(): boolean {
+        return process.env.DATA_MODE === 'demo' || process.env.VITE_DATA_MODE === 'demo';
+    }
+
+    /**
+     * Get exchange configuration
+     */
+    getExchangeConfig(exchange?: string): Record<string, unknown> {
+        // Return basic exchange config
+        return {
+            name: exchange || 'binance',
+            enabled: true,
+            apiKey: process.env[`${exchange?.toUpperCase()}_API_KEY`] || '',
+            apiSecret: process.env[`${exchange?.toUpperCase()}_API_SECRET`] || '',
+        };
+    }
+
+    /**
+     * Get market data configuration
+     */
+    getMarketDataConfig(): Record<string, unknown> {
+        return {
+            updateInterval: 5000,
+            symbols: ['BTCUSDT', 'ETHUSDT'],
+            timeframes: ['1m', '5m', '15m', '1h', '4h', '1d'],
+        };
+    }
+
+    /**
+     * Get KuCoin specific configuration
+     */
+    getKuCoinConfig(): Record<string, unknown> {
+        return {
+            apiKey: process.env.KUCOIN_API_KEY || '',
+            apiSecret: process.env.KUCOIN_API_SECRET || '',
+            passphrase: process.env.KUCOIN_PASSPHRASE || '',
+            enabled: !!process.env.KUCOIN_API_KEY,
+        };
+    }
+
+    /**
+     * Get APIs configuration (Fear & Greed, News, etc.)
+     */
+    getApisConfig(): Record<string, unknown> {
+        return {
+            fearGreed: {
+                enabled: true,
+                url: 'https://api.alternative.me/fng/',
+                cacheTTL: 3600000, // 1 hour
+            },
+            news: {
+                enabled: true,
+                sources: ['cryptopanic', 'newsapi'],
+                cacheTTL: 300000, // 5 minutes
+            },
+        };
+    }
+
+    /**
      * Get a specific configuration value by path
      */
     get<T = unknown>(path: string): T | undefined {

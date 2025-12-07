@@ -6,7 +6,7 @@ import { MultiProviderMarketDataService } from '../services/MultiProviderMarketD
 import { SentimentNewsService } from '../services/SentimentNewsService.js';
 import { BinanceService } from '../services/BinanceService.js';
 import { ConfigManager } from '../core/ConfigManager';
-import { AdvancedCache } from '../core/AdvancedCache';
+import { AdvancedCache } from '../utils/cache';
 import { hfDataEngineAdapter } from '../services/HFDataEngineAdapter.js';
 import { getPrimarySource } from '../config/dataSource.js';
 

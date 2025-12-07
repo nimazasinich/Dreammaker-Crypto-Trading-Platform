@@ -13,7 +13,7 @@
 
 import { Logger } from '../core/Logger';
 import { Database } from '../data/Database.js';
-import { AdvancedCache } from '../core/AdvancedCache';
+import { AdvancedCache } from '../utils/cache';
 import { MultiProviderMarketDataService } from './MultiProviderMarketDataService.js';
 import { HuggingFaceService } from './HuggingFaceService.js';
 import { hfDataEngineAdapter } from './HFDataEngineAdapter.js';

@@ -15,6 +15,7 @@ interface CacheItem<T> {
 }
 
 export class AdvancedCache<T> {
+  private static instance: AdvancedCache<any>;
   private cache: Map<string, CacheItem<T>> = new Map();
   private ttl: number;
   private maxSize: number;
@@ -24,6 +25,16 @@ export class AdvancedCache<T> {
     this.ttl = options.ttl || 5 * 60 * 1000; // Default 5 minutes
     this.maxSize = options.maxSize || 100; // Default 100 items
     this.staleWhileRevalidate = options.staleWhileRevalidate || false;
+  }
+
+  /**
+   * Get the singleton instance
+   */
+  static getInstance<T = any>(options?: CacheOptions): AdvancedCache<T> {
+    if (!AdvancedCache.instance) {
+      AdvancedCache.instance = new AdvancedCache<T>(options);
+    }
+    return AdvancedCache.instance as AdvancedCache<T>;
   }
   
   /**
