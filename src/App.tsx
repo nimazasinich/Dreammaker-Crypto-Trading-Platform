@@ -179,8 +179,16 @@ const AppContent: React.FC = () => {
                 background: viewTheme.backgroundGradient,
             }}
         >
+            {/* Skip to main content link for keyboard users */}
+            <a
+                href="#main-content"
+                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-purple-600 focus:text-white focus:rounded-lg focus:shadow-lg"
+            >
+                Skip to main content
+            </a>
+            
             <EnhancedSidebar />
-            <main className="flex-1 overflow-auto" role="main">
+            <main id="main-content" className="flex-1 overflow-auto" role="main" tabIndex={-1}>
                 {renderCurrentView()}
             </main>
         </div>

@@ -221,4 +221,121 @@ export class SentimentNewsService {
       return { sentiment: 'neutral', score: 0, confidence: 0 };
     }
   }
+
+  /**
+   * Get crypto news with detailed information
+   */
+  async getCryptoNews(symbol: string = 'BTC', limit: number = 20): Promise<{
+    articles: Array<{
+      title: string;
+      description: string;
+      url: string;
+      source: string;
+      publishedAt: string;
+      sentiment?: number;
+    }>;
+    totalResults: number;
+  }> {
+    try {
+      const newsItems = await this.getNews(symbol, limit);
+      
+      const articles = newsItems.map(item => ({
+        title: item.title,
+        description: '', // HuggingFace might not provide descriptions
+        url: item.url,
+        source: item.source,
+        publishedAt: item.published.toISOString(),
+        sentiment: item.sentimentScore
+      }));
+
+      return {
+        articles,
+        totalResults: articles.length
+      };
+    } catch (error) {
+      this.logger.error('Failed to fetch crypto news:', { symbol }, error);
+      return {
+        articles: [],
+        totalResults: 0
+      };
+    }
+  }
+
+  /**
+   * Analyze sentiment for a specific keyword
+   */
+  async analyzeKeywordSentiment(keyword: string): Promise<{
+    sentiment: number; // -1 to 1
+    confidence: number; // 0 to 1
+    sources: number;
+  }> {
+    try {
+      const result = await this.analyzeSentiment(keyword);
+      return {
+        sentiment: result.score || 0,
+        confidence: result.confidence || 0,
+        sources: 1
+      };
+    } catch (error) {
+      this.logger.error('Keyword sentiment analysis failed:', { keyword }, error);
+      return {
+        sentiment: 0,
+        confidence: 0,
+        sources: 0
+      };
+    }
+  }
+
+  /**
+   * Get aggregated sentiment across multiple symbols
+   */
+  async getAggregatedSentiment(symbols: string[]): Promise<{
+    overall: number;
+    bySymbol: Record<string, { sentiment: number; confidence: number }>;
+    timestamp: number;
+  }> {
+    try {
+      const bySymbol: Record<string, { sentiment: number; confidence: number }> = {};
+      let totalSentiment = 0;
+      
+      for (const symbol of symbols) {
+        const result = await this.analyzeSentiment(symbol);
+        bySymbol[symbol] = {
+          sentiment: result.score || 0,
+          confidence: result.confidence || 0
+        };
+        totalSentiment += result.score || 0;
+      }
+      
+      return {
+        overall: symbols.length > 0 ? totalSentiment / symbols.length : 0,
+        bySymbol,
+        timestamp: Date.now()
+      };
+    } catch (error) {
+      this.logger.error('Aggregated sentiment failed:', { symbols }, error);
+      return {
+        overall: 0,
+        bySymbol: {},
+        timestamp: Date.now()
+      };
+    }
+  }
+
+  /**
+   * Start a news stream for given symbols
+   */
+  startNewsStream(symbols: string[], callback: (news: any) => void): () => void {
+    // Placeholder for news streaming using polling
+    const interval = setInterval(async () => {
+      for (const symbol of symbols) {
+        const news = await this.getCryptoNews(symbol, 5);
+        if (news.articles.length > 0) {
+          callback({ symbol, articles: news.articles });
+        }
+      }
+    }, 300000); // Every 5 minutes
+    
+    return () => clearInterval(interval);
+  }
 }

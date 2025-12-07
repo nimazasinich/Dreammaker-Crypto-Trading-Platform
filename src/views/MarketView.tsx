@@ -1098,7 +1098,7 @@ const ChartingContent: React.FC = () => {
                                 </div>
                             </div>
                         )}
-                    </div>
+                    </motion.div>
                 )}
 
                 {/* Settings Panel */}
