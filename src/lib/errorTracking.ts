@@ -40,6 +40,9 @@ export interface ErrorEvent {
   stack?: string;
   timestamp: number;
   recovered?: boolean; // Whether error was recovered from (e.g., retry succeeded)
+  category?: string;
+  component?: string;
+  severity?: 'low' | 'medium' | 'high' | 'critical';
 }
 
 export interface ErrorStats {
@@ -48,6 +51,9 @@ export interface ErrorStats {
   byComponent: Record<string, number>;
   recoveryRate: number;
   recentErrors: ErrorEvent[];
+  uniqueErrors?: number;
+  byCategory?: Record<string, number>;
+  bySeverity?: Record<string, number>;
 }
 
 class ErrorTracker {

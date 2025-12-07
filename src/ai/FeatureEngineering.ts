@@ -73,7 +73,7 @@ export interface ElliottWaveFeatures {
 
 export interface HarmonicFeatures {
   patterns: Array<{
-    type: 'GARTLEY' | 'BAT' | 'BUTTERFLY' | 'CRAB' | 'ABCD';
+    type: 'GARTLEY' | 'BAT' | 'BUTTERFLY' | 'CRAB' | 'ABCD' | 'SHARK' | 'CYPHER';
     points: {
       X: { price: number; timestamp: number };
       A: { price: number; timestamp: number };
@@ -603,16 +603,22 @@ export class FeatureEngineering {
     
     // Convert HarmonicPattern[] to the expected format
     const patterns = detectedPatterns.map(p => ({
-      type: p.type,
-      points: p.points,
+      type: p.type as 'GARTLEY' | 'BAT' | 'BUTTERFLY' | 'CRAB' | 'ABCD' | 'SHARK' | 'CYPHER',
+      points: {
+        X: p.points.X,
+        A: p.points.A,
+        B: p.points.B,
+        C: p.points.C,
+        ...(p.points.D ? { D: p.points.D } : {})
+      },
       fibonacciLevels: p.fibonacciLevels || [],
-      prz: p.prz,
-      completionProbability: p.completionProbability || p.reliabilityScore || 0.5,
-      confidence: p.confidence,
-      reliabilityScore: p.reliabilityScore,
-      direction: p.direction,
-      targetLevels: p.targetLevels
-    }));
+      prz: {
+        upper: p.prz.upper,
+        lower: p.prz.lower,
+        confluence: p.prz.confluence
+      },
+      completionProbability: p.completionProbability || p.reliabilityScore || 0.5
+    })) as any;
     
     return { patterns };
   }

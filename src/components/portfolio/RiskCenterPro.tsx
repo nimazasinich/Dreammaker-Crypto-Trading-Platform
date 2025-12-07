@@ -58,10 +58,16 @@ type OHLCVBar = {
   volume: number;
 };
 
-export default function RiskCenterPro() {
+interface RiskCenterProProps {
+  positions?: Position[];
+  balance?: number;
+  marketData?: any[];
+}
+
+export default function RiskCenterPro(props?: RiskCenterProProps) {
     const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [positions, setPositions] = useState<Position[]>([]);
+  const [positions, setPositions] = useState<Position[]>(props?.positions || []);
   const [hist, setHist] = useState<HistoryRow[]>([]);
   const [futInfo, setFutInfo] = useState<Record<string, FuturesInfo>>({});
   const [symbolVol, setSymbolVol] = useState<Record<string, { vol: number; var95: number; es95: number }>>({});

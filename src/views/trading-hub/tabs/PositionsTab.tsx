@@ -169,7 +169,7 @@ export const PositionsTab: React.FC<TradingTabProps> = ({
 
     return (
         <div className="space-y-6">
-            {ModalComponent}
+            <ModalComponent />
 
             {/* Sub-tab Navigation */}
             <div className="flex gap-2 border-b">

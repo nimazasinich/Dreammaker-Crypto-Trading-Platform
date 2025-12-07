@@ -139,12 +139,12 @@ export const TechnicalAnalysisView: React.FC = () => {
       ]);
 
       // Update state with results
-      setSMCData(smc);
-      setElliottData(elliott);
-      setFibonacciData(fib);
-      setHarmonicData(harmonic);
-      setSARData(sar);
-      setRegimeData(regime);
+      setSMCData(smc as any);
+      setElliottData(elliott as any);
+      setFibonacciData(fib as any);
+      setHarmonicData(harmonic as any);
+      setSARData(sar as any);
+      setRegimeData(regime as any);
       
     } catch (err: any) {
       console.error('Analysis failed:', err);

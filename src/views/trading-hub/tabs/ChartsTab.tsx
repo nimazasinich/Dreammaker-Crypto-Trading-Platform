@@ -103,19 +103,20 @@ export const ChartsTab: React.FC<ChartsTabProps> = ({
                 {activeSubTab === 'chart' && (
                     <div className="space-y-4">
                         {/* Drawing Tools Panel */}
-                        <DrawingToolsPanel
-                            activeTool={activeTool}
-                            onToolChange={setActiveTool}
-                        />
+                    <DrawingToolsPanel 
+                        activeTool={activeTool}
+                        onToolSelect={setActiveTool}
+                        onToolChange={setActiveTool}
+                    />
 
                         {/* TradingView Chart */}
                         <Suspense fallback={<LoadingSpinner message="Loading chart..." />}>
                             <div className="bg-card rounded-lg shadow-lg p-4">
                                 <EnhancedChartWrapper
                                     symbol={chartSymbol}
-                                    interval="1D"
+                                    interval={'1D'}
                                     theme="light"
-                                    height={600}
+                                    height={'600'}
                                 />
                             </div>
                         </Suspense>

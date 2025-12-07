@@ -19,10 +19,13 @@ interface EnhancedChartWrapperProps {
   symbol: string;
   theme: 'light' | 'dark';
   width?: string;
-  height?: string;
+  height?: string | number;
   signals?: ExtremePoint[];
   onSignalClick?: (signal: ExtremePoint) => void;
+  interval?: string;
 }
+
+export type { EnhancedChartWrapperProps };
 
 type DrawingTool = 'trendline' | 'horizontal' | 'vertical' | 'rectangle' | 'circle' | 'text' | 'crosshair' | null;
 type Timeframe = '1m' | '5m' | '15m' | '1h' | '4h' | '1D' | '1W';

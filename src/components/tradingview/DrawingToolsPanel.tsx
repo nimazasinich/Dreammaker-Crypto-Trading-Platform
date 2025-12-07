@@ -14,7 +14,10 @@ interface DrawingToolsPanelProps {
   activeTool: string | null;
   onToolSelect: (tool: string) => void;
   onNotification?: (message: string) => void;
+  onToolChange?: (tool: string) => void;
 }
+
+export type { DrawingToolsPanelProps };
 
 const DrawingToolsPanel: React.FC<DrawingToolsPanelProps> = ({
   activeTool,

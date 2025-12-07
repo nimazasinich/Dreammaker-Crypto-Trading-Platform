@@ -40,6 +40,15 @@ export class PerformanceMonitor {
     return PerformanceMonitor.instance;
   }
 
+  getMetrics(): { cpu: number; memory: number; disk: number } {
+    const memUsage = process.memoryUsage();
+    return {
+      cpu: 0, // Placeholder - would need actual CPU monitoring
+      memory: (memUsage.heapUsed / memUsage.heapTotal) * 100,
+      disk: 0 // Placeholder - would need disk monitoring
+    };
+  }
+
   collectMetrics(): PerformanceMetrics {
     const memoryUsage = process.memoryUsage();
     const cpuUsage = process.cpuUsage(this.startCpuUsage);

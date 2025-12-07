@@ -470,6 +470,7 @@ export class MarketDataIngestionService {
 
     // Use SentimentNewsService for news streaming
     this.newsStreamCleanup = this.sentimentNewsService.startNewsStream(
+      ['BTC', 'ETH'],
       async (newsItem) => {
         try {
           await this.redisService.publish('news_update', { 
@@ -480,8 +481,7 @@ export class MarketDataIngestionService {
         } catch (error) {
           this.logger.error('News publish error', {}, error as Error);
         }
-      },
-      newsInterval
+      }
     );
 
     this.logger.info('News collection started', { interval: newsInterval });

@@ -379,8 +379,9 @@ const EnhancedDashboardView: React.FC = () => {
                     // Validate signals are real (not mock)
                     const realSignals = signalsData.filter(s => {
                         // Check if signal has valid data
+                        const signalType = (s as any).type || (s as any).action?.toLowerCase();
                         return s.symbol && s.confidence > 0 && s.confidence <= 1 &&
-                            (s.type === 'buy' || s.type === 'sell' || s.type === 'hold');
+                            (signalType === 'buy' || signalType === 'sell' || signalType === 'hold');
                     });
 
                     if (realSignals.length > 0) {

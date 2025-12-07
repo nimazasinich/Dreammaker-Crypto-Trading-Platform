@@ -11,6 +11,7 @@ interface ScreenerProps {
   colorTheme?: 'light' | 'dark';
   locale?: string;
   isTransparent?: boolean;
+  onSymbolClick?: (symbol: string) => void;
 }
 
 const Screener: React.FC<ScreenerProps> = ({

@@ -10,7 +10,10 @@ interface RealPortfolioConnectorProps {
     bsc?: string;
     trx?: string;
   };
+  children?: React.ReactNode | ((portfolioData: any) => React.ReactNode);
 }
+
+export type { RealPortfolioConnectorProps };
 
 /**
  * RealPortfolioConnector - Wraps Portfolio component with real blockchain balance data

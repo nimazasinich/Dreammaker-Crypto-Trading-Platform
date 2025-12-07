@@ -27,7 +27,7 @@ export const BacktestTab: React.FC = () => {
                 </p>
 
                 {/* Backtest Panel Component */}
-                <BacktestPanel />
+                <BacktestPanel symbol="BTCUSDT" timeframe="1h" />
             </div>
 
             {/* Backtest Info */}

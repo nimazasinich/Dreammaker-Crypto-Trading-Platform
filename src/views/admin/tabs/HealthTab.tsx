@@ -51,21 +51,24 @@ export const HealthTab: React.FC = () => {
             const systemMetrics = metricsCollector.getMetrics();
             const perfMetrics = performanceMonitor.getMetrics();
 
+            const sysMetrics = systemMetrics as { cpu: number; memory: number; disk: number };
+            const perfMetricsObj = perfMetrics as { cpu: number; memory: number; disk: number; uptime?: number; requests?: number; errors?: number };
+            
             setMetrics({
                 system: {
-                    cpu: systemMetrics.cpu || 0,
-                    memory: systemMetrics.memory || 0,
-                    disk: systemMetrics.disk || 0
+                    cpu: sysMetrics?.cpu || 0,
+                    memory: sysMetrics?.memory || 0,
+                    disk: sysMetrics?.disk || 0
                 },
                 connections: {
-                    binance: health.binance ? 'connected' : 'disconnected',
-                    database: health.database ? 'connected' : 'error',
-                    latency: health.latency || 0
+                    binance: health.services?.binance?.status === 'healthy' ? 'connected' : 'disconnected',
+                    database: health.services?.database?.status === 'healthy' ? 'connected' : 'error',
+                    latency: health.services?.binance?.latency || 0
                 },
                 performance: {
-                    uptime: perfMetrics.uptime || 0,
-                    requests: perfMetrics.requests || 0,
-                    errors: perfMetrics.errors || 0
+                    uptime: perfMetricsObj?.uptime || 0,
+                    requests: perfMetricsObj?.requests || 0,
+                    errors: perfMetricsObj?.errors || 0
                 }
             });
         } catch (error) {

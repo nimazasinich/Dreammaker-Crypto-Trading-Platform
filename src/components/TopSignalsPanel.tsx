@@ -9,6 +9,11 @@ export interface Signal {
   timeframe: string;
   strength: 'STRONG' | 'MODERATE' | 'WEAK';
   timestamp: number;
+  type?: 'buy' | 'sell' | 'hold';
+  action?: string;
+  price?: number;
+  reasons?: string[];
+  strategy?: string;
 }
 
 interface TopSignalsPanelProps {

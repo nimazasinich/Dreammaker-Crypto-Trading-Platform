@@ -13,7 +13,10 @@ interface PerformanceChartProps {
   currentConfidence: number;
   currentAction: string;
   isLive?: boolean;
+  data?: any;
 }
+
+export type { PerformanceChartProps };
 
 export const PerformanceChart: React.FC<PerformanceChartProps> = ({
   currentScore,

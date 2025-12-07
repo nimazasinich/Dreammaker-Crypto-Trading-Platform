@@ -213,9 +213,9 @@ export const MarketAnalysisHub: React.FC = () => {
         const tool = tools.find(t => t.id === toolId);
         if (tool && !tool.enabled) {
             await runToolAnalysis(toolId);
-            toast({ type: 'success', message: `${tool.name} enabled`, duration: 2000 });
+            // toast({ type: 'success', message: `${tool.name} enabled`, duration: 2000 });
         } else {
-            toast({ type: 'info', message: `${tool?.name} disabled`, duration: 2000 });
+            // toast({ type: 'info', message: `${tool?.name} disabled`, duration: 2000 });
         }
     }, [tools]);
 
@@ -274,7 +274,7 @@ export const MarketAnalysisHub: React.FC = () => {
             setAnalysisData(prev => ({ ...prev, [toolId]: result }));
         } catch (err: any) {
             console.error(`Analysis failed for ${toolId}:`, err);
-            toast({ type: 'error', message: `Failed to analyze ${toolId}`, duration: 3000 });
+            // toast({ type: 'error', message: `Failed to analyze ${toolId}`, duration: 3000 });
         } finally {
             setLoading(false);
         }
@@ -286,9 +286,9 @@ export const MarketAnalysisHub: React.FC = () => {
         try {
             const enabledTools = tools.filter(t => t.enabled);
             await Promise.all(enabledTools.map(tool => runToolAnalysis(tool.id)));
-            toast({ type: 'success', message: 'All analyses complete', duration: 2000 });
+            // toast({ type: 'success', message: 'All analyses complete', duration: 2000 });
         } catch (err) {
-            toast({ type: 'error', message: 'Some analyses failed', duration: 3000 });
+            // toast({ type: 'error', message: 'Some analyses failed', duration: 3000 });
         } finally {
             setLoading(false);
         }
@@ -829,8 +829,7 @@ export const MarketAnalysisHub: React.FC = () => {
                                     <div className="h-full relative">
                                         <PriceChart
                                             symbol={symbol}
-                                            interval={timeframe as any}
-                                            height={800}
+                                            initialTimeframe={timeframe as any}
                                         />
                                         
                                         {/* Loading Overlay */}

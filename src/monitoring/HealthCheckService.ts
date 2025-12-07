@@ -52,6 +52,14 @@ export class HealthCheckService {
     return HealthCheckService.instance;
   }
 
+  async checkHealth(): Promise<HealthStatus> {
+    return await this.performHealthCheck();
+  }
+
+  async check(): Promise<HealthStatus> {
+    return await this.performHealthCheck();
+  }
+
   async performHealthCheck(): Promise<HealthStatus> {
     const startTime = Date.now();
     const checks = await Promise.allSettled([
