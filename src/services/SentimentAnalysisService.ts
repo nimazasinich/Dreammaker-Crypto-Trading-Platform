@@ -92,8 +92,8 @@ export class SentimentAnalysisService {
           const newsScores = (symbolNews || []).map((item, index) => {
             const hfScore = hfResults.results[index]?.sentiment || 0;
             // Combine HF sentiment with item sentiment if available
-            if (item.sentiment === 'positive') return 30 + (hfScore * 70);
-            if (item.sentiment === 'negative') return -30 + (hfScore * 70);
+            if (item.sentiment && item.sentiment > 0.5) return 30 + (hfScore * 70);
+            if (item.sentiment && item.sentiment < -0.5) return -30 + (hfScore * 70);
             return hfScore * 100;
           });
           news = newsScores.reduce((sum, score) => sum + score, 0) / newsScores.length;
@@ -305,7 +305,7 @@ export class SentimentAnalysisService {
           return {
             headline: item.title,
             source: item.source,
-            timestamp: item.published.getTime(),
+            timestamp: new Date(item.publishedAt).getTime(),
             impact: (hfResult?.sentiment || 0) * 100,
             category: this.categorizeNewsHeadline(item.title)
           };

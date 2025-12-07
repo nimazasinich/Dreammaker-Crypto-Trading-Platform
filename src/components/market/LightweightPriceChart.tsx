@@ -147,7 +147,7 @@ export const LightweightPriceChart: React.FC<LightweightPriceChartProps> = ({
         wickUpColor: '#10b981',
         wickDownColor: '#ef4444',
       }) : 
-      chart.addSeries('Candlestick', {
+      chart.addSeries({ type: 'Candlestick' } as any, {
         upColor: '#10b981',
         downColor: '#ef4444',
         borderUpColor: '#10b981',

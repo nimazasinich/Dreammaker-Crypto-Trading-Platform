@@ -664,26 +664,9 @@ export const MarketAnalysisHub: React.FC = () => {
                                             <Icon 
                                                 className={`transition-all duration-300 ${
                                                     activeTab === tab.id 
-                                                        ? 'w-6 h-6 text-white' 
-                                                        : 'w-5 h-5'
+                                                        ? 'w-6 h-6 text-white drop-shadow-lg' 
+                                                        : 'w-5 h-5 text-purple-400 drop-shadow'
                                                 }`}
-                                                style={activeTab === tab.id ? (
-                                                    tab.id === 'scanner' ? {
-                                                        // Scanner icon - Bright white with cyan glow
-                                                        color: '#ffffff',
-                                                        filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3)) drop-shadow(0 0 6px rgba(255, 255, 255, 0.4)) drop-shadow(0 0 12px rgba(45, 212, 191, 0.3))',
-                                                        strokeWidth: '2.3px',
-                                                    } : {
-                                                        // Charts icon - Bright white with purple glow
-                                                        color: '#ffffff',
-                                                        filter: 'drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3)) drop-shadow(0 0 6px rgba(255, 255, 255, 0.4)) drop-shadow(0 0 12px rgba(167, 139, 250, 0.3))',
-                                                        strokeWidth: '2.3px',
-                                                    }
-                                                ) : {
-                                                    color: COLORS.primary.dark,
-                                                    filter: 'drop-shadow(0 1px 3px rgba(139, 92, 246, 0.25))',
-                                                    strokeWidth: '2px',
-                                                }}
                                             />
                                         </div>
 
@@ -854,7 +837,7 @@ export const MarketAnalysisHub: React.FC = () => {
                                         {loading && (
                                             <div className="absolute inset-0 backdrop-blur-sm bg-white/80 dark:bg-black/30 flex items-center justify-center">
                                                 <div className="bg-white dark:bg-white/10 backdrop-blur-md rounded-xl p-6 border border-gray-200 dark:border-white/20 shadow-2xl">
-                                                    <LoadingSpinner size="large" />
+                                                    <LoadingSpinner size="lg" />
                                                     <p className="text-gray-900 dark:text-white mt-4 text-center font-medium">Running analysis...</p>
                                                 </div>
                                             </div>
@@ -876,7 +859,7 @@ export const MarketAnalysisHub: React.FC = () => {
                             <Suspense fallback={
                                     <div className="h-full flex items-center justify-center bg-white dark:bg-[color:var(--surface)] rounded-2xl border border-gray-200 dark:border-[color:var(--border)]">
                                         <div className="text-center">
-                                            <LoadingSpinner size="large" />
+                                            <LoadingSpinner size="lg" />
                                             <p className="mt-4 text-gray-600 dark:text-gray-400">Loading Scanner...</p>
                                         </div>
                                 </div>

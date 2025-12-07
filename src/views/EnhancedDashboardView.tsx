@@ -325,7 +325,7 @@ const QuickAction: React.FC<QuickActionProps> = ({ label, icon: Icon, onClick, v
                             border: '1px solid rgba(255, 255, 255, 0.3)',
                         }}
                     >
-                        <Icon size={26} className="text-white drop-shadow-2xl" style={{ filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.6))' }} />
+                        <Icon size={26} className="text-white drop-shadow-2xl" />
                     </div>
                 </div>
 
@@ -337,8 +337,7 @@ const QuickAction: React.FC<QuickActionProps> = ({ label, icon: Icon, onClick, v
                 <div className="relative">
                     <ArrowRightIcon
                         size={22}
-                        className="text-white/90 transition-all duration-500 group-hover:translate-x-2 group-hover:scale-125"
-                        style={{ filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))' }}
+                        className="text-white/90 transition-all duration-500 group-hover:translate-x-2 group-hover:scale-125 drop-shadow"
                     />
                     <div className="absolute inset-0 blur-sm opacity-0 transition-opacity duration-500 group-hover:opacity-100">
                         <ArrowRightIcon size={22} className="text-white" />
@@ -716,7 +715,7 @@ const EnhancedDashboardView: React.FC = () => {
                                                 boxShadow: '0 10px 30px rgba(139, 92, 246, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.3)',
                                             }}
                                         >
-                                            <LineChartIcon size={40} className="text-white drop-shadow-2xl" style={{ filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.6))' }} />
+                                            <LineChartIcon size={40} className="text-white drop-shadow-2xl" />
                                         </div>
                                     </div>
 

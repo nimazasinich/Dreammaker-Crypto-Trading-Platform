@@ -1514,9 +1514,9 @@ app.get('/api/providers/categories', async (req, res) => {
 app.get('/api/providers/:category', async (req, res) => {
   try {
     const { category } = req.params;
-    const { ProviderManager } = await import('./core/ProviderManager.js');
+    const { ProviderManager } = await import('./core/ProviderManager');
     const providerManager = ProviderManager.getInstance();
-    const providers = providerManager.getProviders(category);
+    const providers = providerManager.getProviders();
 
     res.json({
       success: true,
@@ -2728,7 +2728,7 @@ app.get('/api/news/crypto', async (req, res) => {
 // Market sentiment endpoint - ??????? ????? ?????
 app.get('/api/sentiment', async (req, res) => {
   try {
-    const sentiment = await sentimentNewsService.getAggregatedSentiment();
+    const sentiment = await sentimentNewsService.getAggregatedSentiment(['BTC', 'ETH']);
     
     res.json({
       success: true,
@@ -2787,7 +2787,7 @@ app.get('/api/test/real-data', async (req, res) => {
     const btcPrice = await multiProviderService.getRealTimePrice('BTC');
     
     // Get market sentiment
-    const sentiment = await sentimentNewsService.getAggregatedSentiment();
+    const sentiment = await sentimentNewsService.getAggregatedSentiment(['BTC', 'ETH']);
 
     res.json({
       success: true,

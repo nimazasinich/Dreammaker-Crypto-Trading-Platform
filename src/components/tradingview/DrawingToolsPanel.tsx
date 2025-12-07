@@ -83,8 +83,7 @@ const DrawingToolsPanel: React.FC<DrawingToolsPanelProps> = ({
             }}
           >
             <Icon
-              className="w-5 h-5"
-              style={tool.rotate ? { transform: `rotate(${tool.rotate}deg)` } : {}}
+              className={`w-5 h-5 ${tool.rotate ? `rotate-[${tool.rotate}deg]` : ''}`}
             />
             <span className="text-sm font-medium flex-1 text-left">{tool.label}</span>
             <span className="text-xs opacity-60">{tool.key}</span>

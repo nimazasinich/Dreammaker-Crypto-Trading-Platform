@@ -13,7 +13,7 @@ const logger = Logger.getInstance();
 
 export function lazyLoad<T extends ComponentType<any>>(
   importFunc: () => Promise<{ default: T }>,
-  fallback: React.ReactNode = <LoadingSpinner size="medium" />
+  fallback: React.ReactNode = <LoadingSpinner />
 ) {
   const LazyComponent = lazy(() => {
     return importFunc().catch((error) => {
@@ -57,7 +57,7 @@ export function lazyLoad<T extends ComponentType<any>>(
  */
 export function lazyLoadWithRetry<T extends ComponentType<any>>(
   importFunc: () => Promise<{ default: T }>,
-  fallback: React.ReactNode = <LoadingSpinner size="medium" />,
+  fallback: React.ReactNode = <LoadingSpinner size="md" />,
   retries: number = 3
 ) {
   const LazyComponent = lazy(() => {

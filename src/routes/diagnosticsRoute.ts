@@ -101,7 +101,7 @@ function buildProviderDiagnostics(provider: ProviderName): ProviderDiagnostics {
     errors: {
       totalErrors: errorStats.total,
       lastError: lastError ? {
-        timestamp: lastError.timestamp,
+        timestamp: new Date(lastError.timestamp).toISOString(),
         message: lastError.error,
         endpoint: provider,
         statusCode: 0
