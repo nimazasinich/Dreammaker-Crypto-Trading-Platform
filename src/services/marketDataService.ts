@@ -1,6 +1,14 @@
+/**
+ * Market Data Service - HuggingFace Integration
+ * 
+ * This service uses ONLY HuggingFace Crypto API as the data source.
+ * All external API calls (Binance, CoinGecko, etc.) have been removed.
+ */
+
 import { MarketData } from '../types';
 import { Logger } from '../core/Logger.js';
-import { coinGeckoOHLCService } from './CoinGeckoOHLCService';
+import { cryptoAPI } from './CryptoAPI';
+
 interface TechnicalIndicators {
   sma: number[];
   ema: number[];
@@ -59,268 +67,38 @@ interface MarketRegime {
 }
 
 interface DataFeedHealth {
-  binanceStatus: 'healthy' | 'degraded' | 'down';
-  coinGeckoStatus: 'healthy' | 'degraded' | 'down';
+  huggingFaceStatus: 'healthy' | 'degraded' | 'down';
   lastUpdate: Date;
   latency: number;
   errorRate: number;
 }
 
-class BinanceAPI {
-  private readonly logger = Logger.getInstance();
-  private baseUrl = 'https://really-amin-datasourceforcryptocurrency-2.hf.space';
-  private hfToken = process.env.HF_API_TOKEN || process.env.VITE_HF_API_TOKEN || ''; // Must be set via environment variable
-  private useProxy = false; // Disable proxy, use HF directly
-  private wsUrl = 'wss://stream.binance.com:9443/ws';
-  private rateLimitRemaining = 1200;
-  private lastRequestTime = 0;
-  private websocket: WebSocket | null = null;
-  private subscriptions = new Map<string, (data: any) => void>();
-
-  async getHistoricalKlines(symbol: string, interval: string, limit: number = 500): Promise<any[]> {
-    await this.checkRateLimit();
-    
-    try {
-      // ✅ ONLY USE BINANCE API - Real data, no demo
-      const binanceUrl = `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`;
-      
-      const binanceResponse = await fetch(binanceUrl, {
-        signal: AbortSignal.timeout(15000)
-      });
-      
-      if (!binanceResponse.ok) {
-        throw new Error(`Binance API error: ${binanceResponse.status}`);
-      }
-      
-      const binanceData = await binanceResponse.json();
-      
-      if (!Array.isArray(binanceData) || binanceData.length === 0) {
-        throw new Error('No data received from Binance');
-      }
-      
-      this.logger.info(`✅ Fetched ${binanceData.length} real candles from Binance`);
-      return binanceData; // Already in correct Binance format
-      
-    } catch (error) {
-      this.logger.error('Binance OHLCV API error:', {}, error);
-      throw error;
-    }
-  }
-
-  async get24hrTicker(symbol: string): Promise<any> {
-    await this.checkRateLimit();
-    
-    try {
-      const response = await fetch(`${this.baseUrl}/ticker/24hr?symbol=${symbol}`, { mode: "cors", headers: { "Content-Type": "application/json" } });
-      
-      if (!response.ok) {
-        console.error(`Binance API error: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      this.updateRateLimit(response.headers);
-
-      return data;
-    } catch (error) {
-      this.logger.error('Binance ticker error:', {}, error);
-      throw error;
-    }
-  }
-
-  subscribeToRealTime(symbols: string[], callback: (data: any) => void): void {
-    const streams = (symbols || []).map(symbol => `${symbol.toLowerCase()}@ticker`).join('/');
-    const wsUrl = `${this.wsUrl}/${streams}`;
-    
-    if (this.websocket) {
-      this.websocket.close();
-    }
-    
-    this.websocket = new WebSocket(wsUrl);
-
-    this.websocket.onopen = () => {
-      this.logger.info('Binance WebSocket connected');
-    };
-
-    this.websocket.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        callback(data);
-      } catch (error) {
-        this.logger.error('WebSocket message parsing error:', {}, error);
-      }
-    };
-
-    this.websocket.onerror = (error) => {
-      this.logger.error('Binance WebSocket error:', {}, error instanceof Error ? error : new Error(String(error)));
-    };
-
-    this.websocket.onclose = () => {
-      this.logger.info('Binance WebSocket disconnected');
-      setTimeout(() => {
-        if ((symbols?.length || 0) > 0) {
-          this.subscribeToRealTime(symbols, callback);
-        }
-      }, 5000);
-    };
-  }
-
-  private async checkRateLimit(): Promise<void> {
-    const now = Date.now();
-    const timeSinceLastRequest = now - this.lastRequestTime;
-    
-    if (this.rateLimitRemaining <= 10 && timeSinceLastRequest < 60000) {
-      const waitTime = 60000 - timeSinceLastRequest;
-      this.logger.info(`Rate limit approaching, waiting ${waitTime}ms`, { data: waitTime });
-      await new Promise(resolve => setTimeout(resolve, waitTime));
-    }
-    
-    this.lastRequestTime = now;
-  }
-
-  private updateRateLimit(headers: Headers): void {
-    const remaining = headers.get('x-mbx-used-weight-1m');
-    if (remaining) {
-      this.rateLimitRemaining = 1200 - parseInt(remaining);
-    }
-  }
-
-  disconnect(): void {
-    if (this.websocket) {
-      this.websocket.close();
-      this.websocket = null;
-    }
-  }
-}
-
-class CoinGeckoAPI {
-  private readonly logger = Logger.getInstance();
-  private baseUrl = 'https://really-amin-datasourceforcryptocurrency-2.hf.space';
-  private hfToken = process.env.HF_API_TOKEN || process.env.VITE_HF_API_TOKEN || ''; // Must be set via environment variable
-  private useProxy = false; // Use HF directly
-  private rateLimitRemaining = 50;
-  private lastRequestTime = 0;
-
-  async getHistoricalData(coinId: string, days: number = 30): Promise<any> {
-    await this.checkRateLimit();
-    
-    try {
-      // Use HF Space API - /api/ohlcv endpoint as fallback
-      // Map coin IDs to symbols: bitcoin->BTC, ethereum->ETH
-      const symbolMap: Record<string, string> = {
-        'bitcoin': 'BTC/USDT',
-        'ethereum': 'ETH/USDT',
-        'binancecoin': 'BNB/USDT',
-        'solana': 'SOL/USDT',
-        'cardano': 'ADA/USDT',
-        'polkadot': 'DOT/USDT',
-      };
-      
-      const symbol = symbolMap[coinId.toLowerCase()] || 'BTC/USDT';
-      const limit = Math.min(days * 24, 1000); // Convert days to hours
-      
-      const url = `${this.baseUrl}/api/ohlcv?symbol=${symbol}&timeframe=1h&limit=${limit}`;
-      
-      const response = await fetch(url, {
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${this.hfToken}`,
-        }
-      });
-      
-      if (!response.ok) {
-        console.error(`HF API error: ${response.status}`);
-        throw new Error(`HTTP ${response.status}`);
-      }
-
-      const responseData = await response.json();
-      
-      // Transform HF format to CoinGecko format
-      // CoinGecko expects: { prices: [[timestamp, price], ...] }
-      if (responseData.success && responseData.data) {
-        return {
-          prices: responseData.data.map((candle: any) => [candle.t, candle.c]),
-          market_caps: responseData.data.map((candle: any) => [candle.t, 0]),
-          total_volumes: responseData.data.map((candle: any) => [candle.t, candle.v]),
-        };
-      }
-
-      return { prices: [], market_caps: [], total_volumes: [] };
-    } catch (error) {
-      this.logger.error('HF API (CoinGecko fallback) error:', {}, error);
-      throw error;
-    }
-  }
-
-  async getCurrentPrice(coinIds: string[]): Promise<any> {
-    await this.checkRateLimit();
-    
-    try {
-      const ids = coinIds.join(',');
-      // Use proxy endpoint
-      const url = this.useProxy
-        ? `${this.proxyUrl}/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true`
-        : `${this.baseUrl}/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true`;
-      
-      const response = await fetch(url, {
-        headers: {
-          'Accept': 'application/json',
-        }
-      });
-      
-      if (!response.ok) {
-        if (response.status === 401) {
-          console.error('CoinGecko API key required');
-        }
-        console.error(`CoinGecko API error: ${response.status}`);
-      }
-      
-      return await response.json();
-    } catch (error) {
-      this.logger.error('CoinGecko price error:', {}, error);
-      throw error;
-    }
-  }
-
-  private async checkRateLimit(): Promise<void> {
-    const now = Date.now();
-    const timeSinceLastRequest = now - this.lastRequestTime;
-    
-    if (this.rateLimitRemaining <= 5 && timeSinceLastRequest < 60000) {
-      const waitTime = 60000 - timeSinceLastRequest;
-      this.logger.info(`CoinGecko rate limit approaching, waiting ${waitTime}ms`, { data: waitTime });
-      await new Promise(resolve => setTimeout(resolve, waitTime));
-    }
-    
-    this.lastRequestTime = now;
-  }
-}
-
 export class MarketDataService {
   private readonly logger = Logger.getInstance();
-
-  private binanceAPI: BinanceAPI;
-  private coinGeckoAPI: CoinGeckoAPI;
   private cache = new Map<string, { data: any; timestamp: number; ttl: number }>();
   private realTimeSubscriptions = new Map<string, (data: MarketData) => void>();
+  private pollingIntervals = new Map<string, NodeJS.Timeout>();
   
   private symbolMappings = {
-    'BTCUSDT': { binance: 'BTCUSDT', coingecko: 'bitcoin' },
-    'ETHUSDT': { binance: 'ETHUSDT', coingecko: 'ethereum' },
-    'BNBUSDT': { binance: 'BNBUSDT', coingecko: 'binancecoin' },
-    'ADAUSDT': { binance: 'ADAUSDT', coingecko: 'cardano' },
-    'SOLUSDT': { binance: 'SOLUSDT', coingecko: 'solana' },
-    'MATICUSDT': { binance: 'MATICUSDT', coingecko: 'matic-network' },
-    'DOTUSDT': { binance: 'DOTUSDT', coingecko: 'polkadot' },
-    'LINKUSDT': { binance: 'LINKUSDT', coingecko: 'chainlink' },
-    'LTCUSDT': { binance: 'LTCUSDT', coingecko: 'litecoin' },
-    'XRPUSDT': { binance: 'XRPUSDT', coingecko: 'ripple' }
+    'BTCUSDT': 'BTC',
+    'ETHUSDT': 'ETH',
+    'BNBUSDT': 'BNB',
+    'ADAUSDT': 'ADA',
+    'SOLUSDT': 'SOL',
+    'MATICUSDT': 'MATIC',
+    'DOTUSDT': 'DOT',
+    'LINKUSDT': 'LINK',
+    'LTCUSDT': 'LTC',
+    'XRPUSDT': 'XRP'
   };
 
   constructor() {
-    this.binanceAPI = new BinanceAPI();
-    this.coinGeckoAPI = new CoinGeckoAPI();
+    this.logger.info('✅ MarketDataService initialized with HuggingFace API');
   }
 
+  /**
+   * Get historical OHLCV data from HuggingFace
+   */
   async getHistoricalData(symbol: string, timeframe: string, limit: number = 500): Promise<MarketData[]> {
     const cacheKey = `${symbol}_${timeframe}_${limit}`;
     const cached = this.getFromCache(cacheKey, 300000);
@@ -329,124 +107,136 @@ export class MarketDataService {
       return cached;
     }
 
-    // 🆕 PRIORITY 1: Try CoinGecko OHLC (real data, no API key needed)
     try {
-      this.logger.info(`🔍 Trying CoinGecko OHLC for ${symbol}...`);
-      const coinGeckoData = await coinGeckoOHLCService.getOHLCData(symbol, timeframe, limit);
+      // Convert symbol to HuggingFace format (e.g., BTCUSDT -> BTC)
+      const hfSymbol = this.symbolMappings[symbol as keyof typeof this.symbolMappings] || symbol.replace('USDT', '');
       
-      if (coinGeckoData.success && coinGeckoData.count > 0) {
-        this.logger.info(`✅ CoinGecko OHLC success: ${coinGeckoData.count} real candles`);
-        
-        // Convert CoinGecko format to MarketData
-        const marketData: MarketData[] = coinGeckoData.data.map(candle => ({
-          symbol,
-          timeframe,
-          timestamp: new Date(candle.t),
-          open: candle.o,
-          high: candle.h,
-          low: candle.l,
-          close: candle.c,
-          volume: candle.v || 0  // CoinGecko doesn't provide volume in OHLC
-        }));
-        
-        this.setCache(cacheKey, marketData, 300000);
-        return marketData;
+      this.logger.info(`📊 Fetching OHLCV from HuggingFace: ${hfSymbol}, ${timeframe}, ${limit}`);
+      
+      // Fetch from HuggingFace API
+      const response = await cryptoAPI.getOHLCV(hfSymbol, timeframe, limit);
+      
+      if (!response.success || !response.data || response.data.length === 0) {
+        this.logger.warn(`⚠️ HuggingFace returned no data for ${hfSymbol}`);
+        return [];
       }
-    } catch (coinGeckoError) {
-      this.logger.warn(`⚠️ CoinGecko OHLC failed, trying Binance...`, { error: coinGeckoError });
-    }
-
-    // PRIORITY 2: Try Binance (via HF Space or direct)
-    try {
-      const binanceInterval = this.convertTimeframeToBinance(timeframe);
-      const binanceSymbol = this.symbolMappings[symbol as keyof typeof this.symbolMappings]?.binance || symbol;
       
-      const klines = await this.binanceAPI.getHistoricalKlines(binanceSymbol, binanceInterval, limit);
-      const marketData = this.convertBinanceKlinesToMarketData(klines, symbol, timeframe);
+      // Convert HuggingFace format to MarketData
+      const marketData: MarketData[] = response.data.map((candle: any) => ({
+        symbol,
+        timeframe,
+        timestamp: new Date(candle.t),
+        open: candle.o,
+        high: candle.h,
+        low: candle.l,
+        close: candle.c,
+        volume: candle.v || 0
+      }));
+      
+      this.logger.info(`✅ HuggingFace: Fetched ${marketData.length} candles for ${symbol}`);
       
       this.setCache(cacheKey, marketData, 300000);
       return marketData;
 
-    } catch (binanceError) {
-      this.logger.warn('⚠️ Binance failed, trying CoinGecko market_chart fallback...');
-
-      // PRIORITY 3: Try CoinGecko market_chart as last resort
-      try {
-        const coinGeckoId = this.symbolMappings[symbol as keyof typeof this.symbolMappings]?.coingecko;
-        if (!coinGeckoId) {
-          console.error(`No CoinGecko mapping for ${symbol}`);
-          return [];
-        }
-
-        const days = this.convertLimitToDays(limit, timeframe);
-        const data = await this.coinGeckoAPI.getHistoricalData(coinGeckoId, days);
-        const marketData = this.convertCoinGeckoToMarketData(data, symbol, timeframe);
-
-        this.setCache(cacheKey, marketData, 300000);
-        return marketData;
-
-      } catch (fallbackError) {
-        this.logger.warn('⚠️ All sources failed, returning empty array');
-        return [];
-      }
+    } catch (error) {
+      this.logger.error('HuggingFace OHLCV fetch failed:', {}, error);
+      return [];
     }
   }
 
+  /**
+   * Get real-time price from HuggingFace
+   */
   async getRealTimePrice(symbol: string): Promise<MarketData> {
     try {
-      const binanceSymbol = this.symbolMappings[symbol as keyof typeof this.symbolMappings]?.binance || symbol;
-      const ticker = await this.binanceAPI.get24hrTicker(binanceSymbol);
+      const hfSymbol = this.symbolMappings[symbol as keyof typeof this.symbolMappings] || symbol.replace('USDT', '');
+      const pair = `${hfSymbol}/USDT`;
+      
+      const response = await cryptoAPI.getPrice(pair);
+      
+      if (!response.data || !response.data.price) {
+        throw new Error(`No price data returned for ${pair}`);
+      }
       
       return {
         symbol,
         timeframe: '1m',
-        timestamp: new Date(),
-        open: parseFloat(ticker.openPrice),
-        high: parseFloat(ticker.highPrice),
-        low: parseFloat(ticker.lowPrice),
-        close: parseFloat(ticker.lastPrice),
-        volume: parseFloat(ticker.volume),
-        trades: parseInt(ticker.count)
+        timestamp: new Date(response.data.ts || Date.now()),
+        open: response.data.price,
+        high: response.data.price,
+        low: response.data.price,
+        close: response.data.price,
+        volume: 0
       };
     } catch (error) {
-      this.logger.error('Real-time price fetch failed:', {}, error);
+      this.logger.error('HuggingFace real-time price fetch failed:', {}, error);
       throw error;
     }
   }
 
+  /**
+   * Subscribe to real-time price updates using polling
+   * (HuggingFace doesn't support WebSockets for external connections)
+   */
   async subscribeToRealTime(symbols: string[], callback: (data: MarketData) => void): Promise<void> {
-    const binanceSymbols = (symbols || []).map(symbol => 
-      this.symbolMappings[symbol as keyof typeof this.symbolMappings]?.binance || symbol
-    );
-
-    this.binanceAPI.subscribeToRealTime(binanceSymbols, (wsData) => {
-      try {
-        const marketData: MarketData = {
-          symbol: wsData.s,
-          timeframe: '1m',
-          timestamp: new Date(wsData.E),
-          open: parseFloat(wsData.o),
-          high: parseFloat(wsData.h),
-          low: parseFloat(wsData.l),
-          close: parseFloat(wsData.c),
-          volume: parseFloat(wsData.v),
-          trades: parseInt(wsData.n)
-        };
-
-        callback(marketData);
-      } catch (error) {
-        this.logger.error('WebSocket data processing error:', {}, error);
-      }
-    });
-
+    this.logger.info(`🔄 Starting real-time polling for ${symbols.length} symbols`);
+    
     symbols.forEach(symbol => {
+      // Clear existing interval if any
+      const existingInterval = this.pollingIntervals.get(symbol);
+      if (existingInterval) {
+        clearInterval(existingInterval);
+      }
+      
+      // Create polling interval (every 10 seconds for real-time feel)
+      const interval = setInterval(async () => {
+        try {
+          const marketData = await this.getRealTimePrice(symbol);
+          callback(marketData);
+        } catch (error) {
+          this.logger.error(`Polling error for ${symbol}:`, {}, error);
+        }
+      }, 10000);
+      
+      this.pollingIntervals.set(symbol, interval);
       this.realTimeSubscriptions.set(symbol, callback);
+      
+      // Initial fetch
+      this.getRealTimePrice(symbol)
+        .then(callback)
+        .catch(err => this.logger.error(`Initial fetch error for ${symbol}:`, {}, err));
     });
+  }
+
+  /**
+   * Get multiple prices at once (batch request)
+   */
+  async getBatchPrices(symbols: string[]): Promise<Map<string, number>> {
+    const prices = new Map<string, number>();
+    
+    try {
+      const hfSymbols = symbols.map(symbol => {
+        const base = this.symbolMappings[symbol as keyof typeof this.symbolMappings] || symbol.replace('USDT', '');
+        return `${base}/USDT`;
+      });
+      
+      const response = await cryptoAPI.getPrices(hfSymbols);
+      
+      if (response.data && Array.isArray(response.data)) {
+        response.data.forEach((priceData: any, index: number) => {
+          prices.set(symbols[index], priceData.price);
+        });
+      }
+    } catch (error) {
+      this.logger.error('Batch price fetch failed:', {}, error);
+    }
+    
+    return prices;
   }
 
   async calculateIndicators(data: MarketData[]): Promise<TechnicalIndicators> {
     if (data.length < 50) {
-      console.error('Insufficient data for technical indicators');
+      this.logger.warn('Insufficient data for technical indicators');
     }
 
     const closes = (data || []).map(d => d.close);
@@ -478,7 +268,7 @@ export class MarketDataService {
 
   async detectMarketRegime(data: MarketData[]): Promise<MarketRegime> {
     if (data.length < 50) {
-      console.error('Insufficient data for regime detection');
+      this.logger.warn('Insufficient data for regime detection');
     }
 
     const closes = (data || []).map(d => d.close);
@@ -530,40 +320,31 @@ export class MarketDataService {
   }
 
   async validateDataQuality(data: MarketData[]): Promise<DataFeedHealth> {
-    const now = Date.now();
-    let binanceStatus: 'healthy' | 'degraded' | 'down' = 'healthy';
-    let coinGeckoStatus: 'healthy' | 'degraded' | 'down' = 'healthy';
+    let huggingFaceStatus: 'healthy' | 'degraded' | 'down' = 'healthy';
     let latency = 0;
     let errorRate = 0;
 
     try {
       const start = Date.now();
-      await this.binanceAPI.get24hrTicker('BTCUSDT');
+      await cryptoAPI.getHealth();
       latency = Date.now() - start;
       
-      if (latency > 2000) binanceStatus = 'degraded';
+      if (latency > 2000) huggingFaceStatus = 'degraded';
+      if (latency > 5000) huggingFaceStatus = 'down';
     } catch (error) {
-      binanceStatus = 'down';
-      errorRate += 0.5;
-    }
-
-    try {
-      await this.coinGeckoAPI.getCurrentPrice(['bitcoin']);
-    } catch (error) {
-      coinGeckoStatus = 'down';
-      errorRate += 0.5;
+      huggingFaceStatus = 'down';
+      errorRate = 1.0;
     }
 
     return {
-      binanceStatus,
-      coinGeckoStatus,
+      huggingFaceStatus,
       lastUpdate: new Date(),
       latency,
       errorRate
     };
   }
 
-  // Technical Indicator Calculations
+  // Technical Indicator Calculations (unchanged from original)
   private calculateSMA(data: number[], period: number): number[] {
     const result: number[] = [];
     for (let i = period - 1; i < data.length; i++) {
@@ -718,7 +499,7 @@ export class MarketDataService {
     return { k, d };
   }
 
-  // Smart Money Concepts
+  // Smart Money Concepts (unchanged from original)
   private detectOrderBlocks(data: MarketData[]): Array<{ price: number; timestamp: Date; type: 'bullish' | 'bearish'; strength: number }> {
     const orderBlocks: Array<{ price: number; timestamp: Date; type: 'bullish' | 'bearish'; strength: number }> = [];
     
@@ -862,65 +643,6 @@ export class MarketDataService {
   }
 
   // Utility methods
-  private convertTimeframeToBinance(timeframe: string): string {
-    const mapping: { [key: string]: string } = {
-      '1m': '1m',
-      '5m': '5m',
-      '15m': '15m',
-      '1h': '1h',
-      '4h': '4h',
-      '1d': '1d',
-      '1w': '1w'
-    };
-    return mapping[timeframe] || '1h';
-  }
-
-  private convertLimitToDays(limit: number, timeframe: string): number {
-    const timeframeMinutes: { [key: string]: number } = {
-      '1m': 1,
-      '5m': 5,
-      '15m': 15,
-      '1h': 60,
-      '4h': 240,
-      '1d': 1440,
-      '1w': 10080
-    };
-    
-    const minutes = timeframeMinutes[timeframe] || 60;
-    return Math.ceil((limit * minutes) / 1440);
-  }
-
-  private convertBinanceKlinesToMarketData(klines: any[], symbol: string, timeframe: string): MarketData[] {
-    return (klines || []).map(kline => ({
-      symbol,
-      timeframe,
-      timestamp: new Date(kline[0]),
-      open: parseFloat(kline[1]),
-      high: parseFloat(kline[2]),
-      low: parseFloat(kline[3]),
-      close: parseFloat(kline[4]),
-      volume: parseFloat(kline[5]),
-      trades: parseInt(kline[8])
-    }));
-  }
-
-  private convertCoinGeckoToMarketData(data: any, symbol: string, timeframe: string): MarketData[] {
-    const prices = data.prices || [];
-    const volumes = data.total_volumes || [];
-    
-    return (prices || []).map((price: [number, number], index: number) => ({
-      symbol,
-      timeframe,
-      timestamp: new Date(price[0]),
-      open: price[1],
-      high: price[1],
-      low: price[1],
-      close: price[1],
-      volume: volumes[index] ? volumes[index][1] : 0,
-      trades: 0
-    }));
-  }
-
   private getFromCache(key: string, maxAge: number): any | null {
     const cached = this.cache.get(key);
     if (cached && Date.now() - cached.timestamp < maxAge) {
@@ -938,8 +660,11 @@ export class MarketDataService {
   }
 
   disconnect(): void {
-    this.binanceAPI.disconnect();
+    // Clear all polling intervals
+    this.pollingIntervals.forEach(interval => clearInterval(interval));
+    this.pollingIntervals.clear();
     this.realTimeSubscriptions.clear();
+    this.logger.info('Disconnected all real-time subscriptions');
   }
 
   getSupportedSymbols(): string[] {

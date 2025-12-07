@@ -1,77 +1,93 @@
 /**
- * Optional CryptoCompare Service
- * CRYPTOCOMPARE_KEY is optional (works without key but with lower rate limits)
- * This is an OPTIONAL alternative provider for market data
+ * CryptoCompare Service - HuggingFace Integration
+ * 
+ * DEPRECATED: This service now uses HuggingFace Crypto API instead of CryptoCompare.
+ * All direct CryptoCompare API calls have been removed.
  */
-import axios from "axios";
 
-const CCClient = axios.create({
-  baseURL: "https://min-api.cryptocompare.com",
-  timeout: 15000
-});
-
-const API_KEY = process.env.CRYPTOCOMPARE_KEY || "";
+import { cryptoAPI } from '../CryptoAPI';
 
 export class CryptoCompareService {
   /**
-   * Get prices for multiple symbols
+   * Get prices for multiple symbols using HuggingFace
    */
   static async priceMulti(fsyms = "BTC,ETH", tsyms = "USD") {
-    const response = await CCClient.get("/data/pricemulti", {
-      params: {
-        fsyms,
-        tsyms,
-        api_key: API_KEY || undefined
-      },
-      validateStatus: () => true
-    });
+    try {
+      const symbols = fsyms.split(',').map(s => s.trim());
+      const pairs = symbols.map(sym => `${sym}/${tsyms}`);
+      
+      const response = await cryptoAPI.getPrices(pairs);
+      
+      if (!response.data) {
+        throw new Error('No price data returned');
+      }
 
-    if (response.status !== 200 || !response.data) {
-      console.error(`CryptoCompare priceMulti failed ${response.status}`);
+      // Convert to CryptoCompare format
+      const result: any = {};
+      response.data.forEach((priceData: any, index: number) => {
+        result[symbols[index]] = {
+          [tsyms]: priceData.price
+        };
+      });
+
+      return result;
+    } catch (error: any) {
+      console.error('HuggingFace priceMulti fetch failed:', error.message);
+      return {};
     }
-
-    return response.data;
   }
 
   /**
-   * Get historical hourly data
+   * Get historical hourly data using HuggingFace
    */
   static async histoHour(fsym = "BTC", tsym = "USD", limit = 168) {
-    const response = await CCClient.get("/data/v2/histohour", {
-      params: {
-        fsym,
-        tsym,
-        limit,
-        api_key: API_KEY || undefined
-      },
-      validateStatus: () => true
-    });
+    try {
+      const response = await cryptoAPI.getOHLCV(fsym, '1h', limit);
+      
+      if (!response.success || !response.data) {
+        throw new Error(`No OHLCV data for ${fsym}`);
+      }
 
-    if (response.status !== 200 || !response.data?.Data?.Data) {
-      console.error(`CryptoCompare histoHour failed ${response.status}`);
+      // Convert to CryptoCompare format
+      return response.data.map((candle: any) => ({
+        time: Math.floor(candle.t / 1000),
+        high: candle.h,
+        low: candle.l,
+        open: candle.o,
+        volumefrom: candle.v,
+        volumeto: candle.v * candle.c,
+        close: candle.c
+      }));
+    } catch (error: any) {
+      console.error('HuggingFace histoHour fetch failed:', error.message);
+      return [];
     }
-
-    return response.data.Data.Data;
   }
 
   /**
-   * Get historical daily data
+   * Get historical daily data using HuggingFace
    */
   static async histoDay(fsym = "BTC", tsym = "USD", limit = 30) {
-    const response = await CCClient.get("/data/v2/histoday", {
-      params: {
-        fsym,
-        tsym,
-        limit,
-        api_key: API_KEY || undefined
-      },
-      validateStatus: () => true
-    });
+    try {
+      const response = await cryptoAPI.getOHLCV(fsym, '1d', limit);
+      
+      if (!response.success || !response.data) {
+        throw new Error(`No OHLCV data for ${fsym}`);
+      }
 
-    if (response.status !== 200 || !response.data?.Data?.Data) {
-      console.error(`CryptoCompare histoDay failed ${response.status}`);
+      // Convert to CryptoCompare format
+      return response.data.map((candle: any) => ({
+        time: Math.floor(candle.t / 1000),
+        high: candle.h,
+        low: candle.l,
+        open: candle.o,
+        volumefrom: candle.v,
+        volumeto: candle.v * candle.c,
+        close: candle.c
+      }));
+    } catch (error: any) {
+      console.error('HuggingFace histoDay fetch failed:', error.message);
+      return [];
     }
-
-    return response.data.Data.Data;
   }
 }

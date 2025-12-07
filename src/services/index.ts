@@ -1,71 +1,62 @@
-// Service exports - Complete Integration
-// AI Services
-export * from './aiService';
-export * from './aiPredictionService';
+/**
+ * Services Export Index - HuggingFace Integration
+ * 
+ * Centralized export of all services.
+ * All services now use HuggingFace Crypto API as the single data source.
+ */
 
-// Analysis Services
-export * from './SMCAnalyzer';
-export * from './ElliottWaveAnalyzer';
-export * from './HarmonicPatternDetector';
-export * from './SentimentAnalysisService';
-export * from './WhaleTrackerService';
-export * from './TechnicalAnalysisService';
+// ============================================
+// PRIMARY API CLIENT
+// ============================================
+export { cryptoAPI, default as CryptoAPI } from './CryptoAPI';
+export type { 
+  PriceData, 
+  OHLCVCandle, 
+  NewsArticle, 
+  SentimentResult, 
+  WhaleTransaction 
+} from './CryptoAPI';
 
-// Market Data Services
-export * from './BinanceService';
-export * from './MarketDataIngestionService';
-export * from './RealMarketDataService';
-export * from './MultiProviderMarketDataService';
-export * from './ImprovedRealTimeDataService';
-export * from './HistoricalDataService';
-export * from './marketDataService';
-export * from './HFOHLCVService';
-
-// Trading Services
-export * from './RealTradingService';
-export * from './OrderManagementService';
-export { SignalGeneratorService } from './SignalGeneratorService';
-
-// Signal Detection Services
-export * from './SignalAgent';
-export * from './ExtremePointsDetector';
-export * from './BackgroundSignalService';
-export * from './AdvancedSignalEngine';
-
-// Learning Services
-export * from './ContinuousLearningService';
-
-// Notification Services
-export * from './AlertService';
-export * from './NotificationService';
-
-// Data Management Services
-export * from './dataManager';
-export * from './RealDataManager';
-export * from './RedisService';
-export * from './DataValidationService';
-export * from './EmergencyDataFallbackService';
-
-// Sentiment Services
+// ============================================
+// CORE SERVICES (HuggingFace-based)
+// ============================================
+export { marketDataService, MarketDataService } from './marketDataService';
 export { SentimentNewsService } from './SentimentNewsService';
-export * from './HFSentimentService';
-export * from './SocialAggregationService';
-export { FearGreedService } from './FearGreedService';
+export { HistoricalDataService } from './HistoricalDataService';
+export { WhaleTrackerService } from './WhaleTrackerService';
 
-// Backtest Services
-export * from './backtestService';
-export * from './RealBacktestEngine';
+// ============================================
+// LEGACY SERVICES (Deprecated - use CryptoAPI instead)
+// ============================================
+export { BinanceService } from './BinanceService';
 
-// Blockchain Services
-export * from './BlockchainDataService';
+// ============================================
+// OPTIONAL SERVICES (Updated to use HuggingFace)
+// ============================================
+export { NewsApiService } from './optional/NewsApiService';
+export { BinancePublicService } from './optional/BinancePublicService';
+export { CryptoCompareService } from './optional/CryptoCompareService';
 
-// Integration Services
-export * from './ServiceOrchestrator';
-export * from './FrontendBackendIntegration';
-export * from './CentralizedAPIManager';
-export * from './DynamicWeightingService';
-export * from './CORSProxyService';
+// ============================================
+// UTILITY SERVICES
+// ============================================
+export { WebSocketManager, wsManager } from './WebSocketManager';
+export { RealTimeDataService } from './RealTimeDataService';
 
-// API Services
-export * from './apiService';
-export * from './APIIntegrationHelper';
+/**
+ * MIGRATION GUIDE:
+ * 
+ * Old way (DEPRECATED):
+ * ```typescript
+ * import { BinanceService } from '@/services/BinanceService';
+ * const data = await binanceService.getPrice('BTCUSDT');
+ * ```
+ * 
+ * New way (RECOMMENDED):
+ * ```typescript
+ * import { cryptoAPI } from '@/services';
+ * const data = await cryptoAPI.getPrice('BTC/USDT');
+ * ```
+ * 
+ * For backward compatibility, old services still work but redirect to HuggingFace.
+ */
