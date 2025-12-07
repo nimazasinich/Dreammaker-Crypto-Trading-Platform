@@ -400,7 +400,6 @@ export const EnhancedSidebar: React.FC = () => {
                                             } : {
                                                 animation: `slideIn 0.3s ease-out ${globalIndex * 0.03}s both`,
                                             }}
-                                            aria-current={isActive ? 'page' : undefined}
                                         >
                                             {/* Hover glow effect */}
                                             {!isActive && (

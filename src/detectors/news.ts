@@ -36,7 +36,8 @@ export async function newsLayer(symbol: string): Promise<LayerScore> {
     const baseSymbol = symbol.replace('USDT', '').replace('USD', '').toLowerCase();
 
     // Fetch recent crypto news
-    const allNews = await newsService.getCryptoNews(50);
+    const newsResult = await newsService.getCryptoNews(symbol, 50);
+    const allNews = newsResult.articles;
 
     // Filter news items relevant to this symbol
     const relevantNews = allNews.filter(item => {
@@ -54,7 +55,7 @@ export async function newsLayer(symbol: string): Promise<LayerScore> {
 
     // If no relevant news found, return neutral with low confidence
     if (relevantNews.length === 0) {
-      logger.warn('No relevant news found for symbol', { symbol, totalNews: allNews.length });
+      logger.warn('No relevant news found for symbol', { symbol, totalNews: newsResult.totalResults });
       return {
         score: 0.5,
         reasons: ['No recent news found', 'Using neutral baseline', 'Limited news coverage']
