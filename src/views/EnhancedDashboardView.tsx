@@ -102,7 +102,7 @@ const StatCard: React.FC<StatCardProps> = ({
                     <div className="flex items-start justify-between mb-1">
                         <div className="flex-1 min-w-0">
                             <p
-                                className={`text-[9px] font-semibold uppercase tracking-wide mb-0.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}
+                                className={`text-[9px] font-semibold uppercase tracking-wide mb-0.5 ${isDark ? 'text-slate-300' : 'text-slate-600'}`} /* Improved contrast for WCAG AA */
                                 style={{ letterSpacing: '0.05em' }}
                             >
                                 {title}
@@ -174,7 +174,7 @@ const StatCard: React.FC<StatCardProps> = ({
                     {/* Ultra-compact subtitle */}
                     {subtitle && (
                         <p
-                            className={`text-[9px] font-medium leading-tight ${isDark ? 'text-slate-400' : 'text-slate-600'}`}
+                            className={`text-[9px] font-medium leading-tight ${isDark ? 'text-slate-300' : 'text-slate-600'}`} /* Improved contrast for WCAG AA */
                             style={{
                                 height: 'auto',
                                 maxHeight: '20px',
@@ -732,7 +732,7 @@ const EnhancedDashboardView: React.FC = () => {
                                         >
                                             View Market Analysis
                                         </h2>
-                                        <p className={`text-base font-medium mb-6 max-w-lg mx-auto ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                                        <p className={`text-base font-medium mb-6 max-w-lg mx-auto ${isDark ? 'text-slate-300' : 'text-slate-600'}`}> {/* Improved contrast for WCAG AA */}
                                             Access live price charts, technical indicators, market insights, and real-time analysis in the Market Analysis Hub
                                         </p>
                                         <div
@@ -869,7 +869,7 @@ const EnhancedDashboardView: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    <div className={`mt-3 flex justify-between text-xs font-medium ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
+                                    <div className={`mt-3 flex justify-between text-xs font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}> {/* Improved contrast for WCAG AA */}
                                         <span className="flex items-center gap-1">
                                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="text-red-500">
                                                 <path d="M7 7L17 17M17 17H7M17 17V7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -986,7 +986,7 @@ const EnhancedDashboardView: React.FC = () => {
                                                 <p className={`text-sm font-semibold mb-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>
                                                     {insight.title}
                                                 </p>
-                                                <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                                                <p className={`text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'}`}> {/* Improved contrast for WCAG AA */}
                                                     {insight.subtitle}
                                                 </p>
                                             </div>
@@ -1101,14 +1101,14 @@ const EnhancedDashboardView: React.FC = () => {
                                                     <p className={`text-sm font-semibold mb-0.5 truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>
                                                         {item.action}
                                                     </p>
-                                                    <p className={`text-xs font-medium ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                                                    <p className={`text-xs font-medium ${isDark ? 'text-slate-300' : 'text-slate-600'}`}> {/* Improved contrast for WCAG AA */}
                                                         {item.asset}
                                                     </p>
                                                 </div>
                                             </div>
 
                                             <div className="flex items-center gap-2">
-                                                <span className={`text-xs font-medium whitespace-nowrap ${isDark ? 'text-slate-500' : 'text-slate-500'}`}>
+                                                <span className={`text-xs font-medium whitespace-nowrap ${isDark ? 'text-slate-400' : 'text-slate-500'}`}> {/* Improved contrast for WCAG AA */}
                                                     {item.time}
                                                 </span>
                                                 <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">

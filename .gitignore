@@ -58,3 +58,6 @@ env.test
 # Core dumps
 core
 core.*
+
+# Exception for src/core/ infrastructure files
+!src/core/
