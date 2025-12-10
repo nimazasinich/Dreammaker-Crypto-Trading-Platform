@@ -97,63 +97,72 @@ export const LightweightPriceChart: React.FC<LightweightPriceChartProps> = ({
     if (!chartContainerRef.current) return;
 
     // Create chart
+    // Get CSS variables for theme-aware colors
+    const getCSSVar = (varName: string) => {
+      return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+    };
+
     const chart = createChart(chartContainerRef.current, {
       width: chartContainerRef.current.clientWidth,
       height: 400,
       layout: {
-        background: { color: '#0a0a0f' },
-        textColor: '#d1d5db',
+        background: { color: getCSSVar('--surface-page') || '#0a0a0f' },
+        textColor: getCSSVar('--text-secondary') || '#d1d5db',
       },
       grid: {
-        vertLines: { color: '#1f2937', style: 1, visible: true },
-        horzLines: { color: '#1f2937', style: 1, visible: true },
+        vertLines: { color: getCSSVar('--border-subtle') || '#1f2937', style: 1, visible: true },
+        horzLines: { color: getCSSVar('--border-subtle') || '#1f2937', style: 1, visible: true },
       },
       crosshair: {
         mode: 1,
         vertLine: {
-          color: '#6b7280',
+          color: getCSSVar('--text-muted') || '#6b7280',
           width: 1,
           style: 3,
-          labelBackgroundColor: '#3b82f6',
+          labelBackgroundColor: getCSSVar('--color-info-500') || '#3b82f6',
         },
         horzLine: {
-          color: '#6b7280',
+          color: getCSSVar('--text-muted') || '#6b7280',
           width: 1,
           style: 3,
-          labelBackgroundColor: '#3b82f6',
+          labelBackgroundColor: getCSSVar('--color-info-500') || '#3b82f6',
         },
       },
       rightPriceScale: {
-        borderColor: '#374151',
+        borderColor: getCSSVar('--border-default') || '#374151',
         scaleMargins: {
           top: 0.1,
           bottom: 0.2,
         },
       },
       timeScale: {
-        borderColor: '#374151',
+        borderColor: getCSSVar('--border-default') || '#374151',
         timeVisible: true,
         secondsVisible: false,
       },
     });
 
+    // Get theme-aware candlestick colors
+    const upColor = getCSSVar('--color-success-500') || '#10b981';
+    const downColor = getCSSVar('--color-danger-500') || '#ef4444';
+
     // Add candlestick series (v4 API)
     const candlestickSeries = (chart as any).addCandlestickSeries ? 
       (chart as any).addCandlestickSeries({
-        upColor: '#10b981',
-        downColor: '#ef4444',
-        borderUpColor: '#10b981',
-        borderDownColor: '#ef4444',
-        wickUpColor: '#10b981',
-        wickDownColor: '#ef4444',
+        upColor,
+        downColor,
+        borderUpColor: upColor,
+        borderDownColor: downColor,
+        wickUpColor: upColor,
+        wickDownColor: downColor,
       }) : 
       chart.addSeries({ type: 'Candlestick' } as any, {
-        upColor: '#10b981',
-        downColor: '#ef4444',
-        borderUpColor: '#10b981',
-        borderDownColor: '#ef4444',
-        wickUpColor: '#10b981',
-        wickDownColor: '#ef4444',
+        upColor,
+        downColor,
+        borderUpColor: upColor,
+        borderDownColor: downColor,
+        wickUpColor: upColor,
+        wickDownColor: downColor,
       } as any);
 
     chartRef.current = chart;
