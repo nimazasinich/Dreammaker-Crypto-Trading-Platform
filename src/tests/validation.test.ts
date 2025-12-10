@@ -44,9 +44,10 @@ describe('Validation Utility', () => {
       
       const errors = validateForm(values, schema);
       
-      expect(errors.name).toBeNull();
+      // Valid fields don't have an entry in errors object
+      expect(errors.name).toBeUndefined();
       expect(errors.email).toBe('Please enter a valid email address');
-      expect(errors.age).toBeNull();
+      expect(errors.age).toBeUndefined();
     });
   });
 });
