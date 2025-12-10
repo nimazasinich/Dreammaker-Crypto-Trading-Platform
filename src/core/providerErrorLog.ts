@@ -38,22 +38,29 @@ export class ProviderErrorLog {
 
   /**
    * Log an error for a provider
+   * @param provider Provider name
+   * @param errorOrMessage Error object or message string
+   * @param endpoint Optional endpoint (when using string message)
+   * @param statusCode Optional status code (when using string message)
    */
-  logError(provider: string, error: {
-    message: string;
-    endpoint?: string;
-    statusCode?: number;
-    details?: any;
-  }): void {
+  logError(
+    provider: string,
+    errorOrMessage: string | { message: string; endpoint?: string; statusCode?: number; details?: any },
+    endpoint?: string,
+    statusCode?: number
+  ): void {
     if (!this.errors.has(provider)) {
       this.errors.set(provider, []);
     }
 
     const errors = this.errors.get(provider)!;
-    errors.push({
-      timestamp: Date.now(),
-      ...error,
-    });
+    
+    // Handle both object and string-based signatures
+    const errorRecord: ErrorRecord = typeof errorOrMessage === 'string'
+      ? { timestamp: Date.now(), message: errorOrMessage, endpoint, statusCode }
+      : { timestamp: Date.now(), ...errorOrMessage };
+
+    errors.push(errorRecord);
 
     // Keep only the last MAX_ERRORS
     if (errors.length > this.MAX_ERRORS) {

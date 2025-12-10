@@ -81,4 +81,24 @@ export class ProviderLatencyTracker {
   clearAll(): void {
     this.latencies.clear();
   }
+
+  /**
+   * Measure the latency of an async operation
+   * @param provider Provider name
+   * @param operation Async operation to measure
+   * @returns Result of the operation
+   */
+  async measure<T>(provider: string, operation: () => Promise<T>): Promise<T> {
+    const start = performance.now();
+    try {
+      const result = await operation();
+      const latency = performance.now() - start;
+      this.recordLatency(provider, latency);
+      return result;
+    } catch (error) {
+      const latency = performance.now() - start;
+      this.recordLatency(provider, latency);
+      throw error;
+    }
+  }
 }

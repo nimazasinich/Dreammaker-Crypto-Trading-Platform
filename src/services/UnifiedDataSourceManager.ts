@@ -916,7 +916,7 @@ export class UnifiedDataSourceManager extends EventEmitter {
 
   private emitNotification(notification: DataSourceNotification): void {
     this.emit('notification', notification);
-    this.logger.info('Data source notification', notification);
+    this.logger.info('Data source notification', { ...notification });
   }
 
   // ========== Public API ==========

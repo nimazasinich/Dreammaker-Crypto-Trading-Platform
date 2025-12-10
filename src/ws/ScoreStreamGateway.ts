@@ -409,7 +409,7 @@ export class ScoreStreamGateway {
       }
     }
 
-    this.logger.info('Stream configuration updated', this.config);
+    this.logger.info('Stream configuration updated', { ...this.config });
   }
 
   /**

@@ -115,22 +115,22 @@ export class Logger {
     /**
      * Debug level log - for detailed debugging information
      */
-    debug(message: string, data?: Record<string, unknown>): void {
-        this.log('debug', message, data);
+    debug(message: string, data?: Record<string, unknown>, error?: Error): void {
+        this.log('debug', message, data, error);
     }
 
     /**
      * Info level log - for general information
      */
-    info(message: string, data?: Record<string, unknown>): void {
-        this.log('info', message, data);
+    info(message: string, data?: Record<string, unknown>, error?: Error): void {
+        this.log('info', message, data, error);
     }
 
     /**
      * Warning level log - for potentially harmful situations
      */
-    warn(message: string, data?: Record<string, unknown>): void {
-        this.log('warn', message, data);
+    warn(message: string, data?: Record<string, unknown>, error?: Error): void {
+        this.log('warn', message, data, error);
     }
 
     /**
