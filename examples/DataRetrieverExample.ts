@@ -64,7 +64,7 @@ async function example3_EnvironmentVariables() {
   // - HF_API_TOKEN or VITE_HF_API_TOKEN
 
   // Set environment variables before creating the instance:
-  process.env.HF_API_URL = 'https://Really-amin-Datasourceforcryptocurrency-2.hf.space';
+  process.env.HF_API_URL = 'https://really-amin-datasourceforcryptocurrency-2.hf.space';
   process.env.HF_API_TOKEN = 'your-token-here';
 
   const retriever = new DataRetriever();

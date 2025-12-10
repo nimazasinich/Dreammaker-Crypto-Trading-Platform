@@ -6,10 +6,11 @@ import './index.css';
 import './styles/theme.css';
 
 // CRITICAL: Enforce data policy at application startup
-import { assertPolicy, APP_MODE, getDataSourceLabel } from './config/dataPolicy';
+import { assertPolicy, validateProductionDataPolicy, APP_MODE, getDataSourceLabel } from './config/dataPolicy';
 
 try {
   assertPolicy();
+  validateProductionDataPolicy();
   console.log(`✅ Data policy validated successfully. Mode: ${APP_MODE}, Source: ${getDataSourceLabel()}`);
 } catch (error) {
   console.error('❌ DATA POLICY VIOLATION:', error);
