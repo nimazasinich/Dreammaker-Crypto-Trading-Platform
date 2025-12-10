@@ -69,10 +69,34 @@ export class ProviderLatencyTracker {
   }
 
   /**
+   * Measure execution time of an async function
+   */
+  async measure<T>(provider: string, fn: () => Promise<T>): Promise<T> {
+    const start = Date.now();
+    try {
+      const result = await fn();
+      const latency = Date.now() - start;
+      this.recordLatency(provider, latency);
+      return result;
+    } catch (error) {
+      const latency = Date.now() - start;
+      this.recordLatency(provider, latency);
+      throw error;
+    }
+  }
+
+  /**
    * Clear stats for a provider
    */
   clear(provider: string): void {
     this.latencies.delete(provider);
+  }
+
+  /**
+   * Clear stats for a provider (alias)
+   */
+  clearStats(provider: string): void {
+    this.clear(provider);
   }
 
   /**

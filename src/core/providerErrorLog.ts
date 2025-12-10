@@ -13,6 +13,7 @@ interface ErrorRecord {
 
 interface ErrorStats {
   totalErrors: number;
+  total: number; // Alias for totalErrors
   recentErrors: ErrorRecord[];
   lastError?: {
     timestamp: string;
@@ -70,6 +71,7 @@ export class ProviderErrorLog {
 
     return {
       totalErrors: errors.length,
+      total: errors.length,
       recentErrors: errors.slice(-10), // Last 10 errors
       lastError: lastError ? {
         timestamp: new Date(lastError.timestamp).toISOString(),
@@ -78,6 +80,32 @@ export class ProviderErrorLog {
         statusCode: lastError.statusCode,
       } : undefined,
     };
+  }
+
+  /**
+   * Get the last error for a provider
+   */
+  getLastError(provider: string): ErrorRecord | undefined {
+    const errors = this.errors.get(provider) || [];
+    return errors.length > 0 ? errors[errors.length - 1] : undefined;
+  }
+
+  /**
+   * Check if provider has recent errors (within last 5 minutes)
+   */
+  hasRecentErrors(provider: string, windowMs: number = 5 * 60 * 1000): boolean {
+    const errors = this.errors.get(provider) || [];
+    const now = Date.now();
+    return errors.some(error => now - error.timestamp < windowMs);
+  }
+
+  /**
+   * Get recent errors for a provider (within time window)
+   */
+  getRecentErrors(provider: string, windowMs: number = 5 * 60 * 1000): ErrorRecord[] {
+    const errors = this.errors.get(provider) || [];
+    const now = Date.now();
+    return errors.filter(error => now - error.timestamp < windowMs);
   }
 
   /**
@@ -95,10 +123,24 @@ export class ProviderErrorLog {
   }
 
   /**
+   * Clear errors for a provider (alias)
+   */
+  clearErrors(provider: string): void {
+    this.clear(provider);
+  }
+
+  /**
    * Clear all errors
    */
   clearAll(): void {
     this.errors.clear();
+  }
+
+  /**
+   * Clear all errors (alias)
+   */
+  clearAllErrors(): void {
+    this.clearAll();
   }
 
   /**

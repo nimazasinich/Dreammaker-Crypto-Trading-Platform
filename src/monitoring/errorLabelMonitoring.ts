@@ -6,7 +6,7 @@
  * and raises alerts for critical error patterns.
  */
 
-import { Logger, LogLevels } from '../core/Logger';
+import { Logger, LogLevel } from '../core/Logger';
 
 const logger = Logger.getInstance();
 

@@ -103,6 +103,13 @@ export class AdvancedCache<T> {
       throw error;
     }
   }
+
+  /**
+   * Alias for getOrFetch - Get or Set with a fetch function
+   */
+  async getOrSet(key: string, fetchFn: () => Promise<T>): Promise<T> {
+    return this.getOrFetch(key, fetchFn);
+  }
   
   /**
    * Check if a key exists in the cache and is not expired

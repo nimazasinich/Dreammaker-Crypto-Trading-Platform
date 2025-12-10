@@ -111,6 +111,13 @@ export class ProviderRecoveryTracker {
   }
 
   /**
+   * Clear stats for a provider (alias for reset)
+   */
+  clearStats(provider: string): void {
+    this.reset(provider);
+  }
+
+  /**
    * Reset all stats
    */
   resetAll(): void {
