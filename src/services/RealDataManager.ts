@@ -2,6 +2,7 @@ import { Logger } from '../core/Logger';
 import { DataMode } from '../types/modes';
 import { API_BASE } from '../config/env.js';
 import { isStrictRealData, canUseMockData, canUseSyntheticData } from '../config/dataPolicy.js';
+import { hfAPI } from './HuggingFaceUnifiedAPI';
 import axios from 'axios';
 
 export interface RealPriceData {
@@ -99,19 +100,40 @@ export class RealDataManager {
         const cached = this.getFromCache(cacheKey);
         if (cached) return cached;
 
-        // Normalize symbol (add USDT if not present)
-        const normalizedSymbol = symbol.includes('USDT') ? symbol : `${symbol}USDT`;
+        // Normalize symbol (remove USDT suffix for API call)
+        const normalizedSymbol = symbol.replace(/USDT?$/i, '').toUpperCase();
 
         try {
-            // Try market data endpoint first (more reliable)
-            const response = await axios.get(`${API_BASE}/api/market-data/${normalizedSymbol.replace('USDT', '')}`, {
-                timeout: 20000 // افزایش timeout از 10 به 20 ثانیه
+            // Use HuggingFace Unified API - Primary Method
+            const response = await hfAPI.getPrice(normalizedSymbol);
+            
+            if (response.success && response.data) {
+                const coin = response.data;
+                const priceData: RealPriceData = {
+                    symbol: normalizedSymbol,
+                    price: coin.price || 0,
+                    change24h: coin.change_24h || 0,
+                    volume24h: coin.volume_24h || 0,
+                    lastUpdate: Date.now()
+                };
+
+                this.setCache(cacheKey, priceData);
+                return priceData;
+            }
+        } catch (error) {
+            this.logger.warn(`HuggingFace API failed for ${symbol}, trying fallback...`);
+        }
+
+        try {
+            // Fallback: Try direct market endpoint
+            const response = await axios.get(`${API_BASE}/api/market-data/${normalizedSymbol}`, {
+                timeout: 20000
             });
 
             if (response.data && response.data.data) {
                 const data = response.data.data;
                 const priceData: RealPriceData = {
-                    symbol: symbol.replace('USDT', ''),
+                    symbol: normalizedSymbol,
                     price: parseFloat(data.price || data.currentPrice || 0),
                     change24h: parseFloat(data.changePercent24h || data.change24h || 0),
                     volume24h: parseFloat(data.volume24h || data.volume || 0),
@@ -122,72 +144,50 @@ export class RealDataManager {
                 return priceData;
             }
         } catch (error) {
-            this.logger.warn(`Market data endpoint failed for ${symbol}, trying fallback...`);
+            this.logger.warn(`Market data endpoint failed for ${symbol}`);
         }
 
         try {
-            // Use HuggingFace unified API via cryptoAPI
-            const { cryptoAPI } = await import('../services/CryptoAPI.js');
-            const tickerData = await cryptoAPI.getMarketTickers(100);
+            // Fallback: Use top coins and find the specific one
+            const topCoinsResponse = await hfAPI.getTopCoins(100);
             
-            // Find the specific ticker for this symbol
-            const ticker = tickerData.data?.find((t: any) => 
-                t.symbol?.toUpperCase() === normalizedSymbol.toUpperCase()
-            );
-
-            if (!ticker) {
-                throw new Error(`Ticker not found for ${symbol}`);
-            }
-
-            const data: RealPriceData = {
-                symbol: symbol.replace('USDT', ''),
-                price: parseFloat(ticker.price || ticker.last || '0'),
-                change24h: parseFloat(ticker.change_24h || ticker.priceChangePercent || '0'),
-                volume24h: parseFloat(ticker.volume_24h || ticker.volume || '0'),
-                lastUpdate: Date.now()
-            };
-
-            this.setCache(cacheKey, data);
-            return data;
-        } catch (error) {
-            // Fallback: try to get price directly from HuggingFace
-            try {
-                const { cryptoAPI } = await import('../services/CryptoAPI.js');
-                const priceData = await cryptoAPI.getPrice(`${normalizedSymbol.replace('USDT', '')}/USDT`);
-
-                if (priceData?.data?.price) {
-                    const data: RealPriceData = {
-                        symbol: symbol.replace('USDT', ''),
-                        price: parseFloat(priceData.data.price),
-                        change24h: parseFloat(priceData.data.change_24h || '0'),
-                        volume24h: parseFloat(priceData.data.volume_24h || '0'),
+            if (topCoinsResponse.success && topCoinsResponse.data) {
+                const coin = topCoinsResponse.data.find(c => 
+                    c.symbol?.toUpperCase() === normalizedSymbol ||
+                    c.symbol?.toUpperCase() === `${normalizedSymbol}USDT`
+                );
+                
+                if (coin) {
+                    const priceData: RealPriceData = {
+                        symbol: normalizedSymbol,
+                        price: coin.price || 0,
+                        change24h: coin.change_24h || 0,
+                        volume24h: coin.volume_24h || 0,
                         lastUpdate: Date.now()
                     };
 
-                    this.setCache(cacheKey, data);
-                    return data;
-                }
-            } catch (fallbackError) {
-                this.logger.error('All price sources failed', { symbol }, fallbackError as Error);
-                
-                // If strict real data mode is enabled, fail fast with clear error
-                if (isStrictRealData()) {
-                    throw new Error(
-                        `Primary data source unavailable: Unable to fetch price data for ${symbol}. ` +
-                        `All data providers failed. Check your HF Engine configuration or network connectivity.`
-                    );
+                    this.setCache(cacheKey, priceData);
+                    return priceData;
                 }
             }
+        } catch (fallbackError) {
+            this.logger.error('All price sources failed', { symbol }, fallbackError as Error);
             
-            // Return null only if not in strict real data mode (allows graceful degradation in demo/test)
             if (isStrictRealData()) {
                 throw new Error(
-                    `Primary data source unavailable: Cannot fetch ${symbol} price in strict real data mode. ` +
-                    `Ensure HF Data Engine is running and accessible.`
+                    `Primary data source unavailable: Unable to fetch price data for ${symbol}. ` +
+                    `All data providers failed. Check your HF Engine configuration or network connectivity.`
                 );
             }
-            return null as any;
         }
+        
+        if (isStrictRealData()) {
+            throw new Error(
+                `Primary data source unavailable: Cannot fetch ${symbol} price in strict real data mode. ` +
+                `Ensure HF Data Engine is running and accessible.`
+            );
+        }
+        return null as any;
     }
 
     async getOHLCV(symbol: string, timeframe: string, limit: number = 100): Promise<OHLCV[]> {
@@ -195,67 +195,62 @@ export class RealDataManager {
         const cached = this.getFromCache(cacheKey);
         if (cached) return cached;
 
+        // Normalize symbol
+        const normalizedSymbol = symbol.replace(/USDT?$/i, '').toLowerCase();
+
         try {
-            // Use HuggingFace unified API
-            const { cryptoAPI } = await import('../services/CryptoAPI.js');
-            const interval = this.mapTimeframe(timeframe);
-            const ohlcvData = await cryptoAPI.getOHLCV(
-                symbol.replace('USDT', '').toUpperCase(),
-                interval,
-                limit
-            );
-
-            // Transform HF response to internal format
-            const data: OHLCV[] = (ohlcvData.data || []).map((item: any) => ({
-                timestamp: item.timestamp || item[0],
-                open: parseFloat(item.open || item[1]),
-                high: parseFloat(item.high || item[2]),
-                low: parseFloat(item.low || item[3]),
-                close: parseFloat(item.close || item[4]),
-                volume: parseFloat(item.volume || item[5])
-            }));
-
-            this.setCache(cacheKey, data);
-            return data;
-        } catch (error) {
-            // Fallback to Kraken
-            try {
-                const pair = this.symbolToKrakenPair(symbol);
-                const response = await axios.get(`${API_BASE}/api/proxy/kraken/ohlc`, {
-                    params: {
-                        pair,
-                        interval: this.mapTimeframeToKraken(timeframe)
-                    },
-                    timeout: 25000 // افزایش timeout
-                });
-
-                const krakenData = response.data.result[pair];
-                const data: OHLCV[] = krakenData.slice(0, limit).map((item: any[]) => ({
-                    timestamp: item[0] * 1000,
-                    open: parseFloat(item[1]),
-                    high: parseFloat(item[2]),
-                    low: parseFloat(item[3]),
-                    close: parseFloat(item[4]),
-                    volume: parseFloat(item[6])
+            // Use HuggingFace Unified API - Primary Method
+            const response = await hfAPI.getOHLCV(normalizedSymbol, timeframe, limit);
+            
+            if (response.success && response.data && Array.isArray(response.data)) {
+                const data: OHLCV[] = response.data.map((item: any) => ({
+                    timestamp: item.timestamp || 0,
+                    open: parseFloat(String(item.open || 0)),
+                    high: parseFloat(String(item.high || 0)),
+                    low: parseFloat(String(item.low || 0)),
+                    close: parseFloat(String(item.close || 0)),
+                    volume: parseFloat(String(item.volume || 0))
                 }));
 
                 this.setCache(cacheKey, data);
                 return data;
-            } catch (fallbackError) {
-                this.logger.error('All OHLCV sources failed', { symbol, timeframe }, fallbackError as Error);
-                
-                // If strict real data mode is enabled, fail fast with clear error
-                if (isStrictRealData()) {
-                    throw new Error(
-                        `Primary data source unavailable: Cannot fetch OHLCV data for ${symbol} (${timeframe}). ` +
-                        `All data providers failed. Check your HF Engine configuration or network connectivity.`
-                    );
-                }
-                
-                // Return empty array only if not in strict real data mode (allows graceful degradation in demo/test)
-                return [];
+            }
+        } catch (error) {
+            this.logger.warn(`HuggingFace OHLCV failed for ${symbol}, trying fallback...`);
+        }
+
+        try {
+            // Fallback: Direct API call
+            const response = await axios.get(`${API_BASE}/api/ohlcv/${normalizedSymbol}`, {
+                params: { timeframe, limit },
+                timeout: 25000
+            });
+
+            if (response.data && response.data.data && Array.isArray(response.data.data)) {
+                const data: OHLCV[] = response.data.data.map((item: any) => ({
+                    timestamp: item.t || item.timestamp || item[0] || 0,
+                    open: parseFloat(String(item.o || item.open || item[1] || 0)),
+                    high: parseFloat(String(item.h || item.high || item[2] || 0)),
+                    low: parseFloat(String(item.l || item.low || item[3] || 0)),
+                    close: parseFloat(String(item.c || item.close || item[4] || 0)),
+                    volume: parseFloat(String(item.v || item.volume || item[5] || 0))
+                }));
+
+                this.setCache(cacheKey, data);
+                return data;
+            }
+        } catch (fallbackError) {
+            this.logger.error('All OHLCV sources failed', { symbol, timeframe }, fallbackError as Error);
+            
+            if (isStrictRealData()) {
+                throw new Error(
+                    `Primary data source unavailable: Cannot fetch OHLCV data for ${symbol} (${timeframe}). ` +
+                    `All data providers failed. Check your HF Engine configuration or network connectivity.`
+                );
             }
         }
+        
+        return [];
     }
 
     async getMarketData(symbols: string[]): Promise<Map<string, RealPriceData>> {
@@ -419,6 +414,28 @@ export class RealDataManager {
 
     async getAISignals(limit: number = 10): Promise<Signal[]> {
         try {
+            // Use HuggingFace Unified API - Primary Method
+            const response = await hfAPI.getAISignals();
+            
+            if (response.success && response.data) {
+                const signals = response.data.slice(0, limit);
+                return signals.map((s: any) => ({
+                    id: s.id || `${s.symbol}-${Date.now()}`,
+                    symbol: s.symbol || 'BTCUSDT',
+                    direction: s.type === 'buy' ? 'BULLISH' : s.type === 'sell' ? 'BEARISH' : 'NEUTRAL',
+                    confidence: s.confidence || s.score || 0.5,
+                    timeframe: s.timeframe || '1h',
+                    strength: (s.confidence || s.score || 0.5) >= 0.85 ? 'STRONG' : 
+                              (s.confidence || s.score || 0.5) >= 0.70 ? 'MODERATE' : 'WEAK',
+                    timestamp: s.timestamp ? new Date(s.timestamp).getTime() : Date.now()
+                }));
+            }
+        } catch (error) {
+            this.logger.warn('HuggingFace AI signals failed, trying fallback...');
+        }
+
+        try {
+            // Fallback: Direct API call
             const response = await axios.get(`${API_BASE}/api/ai/signals`, {
                 params: { limit },
                 timeout: 10000
@@ -426,7 +443,6 @@ export class RealDataManager {
             
             const signals = response.data.signals || response.data || [];
             
-            // Convert to Signal format if needed
             return signals.map((s: any) => ({
                 id: s.id || `${s.symbol}-${Date.now()}`,
                 symbol: s.symbol || 'BTCUSDT',

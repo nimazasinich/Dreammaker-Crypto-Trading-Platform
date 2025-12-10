@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Logger } from '../../core/Logger';
 import { NewsItem } from '../../types';
 import { Newspaper, ExternalLink, TrendingUp, TrendingDown, Minus, RefreshCw, AlertCircle } from 'lucide-react';
-import DatasourceClient from '../../services/DatasourceClient';
+import { hfAPI } from '../../services/HuggingFaceUnifiedAPI';
 import { showToast } from '../ui/Toast';
 
 interface NewsFeedProps {
@@ -17,22 +17,21 @@ export const NewsFeed: React.FC<NewsFeedProps> = ({
   autoRefresh = true, 
   refreshInterval = 60000 // 1 minute
 }) => {
-    const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [news, setNews] = useState<NewsItem[]>([]);
   const [filter, setFilter] = useState<'all' | 'positive' | 'negative' | 'neutral'>('all');
   const [loading, setLoading] = useState(true);
 
-  const fetchNews = async () => {
+  const fetchNews = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const datasource = DatasourceClient;
-      const newsData = await datasource.getLatestNews(20);
+      // Use HuggingFace Unified API directly
+      const response = await hfAPI.getLatestNews(20);
       
-      if (newsData && newsData.length > 0) {
+      if (response.success && response.data && response.data.length > 0) {
         // Convert to NewsItem format
-        const formattedNews: NewsItem[] = newsData.map((item: any, index: number) => {
+        const formattedNews: NewsItem[] = response.data.map((item: any, index: number) => {
           const sentimentScore = typeof item.sentiment_score === 'number' ? item.sentiment_score : 0;
           return {
             id: item.id || `news-${index}-${Date.now()}`,
@@ -40,7 +39,7 @@ export const NewsFeed: React.FC<NewsFeedProps> = ({
             description: item.description || item.summary || item.content || '',
             url: item.url || item.link || '#',
             source: item.source || item.source_name || 'Unknown',
-            publishedAt: item.publishedAt || item.published_at || item.timestamp || new Date().toISOString(),
+            publishedAt: item.published_at || item.publishedAt || item.timestamp || new Date().toISOString(),
             sentiment: item.sentiment || (sentimentScore > 0.1 ? 'positive' : sentimentScore < -0.1 ? 'negative' : 'neutral'),
             impact: item.impact || (Math.abs(sentimentScore) > 0.5 ? 'high' : Math.abs(sentimentScore) > 0.2 ? 'medium' : 'low')
           };
@@ -50,15 +49,15 @@ export const NewsFeed: React.FC<NewsFeedProps> = ({
         setNews([]);
         showToast('warning', 'No News', 'No news articles available at the moment');
       }
-    } catch (error) {
-      if (import.meta.env.DEV) logger.error('Failed to fetch news:', {}, error);
+    } catch (err) {
+      if (import.meta.env.DEV) logger.error('Failed to fetch news:', {}, err as Error);
       setError('Failed to load news');
       setNews([]);
       showToast('error', 'News Fetch Failed', 'Failed to load news articles');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchNews();
@@ -67,7 +66,7 @@ export const NewsFeed: React.FC<NewsFeedProps> = ({
       const interval = setInterval(fetchNews, refreshInterval);
       return () => clearInterval(interval);
     }
-  }, [autoRefresh, refreshInterval]);
+  }, [autoRefresh, refreshInterval, fetchNews]);
 
   const filteredNews = filter === 'all' ? news : news.filter(item => item.sentiment === filter);
 

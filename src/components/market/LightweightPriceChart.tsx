@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { createChart, IChartApi, ISeriesApi, CandlestickData as LWCandlestickData } from 'lightweight-charts';
 import { Logger } from '../../core/Logger';
 import { CandlestickData } from '../../types';
-import { marketDataService } from '../../services/marketDataService';
+import { hfAPI } from '../../services/HuggingFaceUnifiedAPI';
 import { RefreshCw } from 'lucide-react';
 
 interface LightweightPriceChartProps {
@@ -28,19 +28,19 @@ export const LightweightPriceChart: React.FC<LightweightPriceChartProps> = ({
   const [timeframe, setTimeframe] = useState(initialTimeframe);
   const [chartData, setChartData] = useState<CandlestickData[]>(propData || []);
 
-  // Fetch chart data
-  const fetchChartData = async () => {
+  // Fetch chart data using HuggingFace Unified API
+  const fetchChartData = useCallback(async () => {
     setLoading(true);
     try {
-      if (import.meta.env.DEV) logger.info(`📊 Loading REAL chart data for ${symbol} (${timeframe})...`);
+      if (import.meta.env.DEV) logger.info(`📊 Loading REAL chart data for ${symbol} (${timeframe}) from HuggingFace...`);
       
-      const symbolForAPI = `${symbol}USDT`;
-      const data = await marketDataService.getHistoricalData(symbolForAPI, timeframe, 100);
+      // Use HuggingFace Unified API directly
+      const response = await hfAPI.getOHLCV(symbol, timeframe, 100);
       
-      if (Array.isArray(data) && data.length > 0) {
-        const candles: CandlestickData[] = data.map((d) => ({
+      if (response.success && response.data && Array.isArray(response.data) && response.data.length > 0) {
+        const candles: CandlestickData[] = response.data.map((d: any) => ({
           timestamp: typeof d.timestamp === 'number' ? d.timestamp :
-                    d.timestamp instanceof Date ? d.timestamp.getTime() :
+                    typeof d.timestamp === 'string' ? new Date(d.timestamp).getTime() :
                     Date.now(),
           open: d.open || 0,
           high: d.high || 0,
@@ -76,14 +76,14 @@ export const LightweightPriceChart: React.FC<LightweightPriceChartProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [symbol, timeframe]);
 
   // Auto-fetch on mount and timeframe change
   useEffect(() => {
     if (autoFetch && symbol) {
       fetchChartData();
     }
-  }, [symbol, timeframe, autoFetch]);
+  }, [symbol, timeframe, autoFetch, fetchChartData]);
 
   // Update from prop data
   useEffect(() => {

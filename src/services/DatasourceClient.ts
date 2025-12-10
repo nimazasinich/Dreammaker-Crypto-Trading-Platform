@@ -1,7 +1,8 @@
 // src/services/DatasourceClient.ts
 // UNIVERSAL DATA SOURCE CLIENT - THE SINGLE SOURCE OF TRUTH
-// All data flows through this client to the local server proxy
+// All data flows through HuggingFace Unified API
 import { DataRetriever } from './DataRetriever';
+import { hfAPI } from './HuggingFaceUnifiedAPI';
 
 interface MarketPrice {
     symbol: string;
@@ -318,32 +319,56 @@ export class DatasourceClient {
     // Get top coins with real-time prices
     async getTopCoins(limit = 10, symbols?: string[]): Promise<MarketPrice[]> {
         try {
-            let url = `${this.baseUrl}/api/market?limit=${limit}`;
+            // Use HuggingFace Unified API
+            const response = await hfAPI.getTopCoins(limit);
+            
+            if (!response.success || !response.data) {
+                // Fallback to direct fetch
+                let url = `${this.baseUrl}/api/market/top?limit=${limit}`;
+                if (symbols && symbols.length > 0) {
+                    url += `&symbol=${symbols.join(',')}`;
+                }
+
+                const fallbackResponse = await this.fetchJSON<{ success: boolean; items: any[] } | any[]>(url);
+                
+                let items: any[];
+                if (Array.isArray(fallbackResponse)) {
+                    items = fallbackResponse;
+                } else if (fallbackResponse && typeof fallbackResponse === 'object' && Array.isArray((fallbackResponse as any).items)) {
+                    items = (fallbackResponse as any).items;
+                } else {
+                    return [];
+                }
+
+                return items.map((item: any) => ({
+                    symbol: item.symbol || '',
+                    price: item.price || 0,
+                    change24h: item.change_24h || item.change24h || 0,
+                    changePercent24h: item.change_24h || item.changePercent24h || 0,
+                    volume: item.volume_24h || item.volume || 0,
+                    marketCap: item.market_cap || item.marketCap || 0,
+                    timestamp: Date.now()
+                }));
+            }
+
+            // Map HuggingFace API response to MarketPrice format
+            let items = response.data;
+            
+            // Filter by symbols if provided
             if (symbols && symbols.length > 0) {
-                url += `&symbol=${symbols.join(',')}`;
+                const normalizedSymbols = symbols.map(s => s.toUpperCase());
+                items = items.filter(item => 
+                    normalizedSymbols.includes(item.symbol?.toUpperCase() || '')
+                );
             }
 
-            const response = await this.fetchJSON<{ success: boolean; items: any[] } | any[]>(url);
-
-            // Handle both formats: { success, items } and direct array
-            let items: any[];
-            if (Array.isArray(response)) {
-                items = response;
-            } else if (response && typeof response === 'object' && Array.isArray(response.items)) {
-                items = response.items;
-            } else {
-                // Silently return empty array on invalid data
-                return [];
-            }
-
-            // Map API response to MarketPrice format
             return items.map((item: any) => ({
                 symbol: item.symbol || '',
                 price: item.price || 0,
-                change24h: item.change_24h || item.change24h || 0,
-                changePercent24h: item.change_24h || item.changePercent24h || 0,
-                volume: item.volume_24h || item.volume || 0,
-                marketCap: item.market_cap || item.marketCap || 0,
+                change24h: item.change_24h || 0,
+                changePercent24h: item.change_24h || 0,
+                volume: item.volume_24h || 0,
+                marketCap: item.market_cap || 0,
                 timestamp: Date.now()
             }));
         } catch (error: any) {
@@ -359,17 +384,42 @@ export class DatasourceClient {
                 return [];
             }
 
-            const url = `${this.baseUrl}/api/market/history?symbol=${symbol}&timeframe=${timeframe}&limit=${limit}`;
-            const data = await this.fetchJSON<PriceChart[]>(url);
+            // Use HuggingFace Unified API
+            const response = await hfAPI.getOHLCV(symbol, timeframe, limit);
+            
+            if (response.success && response.data && Array.isArray(response.data)) {
+                return response.data.map((item: any) => ({
+                    timestamp: item.timestamp || 0,
+                    open: item.open || 0,
+                    high: item.high || 0,
+                    low: item.low || 0,
+                    close: item.close || 0,
+                    volume: item.volume || 0
+                }));
+            }
 
-            if (!Array.isArray(data)) {
-                // Silently return empty array on invalid data
+            // Fallback to direct fetch
+            const url = `${this.baseUrl}/api/ohlcv/${symbol.toLowerCase()}?timeframe=${timeframe}&limit=${limit}`;
+            const fallbackData = await this.fetchJSON<{ data: any[] } | any[]>(url);
+
+            let items: any[];
+            if (Array.isArray(fallbackData)) {
+                items = fallbackData;
+            } else if (fallbackData && typeof fallbackData === 'object' && Array.isArray((fallbackData as any).data)) {
+                items = (fallbackData as any).data;
+            } else {
                 return [];
             }
 
-            return data;
+            return items.map((item: any) => ({
+                timestamp: item.t || item.timestamp || item[0] || 0,
+                open: item.o || item.open || item[1] || 0,
+                high: item.h || item.high || item[2] || 0,
+                low: item.l || item.low || item[3] || 0,
+                close: item.c || item.close || item[4] || 0,
+                volume: item.v || item.volume || item[5] || 0
+            }));
         } catch (error: any) {
-            // Silently return empty array on error
             return []; // Always return empty array, never undefined
         }
     }
@@ -394,22 +444,35 @@ export class DatasourceClient {
     // Get latest news
     async getLatestNews(limit = 20): Promise<NewsItem[]> {
         try {
+            // Use HuggingFace Unified API
+            const response = await hfAPI.getLatestNews(limit);
+            
+            if (response.success && response.data) {
+                return response.data.map((item: any) => ({
+                    id: item.id || `news-${Date.now()}-${Math.random()}`,
+                    title: item.title || '',
+                    description: item.description || item.content || '',
+                    url: item.url || '#',
+                    source: item.source || item.source_name || 'Unknown',
+                    publishedAt: item.published_at || new Date().toISOString(),
+                    sentiment: item.sentiment || 'neutral'
+                }));
+            }
+
+            // Fallback to direct fetch
             const url = `${this.baseUrl}/api/news/latest?limit=${limit}`;
-            const response = await this.fetchJSON<{ success: boolean; news: NewsItem[] }>(url);
+            const fallbackResponse = await this.fetchJSON<{ success: boolean; news: NewsItem[] }>(url);
 
-            // Validate response structure
-            if (!response || typeof response !== 'object') {
+            if (!fallbackResponse || typeof fallbackResponse !== 'object') {
                 return [];
             }
 
-            if (!Array.isArray(response.news)) {
-                // Silently return empty array on invalid data
+            if (!Array.isArray((fallbackResponse as any).news)) {
                 return [];
             }
 
-            return response.news;
+            return (fallbackResponse as any).news;
         } catch (error: any) {
-            // Silently return empty array on error
             return []; // Always return empty array, never undefined
         }
     }
@@ -417,19 +480,47 @@ export class DatasourceClient {
     // Get market sentiment
     async getMarketSentiment(): Promise<MarketSentiment | null> {
         try {
-            const url = `${this.baseUrl}/api/sentiment`;
-            const data = await this.fetchJSON<MarketSentiment>(url);
+            // Use HuggingFace Unified API
+            const response = await hfAPI.getGlobalSentiment();
+            
+            if (response.success && response.data) {
+                const data = response.data;
+                return {
+                    fearGreedIndex: data.fear_greed_index || data.value || 50,
+                    classification: data.value_classification || data.market_sentiment || 'neutral',
+                    timestamp: Date.now(),
+                    indicators: {
+                        volatility: 0,
+                        marketMomentum: 0,
+                        socialSentiment: 0,
+                        surveys: 0,
+                        dominance: 0,
+                        trends: 0
+                    }
+                };
+            }
 
-            // Validate data structure
-            if (!data || typeof data !== 'object') {
+            // Fallback to direct fetch
+            const url = `${this.baseUrl}/api/sentiment/global`;
+            const fallbackData = await this.fetchJSON<any>(url);
+
+            if (!fallbackData || typeof fallbackData !== 'object') {
                 return null;
             }
 
-            if (typeof data.fearGreedIndex !== 'number') {
-                return null;
-            }
-
-            return data;
+            return {
+                fearGreedIndex: fallbackData.value || fallbackData.fearGreedIndex || 50,
+                classification: fallbackData.value_classification || fallbackData.classification || 'neutral',
+                timestamp: Date.now(),
+                indicators: fallbackData.indicators || {
+                    volatility: 0,
+                    marketMomentum: 0,
+                    socialSentiment: 0,
+                    surveys: 0,
+                    dominance: 0,
+                    trends: 0
+                }
+            };
         } catch (error: any) {
             return null; // Return null on error
         }
@@ -438,14 +529,34 @@ export class DatasourceClient {
     // Get AI prediction
     async getAIPrediction(symbol: string, timeframe = '1h'): Promise<AIPrediction | null> {
         try {
-            const url = `${this.baseUrl}/api/ai/predict`;
-            const response = await this.fetchJSON<AIPrediction>(url, {
+            // Use HuggingFace Unified API
+            const response = await hfAPI.getAIDecision(symbol, timeframe);
+            
+            if (response.success && response.data) {
+                const data = response.data;
+                return {
+                    symbol: data.symbol || symbol,
+                    action: data.decision || 'HOLD',
+                    confidence: data.confidence || 0.5,
+                    price: 0,
+                    timeframe: timeframe,
+                    indicators: {
+                        technical: data.analysis?.technical_score || 0,
+                        sentiment: data.analysis?.sentiment_score || 0,
+                        risk: data.analysis?.risk_score || 0
+                    },
+                    timestamp: Date.now()
+                };
+            }
+
+            // Fallback to direct fetch
+            const url = `${this.baseUrl}/api/ai/decision`;
+            const fallbackResponse = await this.fetchJSON<AIPrediction>(url, {
                 method: 'POST',
                 body: JSON.stringify({ symbol, timeframe })
             });
-            return response;
+            return fallbackResponse;
         } catch (error) {
-            // Silently return null - AI prediction may not be available during startup
             return null;
         }
     }
