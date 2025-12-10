@@ -8,7 +8,9 @@
  */
 
 // Export main client class
-export { CryptoDataClient, CryptoAPIError } from './crypto-client';
+export { CryptoDataClient } from './crypto-client';
+export { CryptoAPIError } from './crypto-client';
+export type { CryptoAPIError as CryptoAPIErrorType } from './crypto-client';
 
 // Export all types
 export type {

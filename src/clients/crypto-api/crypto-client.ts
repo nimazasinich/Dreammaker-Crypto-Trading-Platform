@@ -673,3 +673,4 @@ export class CryptoDataClient {
 }
 
 export default CryptoDataClient;
+export { CryptoAPIError };
