@@ -21,9 +21,10 @@ vi.mock('../../core/Logger.js', () => ({
 }));
 
 // Mock the BacktestService - must use .js extension to match actual import
-vi.mock('../../services/backtestService.js', () => ({
-  BacktestService: vi.fn().mockImplementation(() => ({
-    runWalkForwardBacktest: vi.fn().mockResolvedValue({
+vi.mock('../../services/backtestService.js', () => {
+  // Create a mock class that can be instantiated with `new`
+  const MockBacktestService = vi.fn().mockImplementation(function(this: any) {
+    this.runWalkForwardBacktest = vi.fn().mockResolvedValue({
       sharpeRatio: 1.2,
       winRate: 0.65,
       totalReturn: 0.15,
@@ -34,9 +35,10 @@ vi.mock('../../services/backtestService.js', () => ({
       directionalAccuracy: 0.70,
       var95: 0.05,
       trades: []
-    } as BacktestResult)
-  }))
-}));
+    } as BacktestResult);
+  });
+  return { BacktestService: MockBacktestService };
+});
 
 // Mock the RealMarketDataService - must use .js extension to match actual import
 vi.mock('../../services/RealMarketDataService.js', () => ({
