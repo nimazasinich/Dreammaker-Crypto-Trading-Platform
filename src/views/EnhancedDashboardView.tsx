@@ -102,7 +102,7 @@ const StatCard: React.FC<StatCardProps> = ({
                     <div className="flex items-start justify-between mb-1">
                         <div className="flex-1 min-w-0">
                             <p
-                                className={`text-[9px] font-semibold uppercase tracking-wide mb-0.5 ${isDark ? 'text-slate-300' : 'text-slate-600'}`} /* Improved contrast for WCAG AA */
+                                className={`text-[10px] font-semibold uppercase tracking-wide mb-0.5 ${isDark ? 'text-slate-300' : 'text-slate-600'}`} /* Improved contrast and readability (WCAG AA) */
                                 style={{ letterSpacing: '0.05em' }}
                             >
                                 {title}
