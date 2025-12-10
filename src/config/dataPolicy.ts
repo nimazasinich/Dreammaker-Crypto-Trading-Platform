@@ -130,29 +130,55 @@ export function validateProductionDataPolicy(): void {
     const useMock = getEnv('VITE_USE_MOCK_DATA') === 'true' || getEnv('USE_MOCK_DATA') === 'true';
     const allowFake = getEnv('VITE_ALLOW_FAKE_DATA') === 'true' || getEnv('ALLOW_FAKE_DATA') === 'true';
     const mode = resolveAppMode();
+    const strictRealData = getEnv('VITE_STRICT_REAL_DATA') || getEnv('STRICT_REAL_DATA');
     
+    // Check 1: No mock data allowed
     if (useMock) {
       throw new Error(
-        'PRODUCTION ERROR: Mock data is not allowed in production environment. ' +
-        'Set VITE_USE_MOCK_DATA=false in your environment configuration.'
+        '🚨 PRODUCTION ERROR: Mock data is not allowed in production environment. ' +
+        'Set VITE_USE_MOCK_DATA=false'
       );
     }
     
+    // Check 2: No fake data allowed
     if (allowFake) {
       throw new Error(
-        'PRODUCTION ERROR: Synthetic/fake data is not allowed in production environment. ' +
-        'Set VITE_ALLOW_FAKE_DATA=false in your environment configuration.'
+        '🚨 PRODUCTION ERROR: Fake data is not allowed in production environment. ' +
+        'Set VITE_ALLOW_FAKE_DATA=false'
       );
     }
     
+    // Check 3: Must be in online mode
     if (mode !== 'online') {
       throw new Error(
-        `PRODUCTION ERROR: Only online mode is allowed in production. ` +
-        `Current mode: ${mode}. Set VITE_APP_MODE=online in your environment configuration.`
+        '🚨 PRODUCTION ERROR: Only online mode is allowed in production. ' +
+        `Current mode: ${mode}. Set VITE_APP_MODE=online`
       );
     }
     
-    console.log('✅ Production data policy validated: Using real data only');
+    // Check 4: Strict real data must be enabled
+    if (strictRealData !== 'true') {
+      throw new Error(
+        '🚨 PRODUCTION ERROR: Strict real data mode must be enabled in production. ' +
+        'Set VITE_STRICT_REAL_DATA=true'
+      );
+    }
+    
+    console.log('✅ Production data policy validation passed');
+  }
+}
+
+/**
+ * Validate data policy at runtime
+ * Can be called periodically to ensure compliance
+ */
+export function validateRuntimeDataPolicy(): boolean {
+  try {
+    validateProductionDataPolicy();
+    return true;
+  } catch (error) {
+    console.error('Data policy validation failed:', error);
+    return false;
   }
 }
 

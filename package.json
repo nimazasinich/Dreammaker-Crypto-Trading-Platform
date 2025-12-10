@@ -105,7 +105,11 @@
     "ci:validate": "tsx scripts/ci/validate-ci-config.ts",
     "ci:parse": "tsx scripts/ci/parse-ci-reports.ts",
     "ci:parse:local": "tsx scripts/ci/parse-ci-reports.ts all-reports",
-    "ci:help": "cat .github/CI_GUIDE.md"
+    "ci:help": "cat .github/CI_GUIDE.md",
+    "validate:env": "tsx scripts/validate-env.ts",
+    "validate:env:prod": "tsx scripts/validate-env.ts .env.production --production",
+    "validate:env:staging": "tsx scripts/validate-env.ts .env.staging",
+    "prebuild:prod": "npm run validate:env:prod"
   },
   "dependencies": {
     "@octokit/rest": "^22.0.1",
