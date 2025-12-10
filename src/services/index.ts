@@ -8,7 +8,15 @@
  */
 
 // ============================================
-// PRIMARY API CLIENT - HUGGINGFACE UNIFIED API (RECOMMENDED)
+// PRIMARY API CLIENT - UNIFIED CRYPTO DATA SERVICE (RECOMMENDED)
+// ============================================
+export { 
+  unifiedDataService,
+  default as UnifiedCryptoDataService
+} from './UnifiedCryptoDataService';
+
+// ============================================
+// HUGGINGFACE UNIFIED API (Legacy - use unifiedDataService instead)
 // ============================================
 export { 
   hfAPI, 

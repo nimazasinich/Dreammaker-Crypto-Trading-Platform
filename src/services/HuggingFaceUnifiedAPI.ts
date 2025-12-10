@@ -11,6 +11,7 @@
  */
 
 import { Logger } from '../core/Logger';
+import { unifiedDataService } from './UnifiedCryptoDataService';
 
 // ============================================================================
 // Configuration
@@ -409,7 +410,30 @@ class HuggingFaceUnifiedAPI {
    * GET /api/coins/top?limit=X
    */
   async getTopMarket(): Promise<APIResponse<MarketCoin[]>> {
-    return this.getTopCoins(50);
+    try {
+      const response = await unifiedDataService.getTopCoins(50);
+      return {
+        success: true,
+        data: response.coins.map(coin => ({
+          symbol: coin.symbol,
+          name: coin.name || '',
+          price: coin.price,
+          change_24h: coin.change_24h,
+          volume_24h: coin.volume_24h,
+          market_cap: coin.market_cap,
+          rank: coin.rank,
+          last_updated: coin.last_updated,
+          image: coin.image,
+        })),
+        timestamp: Date.now(),
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to get top market',
+        timestamp: Date.now(),
+      };
+    }
   }
 
   /**
@@ -437,28 +461,30 @@ class HuggingFaceUnifiedAPI {
    * GET /api/coins/top?limit=50
    */
   async getTopCoins(limit = 50): Promise<APIResponse<MarketCoin[]>> {
-    const response = await this.request<{ coins: MarketCoin[] }>(`/api/coins/top?limit=${limit}`);
-    if (response.success && response.data) {
-      const data = response.data as any;
-      const coins = data.coins || data;
-      if (Array.isArray(coins)) {
-        return {
-          ...response,
-          data: coins.map((c: any) => ({
-            symbol: c.symbol || '',
-            name: c.name || '',
-            price: c.price || c.current_price || 0,
-            change_24h: c.change_24h || c.price_change_percentage_24h || 0,
-            volume_24h: c.volume_24h || c.total_volume || 0,
-            market_cap: c.market_cap || 0,
-            rank: c.rank || c.market_cap_rank || 0,
-            last_updated: c.last_updated || new Date().toISOString(),
-            image: c.image || '',
-          })),
-        };
-      }
+    try {
+      const response = await unifiedDataService.getTopCoins(limit);
+      return {
+        success: true,
+        data: response.coins.map(coin => ({
+          symbol: coin.symbol,
+          name: coin.name || '',
+          price: coin.price,
+          change_24h: coin.change_24h,
+          volume_24h: coin.volume_24h,
+          market_cap: coin.market_cap,
+          rank: coin.rank,
+          last_updated: coin.last_updated,
+          image: coin.image,
+        })),
+        timestamp: Date.now(),
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to get top coins',
+        timestamp: Date.now(),
+      };
     }
-    return response as unknown as APIResponse<MarketCoin[]>;
   }
 
   /**
@@ -477,7 +503,26 @@ class HuggingFaceUnifiedAPI {
    * GET /api/sentiment/global
    */
   async getGlobalSentiment(): Promise<APIResponse<GlobalSentiment>> {
-    return this.request<GlobalSentiment>('/api/sentiment/global');
+    try {
+      const response = await unifiedDataService.getGlobalSentiment('1D');
+      return {
+        success: true,
+        data: {
+          value: response.fear_greed_index,
+          value_classification: response.sentiment,
+          timestamp: response.timestamp,
+          fear_greed_index: response.fear_greed_index,
+          market_sentiment: response.sentiment,
+        },
+        timestamp: Date.now(),
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to get global sentiment',
+        timestamp: Date.now(),
+      };
+    }
   }
 
   /**
@@ -517,14 +562,20 @@ class HuggingFaceUnifiedAPI {
    * GET /api/ai/signals
    */
   async getAISignals(): Promise<APIResponse<AISignal[]>> {
-    const response = await this.request<{ signals: AISignal[] }>('/api/ai/signals');
-    if (response.success && response.data) {
+    try {
+      const response = await unifiedDataService.getSignals();
       return {
-        ...response,
-        data: Array.isArray(response.data) ? response.data : (response.data as any).signals || [],
+        success: true,
+        data: response.signals || [],
+        timestamp: Date.now(),
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to get AI signals',
+        timestamp: Date.now(),
       };
     }
-    return response as unknown as APIResponse<AISignal[]>;
   }
 
   /**
@@ -544,15 +595,20 @@ class HuggingFaceUnifiedAPI {
    * GET /api/news
    */
   async getNews(limit = 10): Promise<APIResponse<NewsArticle[]>> {
-    const response = await this.request<{ articles: NewsArticle[] } | NewsArticle[]>(`/api/news?limit=${limit}`);
-    if (response.success && response.data) {
-      const data = response.data as any;
+    try {
+      const response = await unifiedDataService.getNews(limit);
       return {
-        ...response,
-        data: Array.isArray(data) ? data : data.articles || data.news || [],
+        success: true,
+        data: response.articles || [],
+        timestamp: Date.now(),
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to get news',
+        timestamp: Date.now(),
       };
     }
-    return response as unknown as APIResponse<NewsArticle[]>;
   }
 
   /**
@@ -720,7 +776,24 @@ class HuggingFaceUnifiedAPI {
    * GET /api/health
    */
   async getHealth(): Promise<APIResponse<HealthStatus>> {
-    return this.request<HealthStatus>('/api/health');
+    try {
+      const response = await unifiedDataService.getHealth();
+      return {
+        success: true,
+        data: {
+          status: response.status === 'healthy' ? 'healthy' : 'degraded',
+          uptime: 0,
+          version: response.version,
+        },
+        timestamp: Date.now(),
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Health check failed',
+        timestamp: Date.now(),
+      };
+    }
   }
 
   /**
