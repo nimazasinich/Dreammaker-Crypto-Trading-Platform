@@ -118,6 +118,45 @@ export function assertPolicy(): void {
 }
 
 /**
+ * Production-specific validation
+ * Ensures production builds never use mock/demo data
+ * Call this at application startup in production environments
+ */
+export function validateProductionDataPolicy(): void {
+  const nodeEnv = getEnv('NODE_ENV');
+  const isProduction = nodeEnv === 'production';
+  
+  if (isProduction) {
+    const useMock = getEnv('VITE_USE_MOCK_DATA') === 'true' || getEnv('USE_MOCK_DATA') === 'true';
+    const allowFake = getEnv('VITE_ALLOW_FAKE_DATA') === 'true' || getEnv('ALLOW_FAKE_DATA') === 'true';
+    const mode = resolveAppMode();
+    
+    if (useMock) {
+      throw new Error(
+        'PRODUCTION ERROR: Mock data is not allowed in production environment. ' +
+        'Set VITE_USE_MOCK_DATA=false in your environment configuration.'
+      );
+    }
+    
+    if (allowFake) {
+      throw new Error(
+        'PRODUCTION ERROR: Synthetic/fake data is not allowed in production environment. ' +
+        'Set VITE_ALLOW_FAKE_DATA=false in your environment configuration.'
+      );
+    }
+    
+    if (mode !== 'online') {
+      throw new Error(
+        `PRODUCTION ERROR: Only online mode is allowed in production. ` +
+        `Current mode: ${mode}. Set VITE_APP_MODE=online in your environment configuration.`
+      );
+    }
+    
+    console.log('✅ Production data policy validated: Using real data only');
+  }
+}
+
+/**
  * Get data source label for UI display
  */
 export function getDataSourceLabel(): string {

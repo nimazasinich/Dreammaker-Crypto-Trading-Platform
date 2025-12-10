@@ -3,14 +3,14 @@
  * 
  * This is the ONLY data source for the entire application.
  * All crypto data flows through HuggingFace API at:
- * https://Really-amin-Datasourceforcryptocurrency-2.hf.space
+ * https://really-amin-datasourceforcryptocurrency-2.hf.space
  * 
  * NO direct calls to CoinGecko, Binance, NewsAPI, or any external API.
  * HuggingFace manages 55 functional data providers internally.
  */
 
 class CryptoAPI {
-  private baseUrl = 'https://Really-amin-Datasourceforcryptocurrency-2.hf.space';
+  private baseUrl = 'https://really-amin-datasourceforcryptocurrency-2.hf.space';
 
   // ============================================
   // PRICES & EXCHANGE RATES

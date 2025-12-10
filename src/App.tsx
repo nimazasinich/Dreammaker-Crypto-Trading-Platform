@@ -199,14 +199,11 @@ function App() {
     const [isAppReady, setIsAppReady] = useState(false);
 
     React.useEffect(() => {
-        // Optimized app initialization with faster loading
+        // Optimized app initialization - no artificial delays
         const initializeApp = async () => {
             try {
-                // Reduced initialization time for faster perceived performance
-                // Providers will continue to initialize in the background
-                await new Promise(resolve => setTimeout(resolve, 800));
-
-                // Mark app as ready - components will handle their own lazy loading
+                // Mark app as ready immediately - components will handle their own lazy loading
+                // Removed artificial 800ms delay for faster perceived performance
                 setIsAppReady(true);
             } catch (error) {
                 Logger.getInstance().error('Error during app initialization:', {}, error);

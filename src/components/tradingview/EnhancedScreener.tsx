@@ -56,7 +56,7 @@ const EnhancedScreener: React.FC<EnhancedScreenerProps> = ({ theme = 'light' }) 
       setIsLoading(true);
       try {
         // Use HuggingFace API to get top coins
-        const response = await fetch('https://Really-amin-Datasourceforcryptocurrency-2.hf.space/api/service/top?n=50');
+        const response = await fetch('https://really-amin-datasourceforcryptocurrency-2.hf.space/api/service/top?n=50');
         if (response.ok) {
           const data = await response.json();
           if (data.data && Array.isArray(data.data)) {

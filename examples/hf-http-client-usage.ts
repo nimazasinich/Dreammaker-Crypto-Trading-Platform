@@ -35,7 +35,7 @@ async function example2_CustomInstance() {
   console.log('=== Example 2: Custom Instance with Configuration ===\n');
 
   const customClient = new HFHttpOnlyClient({
-    baseUrl: process.env.HF_API_URL || 'https://Really-amin-Datasourceforcryptocurrency-2.hf.space',
+    baseUrl: process.env.HF_API_URL || 'https://really-amin-datasourceforcryptocurrency-2.hf.space',
     token: process.env.HF_API_TOKEN || 'hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', // Use environment variable
     timeout: 15000, // 15 ثانیه
     maxRetries: 5,
